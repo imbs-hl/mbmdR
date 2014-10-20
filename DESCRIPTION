@@ -1,8 +1,8 @@
 Package: mbmdR
-Title: What the package does (one line)
+Title: Interface to MB-MDR
 Version: 0.1
-Authors@R: "First Last <first.last@example.com> [aut, cre]"
-Description: What the package does (one paragraph)
+Authors@R: "Damian Gola <gola@imbs.uni-luebeck.de> [aut, cre]"
+Description: This package provides an interface to c++ MB-MDR software by François van Lishout.
 Depends: R (>= 3.1.0)
-License: What license is it under?
+License: GNU GPL v3.0
 LazyData: true

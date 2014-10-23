@@ -5,43 +5,60 @@
 #'
 #' @param exec [\code{string}]\cr
 #'   Default mbmdr executable. Default: "mbmdr"
+#'
 #' @param n.pvalues [\code{integer}]\cr
 #'   Number of p-value to compute. Default: 1000
+#'
 #' @param permutations [\code{integer}]\cr
 #'   Permutation amount for multiple-testing. Default: 999
+#'
 #' @param random.seed [\code{integer} or \code{NULL}]\cr
 #'   Random seed parameter. Default: \code{NULL} (random value)
+#'
 #' @param group.size [\code{integer}]\cr
 #'   Minimum group size to be statistically relevant. Default: 10
+#'
 #' @param alpha [\code{number}]\cr
 #'   Cutoff value for the chi-square test. Default: 0.1
+#'
 #' @param multi.test.corr [\code{string}]\cr
 #'   Multiple-testing correction algorithm. "NONE", "MAXT", "MINP", "RAWP",
 #'   "STRAT1", "STRAT2" or "gammaMAXT" (default).
+#'
 #' @param out.suffix [\code{string}]\cr
 #'   Suffix for output file name. Default: "_output.txt".
+#'
 #' @param adjustment [\code{string}]\cr
 #'   Adjust method to be used. "CODOMINANT" (default), "ADDITIVE" or "NONE".
+#'
 #' @param dim [\code{string}]\cr
 #'   Dimension of interactions. "1D", "2D" (defaut) or "3D".
+#'
 #' @param verbose [\code{string}]\cr
 #'   Verbose level. "NONE" (default), "SHORT", "MEDIUM" or "LONG".
+#'
 #' @param progressbar [\code{string}]\cr
 #'   Progress bar. "NONE" or "NORMAL" (default).
+#'
 #' @param erase [\code{character} or \code{NULL}]\cr
 #'   Vector of markers to be excluded. Default: \code{NULL}
+#'
 #' @param erase.file [\code{string} or \code{NULL}]\cr
 #'   File of markers to be excluded. One marker per line. Default: \code{NULL}
+#'
 #' @param filter [\code{character} or \code{NULL}]\cr
 #'   Analyse only the pairs composed of exactly one marker
 #'   (for instance an environment variable) from the vector of markers names.
 #'   Default: \code{NULL}
+#'
 #' @param filter.file [\code{string} or \code{NULL}]\cr
 #'   Analyse only the pairs composed of exactly one marker
 #'   (for instance an environment variable) from the file of markers names.
 #'   One marker per line. Default: \code{NULL}
+#'
 #' @param input.format [\code{string}]\cr
 #'   Input file format. "MDR" or "MBMDR" (default).
+#'
 #' @param transform [\code{string}]\cr
 #'   Rank transformation (continuous trait only).
 #'   "RANK_TRANSFORM" or "NONE" (default)

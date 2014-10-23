@@ -3,18 +3,28 @@
 \alias{createPartialTopFiles}
 \title{Create partial top files}
 \usage{
-createPartialTopFiles(id = "partialTopFiles", work.dir = getwd(),
-  reg.dir = file.path(work.dir, "registries", id), skip = TRUE)
+createPartialTopFiles(file, trait, cpus, reg.id = "partialTopFiles",
+  work.dir = getwd(), reg.dir = file.path(work.dir, "registries", reg.id),
+  skip = TRUE)
 }
 \arguments{
-\item{id}{[\code{string}]\cr
+\item{file}{[\code{string}]\cr
+  File path of input MB-MDR file.}
+
+\item{trait}{[\code{string}]\cr
+  Type of trait. "binary", "continuous" or "survival".}
+
+\item{cpus}{[\code{integer}]\cr
+  Name for the \link{BatchJobs} \link{Registry}. Defaults to "partialTopFiles".}
+
+\item{reg.id}{[\code{string}]\cr
   Name for the \link{BatchJobs} \link{Registry}. Defaults to "partialTopFiles".}
 
 \item{work.dir}{[\code{string}]\cr
   Working directory for MB-MDR. Defaults to current working directory.}
 
 \item{reg.dir}{[\code{string}]\cr
-  Path for saving the \link{BatchJobs} \link{Registry}. Defaults to <\code{work.dir}>/registries/<\code{id}>.}
+  Path for saving the \link{BatchJobs} \link{Registry}. Defaults to <\code{work.dir}>/registries/<\code{reg.id}>.}
 
 \item{skip}{[\code{logical}]\cr
   Skip creation of a new registry if a registry is found in file.dir. Defaults to TRUE.}

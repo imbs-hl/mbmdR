@@ -1,7 +1,7 @@
-#' @title Maps a function over lists or vectors, adding jobs to a registry.
+#' @title Create partial top files
 #'
 #' @description
-#' You can then submit these jobs to the batch system.
+#' First step of parallel workflow of MB-MDR. Creates partial topfiles on multiple CPUs.
 #'
 #' @param id [\code{string}]\cr
 #'   Name for the \link{BatchJobs} \link{Registry}. Defaults to "partialTopFiles".

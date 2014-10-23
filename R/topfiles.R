@@ -3,7 +3,16 @@
 #' @description
 #' First step of parallel workflow of MB-MDR. Creates partial topfiles on multiple CPUs.
 #'
-#' @param id [\code{string}]\cr
+#' @param file [\code{string}]\cr
+#'   File path of input MB-MDR file.
+#'
+#' @param trait [\code{string}]\cr
+#'   Type of trait. "binary", "continuous" or "survival".
+#'
+#' @param cpus [\code{integer}]\cr
+#'   Name for the \link{BatchJobs} \link{Registry}. Defaults to "partialTopFiles".
+#'
+#' @param reg.id [\code{string}]\cr
 #'   Name for the \link{BatchJobs} \link{Registry}. Defaults to "partialTopFiles".
 #'
 #' @param work.dir [\code{string}]\cr
@@ -18,15 +27,33 @@
 #' @return Vector of type \code{integer} with job ids.
 #'
 #' @export
-createPartialTopFiles <- function(id = "partialTopFiles",
+createPartialTopFiles <- function(file,
+                                  tait,
+                                  cpus,
+                                  reg.id = "partialTopFiles",
                                   work.dir = getwd(),
                                   reg.dir = file.path(work.dir, "registries", id),
                                   skip = TRUE) {
 
-  makeRegistry("partialTopFiles",
-               file.dir = reg.dir,
-               work.dir = work.dir,
-               skip = skip)
+  assertFile(file)
+  assertChoice(trait, c("binary", "continuous", "survival"))
+  assertNumber(cpus)
+  assertString(reg.id)
+  assertDirectory(work.dir)
+  assertDirectory(reg.dir)
+  assertLogical(skip)
+
+  reg <- makeRegistry(reg.id,
+                      file.dir = reg.dir,
+                      work.dir = work.dir,
+                      skip = skip)
+
+  ids <- 1:cpus
+
+  batchMap(reg, gammastep1,
+           ids, more.args(file = file,
+                          trait = trait,
+                          cpus = cpus)
 
 }
 

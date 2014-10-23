@@ -3,20 +3,26 @@
 \alias{createPartialTopFiles}
 \title{Maps a function over lists or vectors, adding jobs to a registry.}
 \usage{
-createPartialTopFiles()
+createPartialTopFiles(id = "partialTopFiles", work.dir = getwd(),
+  reg.dir = file.path(work.dir, "registries", id), skip = TRUE)
 }
 \arguments{
-\item{reg}{[\code{\link{Registry}}]\cr
-  Empty Registry that will store jobs for the mapping.}
+\item{id}{[\code{string}]\cr
+  Name for the \link{BatchJobs} \link{Registry}. Defaults to "partialTopFiles".}
+
+\item{work.dir}{[\code{string}]\cr
+  Working directory for MB-MDR. Defaults to current working directory.}
+
+\item{reg.dir}{[\code{string}]\cr
+  Path for saving the \link{BatchJobs} \link{Registry}. Defaults to <\code{work.dir}>/registries/<\code{id}>.}
+
+\item{skip}{[\code{logical}]\cr
+  Skip creation of a new registry if a registry is found in file.dir. Defaults to TRUE.}
 }
 \value{
 Vector of type \code{integer} with job ids.
 }
 \description{
 You can then submit these jobs to the batch system.
-}
-\examples{
-x <- 1+1
- x
 }
 

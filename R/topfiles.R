@@ -19,7 +19,7 @@
 #'   Working directory for MB-MDR. Defaults to current working directory.
 #'
 #' @param reg.dir [\code{string}]\cr
-#'   Path for saving the \link{BatchJobs} \link{Registry}. Defaults to <\code{work.dir}>/registries/<\code{id}>.
+#'   Path for saving the \link{BatchJobs} \link{Registry}. Defaults to <\code{work.dir}>/registries/<\code{reg.id}>.
 #'
 #' @param skip [\code{logical}]\cr
 #'   Skip creation of a new registry if a registry is found in file.dir. Defaults to TRUE.
@@ -28,13 +28,12 @@
 #'
 #' @export
 createPartialTopFiles <- function(file,
-                                  tait,
+                                  trait,
                                   cpus,
                                   reg.id = "partialTopFiles",
                                   work.dir = getwd(),
-                                  reg.dir = file.path(work.dir, "registries", id),
-                                  skip = TRUE,
-                                  max.jobs = 1000) {
+                                  reg.dir = file.path(work.dir, "registries", reg.id),
+                                  skip = TRUE) {
 
   assertFile(file)
   assertChoice(trait, c("binary", "continuous", "survival"))
@@ -43,7 +42,6 @@ createPartialTopFiles <- function(file,
   assertDirectory(work.dir)
   assertDirectory(reg.dir)
   assertLogical(skip)
-  assertInt(max.jobs)
 
   reg <- makeRegistry(reg.id,
                       file.dir = reg.dir,
@@ -52,12 +50,16 @@ createPartialTopFiles <- function(file,
 
   ids <- 1:cpus
 
-  batchMap(reg, gammastep1,
-           ids, more.args(file = file,
-                          trait = trait,
-                          cpus = cpus))
+  jobs <- batchMap(reg, gammastep1,
+                   ids, more.args = list(file = file,
+                                         trait = trait,
+                                         cpus = cpus))
 
-  setConfig(max.concurrent.jobs = max.jobs)
+  submitJobs(reg, chunk(jobs, n.chunks = 1),
+             chunks.as.arrayjobs = getConfig()$ssh,
+             job.delay = TRUE)
+
+  return(reg)
 
 }
 

@@ -6,6 +6,7 @@ Description: This package provides an interface to c++ MB-MDR software by
     François van Lishout.
 Depends:
     R (>= 3.1.0)
+SoftwareRequirements: mbmdr (>= 4.2.2)
 License: GPL-3
 LazyData: true
 Imports:

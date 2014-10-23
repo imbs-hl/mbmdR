@@ -70,23 +70,23 @@ configure <- function(exec = "mbmdr",
                       transform = "NONE") {
 
   mbmdr <- list(exec = exec,                      # Set default mbmdr executable
-                     n = n.pvalues,               # Number of p-value to compute
-                     p = permutations,            # Permutation amount for multiple-testing
-                     r = random.seed,             # Random seed parameter
-                     m = group.size,              # Minimum group size to be statistically relevant
-                     x = alpha,                   # Cutoff value for the chi-square test
-                     mt = multi.test.corr,        # Multiple-testing correction algorithm
-                     o = out.suffix,              # Output file name
-                     a = adjustment,              # Adjust method to be used
-                     d = dim,                     # Dimension of interactions
-                     v = verbose,                 # Verbose
-                     pb = progressbar,            # Progress bar
-                     e = erase,                   # Erase markers (list)
-                     E = erase.file,              # Erase markers (file)
-                     filter = filter,             # Filter (list)
-                     filter.file = filter.file,   # Filter (file)
-                     input.format = input.format, # Input format
-                     rt = transform)              # Rank transformation
+                n = n.pvalues,               # Number of p-value to compute
+                p = permutations,            # Permutation amount for multiple-testing
+                r = random.seed,             # Random seed parameter
+                m = group.size,              # Minimum group size to be statistically relevant
+                x = alpha,                   # Cutoff value for the chi-square test
+                mt = multi.test.corr,        # Multiple-testing correction algorithm
+                o = out.suffix,              # Output file name
+                a = adjustment,              # Adjust method to be used
+                d = dim,                     # Dimension of interactions
+                v = verbose,                 # Verbose
+                pb = progressbar,            # Progress bar
+                e = erase,                   # Erase markers (list)
+                E = erase.file,              # Erase markers (file)
+                filter = filter,             # Filter (list)
+                filter.file = filter.file,   # Filter (file)
+                input.format = input.format, # Input format
+                rt = transform)              # Rank transformation
 
   check.options(mbmdr)
 

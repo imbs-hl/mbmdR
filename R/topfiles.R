@@ -40,7 +40,7 @@ createPartialTopFiles <- function(file,
   assertNumber(cpus)
   assertString(reg.id)
   assertDirectory(work.dir)
-  assertDirectory(reg.dir)
+  ifelse(testDirectory(reg.dir), NULL, paste(checkDirectory(reg.dir), "will be created!", sep = ", "))
   assertLogical(skip)
 
   reg <- makeRegistry(reg.id,

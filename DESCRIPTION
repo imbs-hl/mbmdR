@@ -5,10 +5,10 @@ Authors@R: "Damian Gola <gola@imbs.uni-luebeck.de> [aut, cre]"
 Description: This package provides an interface to c++ MB-MDR software by
     François van Lishout.
 Depends:
-    R (>= 3.1.0)
+    R (>= 3.1.0),
+    BatchJobs (>= 1.5),
+    checkmate (>= 1.5.0),
+    BBmisc (>= 1.8)
 SoftwareRequirements: mbmdr (>= 4.2.2)
 License: GPL-3
 LazyData: true
-Imports:
-    BatchJobs,
-    checkmate

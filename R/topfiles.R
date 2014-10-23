@@ -3,17 +3,30 @@
 #' @description
 #' You can then submit these jobs to the batch system.
 #'
-#' @param reg [\code{\link{Registry}}]\cr
-#'   Empty Registry that will store jobs for the mapping.
+#' @param id [\code{string}]\cr
+#'   Name for the \link{BatchJobs} \link{Registry}. Defaults to "partialTopFiles".
+#'
+#' @param work.dir [\code{string}]\cr
+#'   Working directory for MB-MDR. Defaults to current working directory.
+#'
+#' @param reg.dir [\code{string}]\cr
+#'   Path for saving the \link{BatchJobs} \link{Registry}. Defaults to <\code{work.dir}>/registries/<\code{id}>.
+#'
+#' @param skip [\code{logical}]\cr
+#'   Skip creation of a new registry if a registry is found in file.dir. Defaults to TRUE.
 #'
 #' @return Vector of type \code{integer} with job ids.
 #'
-#' @examples
-#'  x <- 1+1
-#'  x
-#'
 #' @export
-createPartialTopFiles <- function() {
+createPartialTopFiles <- function(id = "partialTopFiles",
+                                  work.dir = getwd(),
+                                  reg.dir = file.path(work.dir, "registries", id),
+                                  skip = TRUE) {
+
+  makeRegistry("partialTopFiles",
+               file.dir = reg.dir,
+               work.dir = work.dir,
+               skip = skip)
 
 }
 

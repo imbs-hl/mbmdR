@@ -33,7 +33,8 @@ createPartialTopFiles <- function(file,
                                   reg.id = "partialTopFiles",
                                   work.dir = getwd(),
                                   reg.dir = file.path(work.dir, "registries", id),
-                                  skip = TRUE) {
+                                  skip = TRUE,
+                                  max.jobs = 1000) {
 
   assertFile(file)
   assertChoice(trait, c("binary", "continuous", "survival"))
@@ -42,6 +43,7 @@ createPartialTopFiles <- function(file,
   assertDirectory(work.dir)
   assertDirectory(reg.dir)
   assertLogical(skip)
+  assertInt(max.jobs)
 
   reg <- makeRegistry(reg.id,
                       file.dir = reg.dir,
@@ -53,7 +55,9 @@ createPartialTopFiles <- function(file,
   batchMap(reg, gammastep1,
            ids, more.args(file = file,
                           trait = trait,
-                          cpus = cpus)
+                          cpus = cpus))
+
+  setConfig(max.concurrent.jobs = max.jobs)
 
 }
 

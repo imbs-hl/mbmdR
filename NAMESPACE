@@ -2,6 +2,7 @@
 
 export(combinePartialTopFiles)
 export(configure)
+export(createOutput)
 export(createPartialTopFiles)
 export(runPermutations)
 import(BBmisc)

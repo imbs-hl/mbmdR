@@ -10,7 +10,7 @@
 #'   Type of trait. "binary", "continuous" or "survival".
 #'
 #' @param cpus [\code{integer}]\cr
-#'   Name for the \link{BatchJobs} \link{Registry}. Defaults to "partialTopFiles".
+#'   Sets the total amount of CPUs used in \link{runPermutations}.
 #'
 #' @param reg.id [\code{string}]\cr
 #'   Name for the \link{BatchJobs} \link{Registry}. Defaults to "partialTopFiles".
@@ -70,11 +70,13 @@ createOutput <- function(file,
     dir.create(reg.dir)
   }
   assertDirectory(reg.dir)
-  if(!testDirectory(dirname(out.prefix))) {
-    warning(paste(checkDirectory(dirname(out.prefix)), "will be created!", sep = ", "))
-    dir.create(dirname(out.prefix))
+  if(!testDirectory(dirname(out))) {
+    warning(paste(checkDirectory(dirname(out)), "will be created!", sep = ", "))
+    dir.create(dirname(out))
   }
-  assertDirectory(dirname(out.prefix))
+  assertDirectory(dirname(out))
+  assertDirectory(dirname(perm.prefix))
+  assertFile(paste0(perm.prefix, 1:cpus, ".txt"))
   assertLogical(skip)
 
   reg <- makeRegistry(reg.id,

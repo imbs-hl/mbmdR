@@ -10,7 +10,7 @@
 #'   Type of trait. "binary", "continuous" or "survival".
 #'
 #' @param cpus [\code{integer}]\cr
-#'   Name for the \link{BatchJobs} \link{Registry}. Defaults to "partialTopFiles".
+#'   Sets the total amount of CPUs to be used.
 #'
 #' @param reg.id [\code{string}]\cr
 #'   Name for the \link{BatchJobs} \link{Registry}. Defaults to "partialTopFiles".
@@ -80,7 +80,7 @@ runPermutations <- function(file,
   p[1:(options$p %% cpus)] <- p[1:(options$p %% cpus)]+1
 
   jobs <- batchMap(reg, gammastep3,
-                   p = p,
+                   p = p, i = 1:cpus,
                    more.args = list(file = file,
                                     trait = trait,
                                     t = topfile,
@@ -94,7 +94,7 @@ runPermutations <- function(file,
 
 }
 
-gammastep3 <- function(file, trait, p, t, out.prefix) {
+gammastep3 <- function(file, trait, p, i, t, out.prefix) {
 
   check.options()
 

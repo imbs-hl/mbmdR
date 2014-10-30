@@ -16,7 +16,7 @@ createPartialTopFiles(file, trait, cpus, reg.id = "partialTopFiles",
   Type of trait. "binary", "continuous" or "survival".}
 
 \item{cpus}{[\code{integer}]\cr
-  Name for the \link{BatchJobs} \link{Registry}. Defaults to "partialTopFiles".}
+  Total amount of CPUs to be used.}
 
 \item{reg.id}{[\code{string}]\cr
   Name for the \link{BatchJobs} \link{Registry}. Defaults to "partialTopFiles".}

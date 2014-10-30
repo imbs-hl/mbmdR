@@ -1,4 +1,4 @@
-#' @title Create partial top files
+#' @title Create permutation files
 #'
 #' @description
 #' Third step of parallel workflow of MB-MDR. Run permutations on multiple CPUs.

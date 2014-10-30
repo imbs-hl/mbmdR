@@ -133,6 +133,8 @@ gammastep4 <- function(file, trait, c, q, p, t, o, options) {
                " ", file,
                sep = "")
 
+  print(cmd)
+
   system(cmd)
 
 }

@@ -214,8 +214,6 @@ gammastep2 <- function(file, trait, cpus, ti, t, options) {
 
   check.options(options)
 
-  options <- getOption("mbmdr")
-
   cmd <- paste(options$exec,
                " --", trait,
                " --gammastep2",
@@ -239,6 +237,8 @@ gammastep2 <- function(file, trait, cpus, ti, t, options) {
                " -pb ", options$pb,
                " ", file,
                sep = "")
+
+  print(cmd)
 
   system(cmd)
 

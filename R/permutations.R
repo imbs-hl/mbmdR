@@ -123,6 +123,8 @@ gammastep3 <- function(file, trait, p, i, t, out.prefix, options) {
                " ", file,
                sep = "")
 
+  print(cmd)
+
   system(cmd)
 
 }

@@ -74,7 +74,7 @@ createPartialTopFiles <- function(file,
                                          cpus = cpus,
                                          ti = out.prefix))
 
-  submitJobs(reg, chunk(jobs, n.chunks = 1),
+  submitJobs(reg, chunk(jobs, chunk.size = 1000),
              chunks.as.arrayjobs = getConfig()$ssh,
              job.delay = TRUE)
 
@@ -165,7 +165,7 @@ combinePartialTopFiles <- function(file,
                                           ti = topfiles.prefix,
                                           t = out))
 
-  submitJobs(reg, chunk(jobs, n.chunks = 1),
+  submitJobs(reg, chunk(jobs, chunk.size = 1000),
              chunks.as.arrayjobs = getConfig()$ssh,
              job.delay = TRUE)
 

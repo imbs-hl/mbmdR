@@ -80,13 +80,13 @@ runPermutations <- function(file,
   p[1:(options$p %% cpus)] <- p[1:(options$p %% cpus)]+1
 
   jobs <- batchMap(reg, gammastep3,
-                   p = p, i = 1:cpus,
+                   p = p,
                    more.args = list(file = file,
                                     trait = trait,
                                     t = topfile,
                                     out.prefix = out.prefix))
 
-  submitJobs(reg, chunk(jobs, n.chunks = 1),
+  submitJobs(reg, chunk(jobs, chunk.size = 1000),
              chunks.as.arrayjobs = getConfig()$ssh,
              job.delay = TRUE)
 
@@ -94,7 +94,7 @@ runPermutations <- function(file,
 
 }
 
-gammastep3 <- function(file, trait, p, i, t, out.prefix) {
+gammastep3 <- function(file, trait, p, t, out.prefix) {
 
   check.options()
 
@@ -105,7 +105,6 @@ gammastep3 <- function(file, trait, p, i, t, out.prefix) {
                " --gammastep3",
                " -p ", p,
                " -t ", t,
-               " -i ", i,
                " -o ", paste0(out.prefix, i, '.txt'),
                ifelse(testNull(options$r), "", paste0(" -r ", options$r)),
                " -m ", options$m,

@@ -1,7 +1,7 @@
 #' @title Create partial top files
 #'
 #' @description
-#' First step of parallel workflow of MB-MDR. Creates partial topfiles on multiple CPUs.
+#' Third step of parallel workflow of MB-MDR. Run permutations on multiple CPUs.
 #'
 #' @param file [\code{string}]\cr
 #'   File path of input MB-MDR file.

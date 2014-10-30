@@ -59,12 +59,12 @@ runPermutations <- function(file,
   assertDirectory(work.dir)
   if(!testDirectory(reg.dir)) {
     warning(paste(checkDirectory(reg.dir), "will be created!", sep = ", "))
-    dir.create(reg.dir)
+    dir.create(reg.dir, recursive = TRUE)
   }
   assertDirectory(reg.dir)
   if(!testDirectory(dirname(out.prefix))) {
     warning(paste(checkDirectory(dirname(out.prefix)), "will be created!", sep = ", "))
-    dir.create(dirname(out.prefix))
+    dir.create(dirname(out.prefix), recursive = TRUE)
   }
   assertDirectory(dirname(out.prefix))
   assertLogical(skip)
@@ -72,7 +72,8 @@ runPermutations <- function(file,
   reg <- makeRegistry(reg.id,
                       file.dir = reg.dir,
                       work.dir = work.dir,
-                      skip = skip)
+                      skip = skip,
+                      packages = c('mbmdR'))
 
   options <- getOption("mbmdr")
 

@@ -51,12 +51,12 @@ createPartialTopFiles <- function(file,
   assertDirectory(work.dir)
   if(!testDirectory(reg.dir)) {
     warning(paste(checkDirectory(reg.dir), "will be created!", sep = ", "))
-    dir.create(reg.dir)
+    dir.create(reg.dir, recursive = TRUE)
   }
   assertDirectory(reg.dir)
   if(!testDirectory(dirname(out.prefix))) {
     warning(paste(checkDirectory(dirname(out.prefix)), "will be created!", sep = ", "))
-    dir.create(dirname(out.prefix))
+    dir.create(dirname(out.prefix), recursive = TRUE)
   }
   assertDirectory(dirname(out.prefix))
   assertLogical(skip)
@@ -64,7 +64,8 @@ createPartialTopFiles <- function(file,
   reg <- makeRegistry(reg.id,
                       file.dir = reg.dir,
                       work.dir = work.dir,
-                      skip = skip)
+                      skip = skip,
+                      packages = c('mbmdR'))
 
   ids <- 1:cpus
 
@@ -143,12 +144,12 @@ combinePartialTopFiles <- function(file,
   assertDirectory(work.dir)
   if(!testDirectory(reg.dir)) {
     warning(paste(checkDirectory(reg.dir), "will be created!", sep = ", "))
-    dir.create(reg.dir)
+    dir.create(reg.dir, recursive = TRUE)
   }
   assertDirectory(reg.dir)
   if(!testDirectory(dirname(out))) {
     warning(paste(checkDirectory(dirname(out)), "will be created!", sep = ", "))
-    dir.create(dirname(out))
+    dir.create(dirname(out), recursive = TRUE)
   }
   assertDirectory(dirname(topfiles.prefix))
   assertDirectory(dirname(out))
@@ -157,7 +158,8 @@ combinePartialTopFiles <- function(file,
   reg <- makeRegistry(reg.id,
                       file.dir = reg.dir,
                       work.dir = work.dir,
-                      skip = skip)
+                      skip = skip,
+                      packages = c('mbmdR'))
 
   jobs <- batchMap(reg, gammastep2,
                    file, more.args = list(trait = trait,

@@ -67,12 +67,12 @@ createOutput <- function(file,
   assertDirectory(work.dir)
   if(!testDirectory(reg.dir)) {
     warning(paste(checkDirectory(reg.dir), "will be created!", sep = ", "))
-    dir.create(reg.dir)
+    dir.create(reg.dir, recursive = TRUE)
   }
   assertDirectory(reg.dir)
   if(!testDirectory(dirname(out))) {
     warning(paste(checkDirectory(dirname(out)), "will be created!", sep = ", "))
-    dir.create(dirname(out))
+    dir.create(dirname(out), recursive = TRUE)
   }
   assertDirectory(dirname(out))
   assertDirectory(dirname(perm.prefix))
@@ -82,7 +82,8 @@ createOutput <- function(file,
   reg <- makeRegistry(reg.id,
                       file.dir = reg.dir,
                       work.dir = work.dir,
-                      skip = skip)
+                      skip = skip,
+                      packages = c('mbmdR'))
 
   options <- getOption("mbmdr")
 

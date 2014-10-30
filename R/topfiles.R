@@ -94,7 +94,7 @@ createPartialTopFiles <- function(file,
 #'   Type of trait. "binary", "continuous" or "survival".
 #'
 #' @param cpus [\code{integer}]\cr
-#'   Sets the total amount of CPUs used in \link{createPartialTopfiles}.
+#'   Sets the total amount of CPUs used in \link{createPartialTopFiles}.
 #'
 #' @param reg.id [\code{string}]\cr
 #'   Name for the \link{BatchJobs} \link{Registry}. Defaults to "partialTopFiles".

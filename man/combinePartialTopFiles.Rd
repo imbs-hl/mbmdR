@@ -18,7 +18,7 @@ combinePartialTopFiles(file, trait, cpus, reg.id = "combineTopFiles",
   Type of trait. "binary", "continuous" or "survival".}
 
 \item{cpus}{[\code{integer}]\cr
-  Sets the total amount of CPUs used in \link{createPartialTopfiles}.}
+  Sets the total amount of CPUs used in \link{createPartialTopFiles}.}
 
 \item{reg.id}{[\code{string}]\cr
   Name for the \link{BatchJobs} \link{Registry}. Defaults to "partialTopFiles".}

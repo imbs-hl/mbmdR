@@ -73,7 +73,8 @@ createPartialTopFiles <- function(file,
                    ids, more.args = list(file = file,
                                          trait = trait,
                                          cpus = cpus,
-                                         ti = out.prefix))
+                                         ti = out.prefix,
+                                         options = getOption("mbmdr")))
 
   submitJobs(reg, chunk(jobs, chunk.size = 1000),
              chunks.as.arrayjobs = getConfig()$ssh,
@@ -165,7 +166,8 @@ combinePartialTopFiles <- function(file,
                    file, more.args = list(trait = trait,
                                           cpus = cpus,
                                           ti = topfiles.prefix,
-                                          t = out))
+                                          t = out,
+                                          options = getOption("mbmdr")))
 
   submitJobs(reg, chunk(jobs, chunk.size = 1000),
              chunks.as.arrayjobs = getConfig()$ssh,
@@ -175,11 +177,9 @@ combinePartialTopFiles <- function(file,
 
 }
 
-gammastep1 <- function(file, trait, id, cpus, ti) {
+gammastep1 <- function(file, trait, id, cpus, ti, options) {
 
-  check.options()
-
-  options <- getOption("mbmdr")
+  check.options(options)
 
   cmd <- paste(options$exec,
                " --", trait,
@@ -204,13 +204,15 @@ gammastep1 <- function(file, trait, id, cpus, ti) {
                " ", file,
                sep = "")
 
+  print(cmd)
+
   system(cmd)
 
 }
 
-gammastep2 <- function(file, trait, cpus, ti, t) {
+gammastep2 <- function(file, trait, cpus, ti, t, options) {
 
-  check.options()
+  check.options(options)
 
   options <- getOption("mbmdr")
 

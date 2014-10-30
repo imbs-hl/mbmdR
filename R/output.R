@@ -94,7 +94,8 @@ createOutput <- function(file,
                                     q = cpus,
                                     p = options$p,
                                     o = out,
-                                    t = topfile))
+                                    t = topfile,
+                                    options = getOption("mbmdr")))
 
   submitJobs(reg, chunk(jobs, chunk.size = 1000),
              chunks.as.arrayjobs = getConfig()$ssh,
@@ -104,11 +105,9 @@ createOutput <- function(file,
 
 }
 
-gammastep4 <- function(file, trait, c, q, p, t, o) {
+gammastep4 <- function(file, trait, c, q, p, t, o, options) {
 
-  check.options()
-
-  options <- getOption("mbmdr")
+  check.options(options)
 
   cmd <- paste(options$exec,
                " --", trait,

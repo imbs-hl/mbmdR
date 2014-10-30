@@ -85,7 +85,8 @@ runPermutations <- function(file,
                    more.args = list(file = file,
                                     trait = trait,
                                     t = topfile,
-                                    out.prefix = out.prefix))
+                                    out.prefix = out.prefix,
+                                    options = getOption("mbmdr")))
 
   submitJobs(reg, chunk(jobs, chunk.size = 1000),
              chunks.as.arrayjobs = getConfig()$ssh,
@@ -95,11 +96,9 @@ runPermutations <- function(file,
 
 }
 
-gammastep3 <- function(file, trait, p, i, t, out.prefix) {
+gammastep3 <- function(file, trait, p, i, t, out.prefix, options) {
 
-  check.options()
-
-  options <- getOption("mbmdr")
+  check.options(options)
 
   cmd <- paste(options$exec,
                " --", trait,

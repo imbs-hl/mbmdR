@@ -18,4 +18,4 @@ install_git(ssh://git@10.15.59.180:22222/gola/mbmdr.git)
 
 ## Configuration
 
-You have to configure BatchJobs properly. See (here)[https://bioweb2.imbs.uk-sh.de/gitlab/imbs/imbs-general/tree/master/templates/batchjobs] and (here)[https://github.com/tudo-r/BatchJobs].
+You have to configure BatchJobs properly. See [here](https://bioweb2.imbs.uk-sh.de/gitlab/imbs/imbs-general/tree/master/templates/batchjobs) and [here](https://github.com/tudo-r/BatchJobs).

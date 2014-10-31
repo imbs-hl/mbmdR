@@ -1,7 +1,7 @@
 #' @title MB-MDR Analysis
 #'
 #' @description
-#' Run a complete MB-MDR analysis. Necessary files and directories will be created in current working directory.
+#' Run a complete MB-MDR analysis. Necessary files and directories will be created in given working directory.
 #'
 #' @param file [\code{string}]\cr
 #'   File path of input MB-MDR file.
@@ -14,6 +14,9 @@
 #'
 #' @param cpus.permutations [\code{integer}]\cr
 #'   Sets the total amount of CPUs to be used for permutations.
+#'
+#' @param work.dir [\code{string}]\cr
+#'   Working directory for MB-MDR. Defaults to current working directory.
 #'
 #' @param prefix.topfiles [\code{string}]\cr
 #'   Path for saving the partial topfiles. Defaults to <\code{\link{getwd}()}>/topfiles/<\code{file}>_top.
@@ -92,6 +95,7 @@ mbmdr <- function(file,
                   trait,
                   cpus.topfiles,
                   cpus.permutations,
+                  work.dir = getwd(),
                   prefix.topfiles = file.path(work.dir,
                                               "topfiles",
                                               paste0(gsub('(.+)\\.(.*)',
@@ -159,9 +163,9 @@ mbmdr <- function(file,
             input.format,
             transform)
 
-  waitForJobs(createPartialTopFiles(file = file, trait = trait, cpus = cpus.topfiles, out.prefix = prefix.topfiles))
-  waitForJobs(combinePartialTopFiles(file = file, trait = trait, cpus = cpus.topfiles, topfiles.prefix = prefix.topfiles, out = topfile))
-  waitForJobs(runPermutations(file = file, trait = trait, cpus = cpus.permutations, topfile = topfile, out.prefix = prefix.permutations))
-  waitForJobs(createOutput(file = file, trait = trait, cpus = cpus.permutations, topfile = topfile, out = resultfile, perm.prefix = prefix.permutations))
+  waitForJobs(createPartialTopFiles(file = file, trait = trait, cpus = cpus.topfiles, out.prefix = prefix.topfiles, work.dir = work.dir))
+  waitForJobs(combinePartialTopFiles(file = file, trait = trait, cpus = cpus.topfiles, topfiles.prefix = prefix.topfiles, out = topfile, work.dir = work.dir))
+  waitForJobs(runPermutations(file = file, trait = trait, cpus = cpus.permutations, topfile = topfile, out.prefix = prefix.permutations, work.dir = work.dir))
+  waitForJobs(createOutput(file = file, trait = trait, cpus = cpus.permutations, topfile = topfile, out = resultfile, perm.prefix = prefix.permutations, work.dir = work.dir))
 
 }

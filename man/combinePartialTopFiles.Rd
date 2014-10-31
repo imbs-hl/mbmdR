@@ -21,7 +21,7 @@ combinePartialTopFiles(file, trait, cpus, reg.id = "combineTopFiles",
   Sets the total amount of CPUs used in \link{createPartialTopFiles}.}
 
 \item{reg.id}{[\code{string}]\cr
-  Name for the \link{BatchJobs} \link{Registry}. Defaults to "partialTopFiles".}
+  Name for the \link{BatchJobs} \link{Registry}. Defaults to "combineTopFiles".}
 
 \item{work.dir}{[\code{string}]\cr
   Working directory for MB-MDR. Defaults to current working directory.}

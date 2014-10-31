@@ -21,7 +21,7 @@ runPermutations(file, trait, cpus, reg.id = "permutations",
   Sets the total amount of CPUs to be used.}
 
 \item{reg.id}{[\code{string}]\cr
-  Name for the \link{BatchJobs} \link{Registry}. Defaults to "partialTopFiles".}
+  Name for the \link{BatchJobs} \link{Registry}. Defaults to "permutations".}
 
 \item{work.dir}{[\code{string}]\cr
   Working directory for MB-MDR. Defaults to current working directory.}

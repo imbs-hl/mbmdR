@@ -103,7 +103,7 @@ mbmdr(file, trait, cpus.topfiles, cpus.permutations, work.dir = getwd(),
   "RANK_TRANSFORM" or "NONE" (default)}
 }
 \value{
-Throws an error if any check fails and invisibly returns TRUE otherwise.
+Throws an error if any check fails and returns TRUE otherwise.
 }
 \description{
 Run a complete MB-MDR analysis. Necessary files and directories will be created in given working directory.

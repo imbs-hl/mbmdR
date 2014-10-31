@@ -88,7 +88,7 @@
 #'   "RANK_TRANSFORM" or "NONE" (default)
 #'
 #' @return
-#' Throws an error if any check fails and invisibly returns TRUE otherwise.
+#' Throws an error if any check fails and returns TRUE otherwise.
 #'
 #' @export
 mbmdr <- function(file,

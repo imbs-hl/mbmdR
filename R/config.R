@@ -25,9 +25,6 @@
 #'   Multiple-testing correction algorithm. "NONE", "MAXT", "MINP", "RAWP",
 #'   "STRAT1", "STRAT2" or "gammaMAXT" (default).
 #'
-#' @param out.suffix [\code{string}]\cr
-#'   Suffix for output file name. Default: "_output.txt".
-#'
 #' @param adjustment [\code{string}]\cr
 #'   Adjust method to be used. "CODOMINANT" (default), "ADDITIVE" or "NONE".
 #'
@@ -74,7 +71,6 @@ configure <- function(exec = "mbmdr",
                       group.size = 10,
                       alpha = 0.1,
                       multi.test.corr = "gammaMAXT",
-                      out.suffix = "_output.txt",
                       adjustment = "CODOMINANT",
                       dim = "2D",
                       verbose = "NONE",
@@ -93,7 +89,6 @@ configure <- function(exec = "mbmdr",
                 m = group.size,              # Minimum group size to be statistically relevant
                 x = alpha,                   # Cutoff value for the chi-square test
                 mt = multi.test.corr,        # Multiple-testing correction algorithm
-                o = out.suffix,              # Output file name
                 a = adjustment,              # Adjust method to be used
                 d = dim,                     # Dimension of interactions
                 v = verbose,                 # Verbose

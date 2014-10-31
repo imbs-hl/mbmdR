@@ -16,7 +16,6 @@ check.options <- function(options = getOption("mbmdr")) {
   assertInt(options$m)
   assertNumber(options$x)
   assertChoice(options$mt, c("NONE", "MAXT", "MINP", "RAWP", "STRAT1", "STRAT2", "gammaMAXT"))
-  assertString(options$o)
   assertChoice(options$a, c("CODOMINANT", "ADDITIVE", "NONE"))
   assertChoice(options$d, c("1D", "2D", "3D"))
   assertChoice(options$v, c("NONE", "SHORT", "MEDIUM", "LONG"))

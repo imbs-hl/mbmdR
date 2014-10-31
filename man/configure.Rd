@@ -5,11 +5,10 @@
 \usage{
 configure(exec = "mbmdr", n.pvalues = 1000, permutations = 999,
   random.seed = NULL, group.size = 10, alpha = 0.1,
-  multi.test.corr = "gammaMAXT", out.suffix = "_output.txt",
-  adjustment = "CODOMINANT", dim = "2D", verbose = "NONE",
-  progressbar = "NORMAL", erase = NULL, erase.file = NULL,
-  filter = NULL, filter.file = NULL, input.format = "MBMDR",
-  transform = "NONE")
+  multi.test.corr = "gammaMAXT", adjustment = "CODOMINANT", dim = "2D",
+  verbose = "NONE", progressbar = "NORMAL", erase = NULL,
+  erase.file = NULL, filter = NULL, filter.file = NULL,
+  input.format = "MBMDR", transform = "NONE")
 }
 \arguments{
 \item{exec}{[\code{string}]\cr
@@ -33,9 +32,6 @@ configure(exec = "mbmdr", n.pvalues = 1000, permutations = 999,
 \item{multi.test.corr}{[\code{string}]\cr
   Multiple-testing correction algorithm. "NONE", "MAXT", "MINP", "RAWP",
   "STRAT1", "STRAT2" or "gammaMAXT" (default).}
-
-\item{out.suffix}{[\code{string}]\cr
-  Suffix for output file name. Default: "_output.txt".}
 
 \item{adjustment}{[\code{string}]\cr
   Adjust method to be used. "CODOMINANT" (default), "ADDITIVE" or "NONE".}

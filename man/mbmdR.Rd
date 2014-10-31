@@ -3,8 +3,14 @@
 \alias{mbmdr}
 \title{MB-MDR Analysis}
 \usage{
-mbmdr(file, trait, cpus.topfiles, cpus.permutations, prefix.topfiles, topfile,
-  prefix.permutations, resultfile, exec = "mbmdr", n.pvalues = 1000,
+mbmdr(file, trait, cpus.topfiles, cpus.permutations, work.dir = getwd(),
+  prefix.topfiles = file.path(work.dir, "topfiles",
+  paste0(gsub("(.+)\\\\.(.*)", "\\\\1", basename(file)), "_top")),
+  topfile = file.path(work.dir, paste0(gsub("(.+)\\\\.(.*)", "\\\\1",
+  basename(file)), ".topfile")), prefix.permutations = file.path(work.dir,
+  "permutations", paste0(gsub("(.+)\\\\.(.*)", "\\\\1", basename(file)),
+  "_perm")), resultfile = file.path(work.dir, paste0(gsub("(.+)\\\\.(.*)",
+  "\\\\1", basename(file)), ".result")), exec = "mbmdr", n.pvalues = 1000,
   permutations = 999, random.seed = NULL, group.size = 10, alpha = 0.1,
   multi.test.corr = "gammaMAXT", adjustment = "CODOMINANT", dim = "2D",
   verbose = "NONE", progressbar = "NORMAL", erase = NULL,
@@ -23,6 +29,9 @@ mbmdr(file, trait, cpus.topfiles, cpus.permutations, prefix.topfiles, topfile,
 
 \item{cpus.permutations}{[\code{integer}]\cr
   Sets the total amount of CPUs to be used for permutations.}
+
+\item{work.dir}{[\code{string}]\cr
+  Working directory for MB-MDR. Defaults to current working directory.}
 
 \item{prefix.topfiles}{[\code{string}]\cr
   Path for saving the partial topfiles. Defaults to <\code{\link{getwd}()}>/topfiles/<\code{file}>_top.}
@@ -97,6 +106,6 @@ mbmdr(file, trait, cpus.topfiles, cpus.permutations, prefix.topfiles, topfile,
 Throws an error if any check fails and invisibly returns TRUE otherwise.
 }
 \description{
-Run a complete MB-MDR analysis. Necessary files and directories will be created in current working directory.
+Run a complete MB-MDR analysis. Necessary files and directories will be created in given working directory.
 }
 

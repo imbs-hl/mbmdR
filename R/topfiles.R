@@ -140,7 +140,7 @@ combinePartialTopFiles <- function(file,
 
   assertFile(file)
   assertChoice(trait, c("binary", "continuous", "survival"))
-  assertNumber(cpus)
+  assertInt(cpus)
   assertString(reg.id)
   assertDirectory(work.dir)
   if(!testDirectory(reg.dir)) {

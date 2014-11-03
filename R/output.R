@@ -115,6 +115,7 @@ gammastep4 <- function(file, trait, c, q, p, t, o, options) {
                " -c ", c,
                " -q ", sprintf("%d", q),
                " -p ", sprintf("%d", p),
+               " -x ", sprintf("%f", options$x),
                " -t ", t,
                " -o ", o,
                ifelse(testNull(options$r), "", paste0(" -r ", options$r)),

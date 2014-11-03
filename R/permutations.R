@@ -78,7 +78,11 @@ runPermutations <- function(file,
   options <- getOption("mbmdr")
 
   p <- rep(options$p %/% cpus, cpus)
-  p[1:(options$p %% cpus)] <- p[1:(options$p %% cpus)]+1
+  rem <- options$p %% cpus
+
+  if (rem > 0) {
+    p[1:(options$p %% cpus)] <- p[1:(options$p %% cpus)]+1
+  }
 
   jobs <- batchMap(reg, gammastep3,
                    p = p, i = 1:cpus,

@@ -112,7 +112,7 @@ gammastep3 <- function(file, trait, p, i, t, out.prefix, options) {
                " -o ", paste0(out.prefix, sprintf("%d", i), '.txt'),
                ifelse(testNull(options$r), "", paste0(" -r ", sprintf("%d", options$r))),
                " -m ", sprintf("%d", options$m),
-               " -x ", sprintf("%x", options$x),
+               " -x ", sprintf("%f", options$x),
                " -a ", options$a,
                ifelse(testCharacter(options$e),
                       paste(" -e ", paste(options$e, collapse = ",")), ""),

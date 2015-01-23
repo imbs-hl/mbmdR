@@ -19,16 +19,19 @@
 #'   Working directory for MB-MDR. Defaults to current working directory.
 #'
 #' @param prefix.topfiles [\code{string}]\cr
-#'   Path for saving the partial topfiles. Defaults to <\code{\link{getwd}()}>/topfiles/<\code{file}>_top.
+#'   Path for saving the partial topfiles. Defaults to <\code{work.dir}>/topfiles/<\code{file}>_top.
 #'
 #' @param topfile [\code{string}]\cr
-#'   Path for saving the final topfile. Defaults to <\code{\link{getwd}()}>/<\code{file}>.topfile.
+#'   Path for saving the final topfile. Defaults to <\code{work.dir}>/<\code{file}>.topfile.
 #'
 #' @param prefix.permutations [\code{string}]\cr
-#'   Path for saving the permutation files. Defaults to <\code{\link{getwd}()}>/permutations/<\code{file}>_perm.
+#'   Path for saving the permutation files. Defaults to <\code{work.dir}>/permutations/<\code{file}>_perm.
 #'
 #' @param resultfile [\code{string}]\cr
-#'   Sets the output file name. Defaults to <\code{\link{getwd}()}>/<\code{file}>.result.
+#'   Sets the output file name. Defaults to <\code{\link{work.dir}>/<\code{file}>.result.
+#'
+#' @param logfile [\code{string}]\cr
+#'   Sets the output file name. Defaults to <\code{\link{work.dir}>/<\code{file}>.log.
 #'
 #' @param exec [\code{string}]\cr
 #'   Default mbmdr executable. Default: "mbmdr"
@@ -98,26 +101,21 @@ mbmdr <- function(file,
                   work.dir = getwd(),
                   prefix.topfiles = file.path(work.dir,
                                               "topfiles",
-                                              paste0(gsub('(.+)\\.(.*)',
-                                                          '\\1',
-                                                          basename(file)),
-                                                     "_top")),
+                                              paste(basename(file_path_sans_ext(file)),
+                                                    "top", sep = "_")),
                   topfile = file.path(work.dir,
-                                      paste0(gsub('(.+)\\.(.*)',
-                                                  '\\1',
-                                                  basename(file)),
-                                             ".topfile")),
+                                      paste(basename(file_path_sans_ext(file)),
+                                            "topfile", sep = ".")),
                   prefix.permutations = file.path(work.dir,
                                                   "permutations",
-                                                  paste0(gsub('(.+)\\.(.*)',
-                                                              '\\1',
-                                                              basename(file)),
-                                                         "_perm")),
+                                                  paste(basename(file_path_sans_ext(file)),
+                                                        "perm", sep = "_")),
                   resultfile = file.path(work.dir,
-                                         paste0(gsub('(.+)\\.(.*)',
-                                                     '\\1',
-                                                     basename(file)),
-                                                ".result")),
+                                         paste(basename(file_path_sans_ext(file)),
+                                               "result", sep = ".")),
+                  logfile = file.path(work.dir,
+                                      paste(basename(file_path_sans_ext(file)),
+                                            "log", sep = ".")),
                   exec = "mbmdr",
                   n.pvalues = 1000,
                   permutations = 999,
@@ -167,7 +165,7 @@ mbmdr <- function(file,
 
   if(ncol(input)<1000) {
 
-    waitForJobs(runSingleThread(file = file, trait = trait, out = resultfile, work.dir = work.dir))
+    waitForJobs(runSingleThread(file = file, trait = trait, out = resultfile, log = logfile, work.dir = work.dir))
 
   } else {
 
@@ -175,6 +173,20 @@ mbmdr <- function(file,
     waitForJobs(combinePartialTopFiles(file = file, trait = trait, cpus = cpus.topfiles, topfiles.prefix = prefix.topfiles, out = topfile, work.dir = work.dir))
     waitForJobs(runPermutations(file = file, trait = trait, cpus = cpus.permutations, topfile = topfile, out.prefix = prefix.permutations, work.dir = work.dir))
     waitForJobs(createOutput(file = file, trait = trait, cpus = cpus.permutations, topfile = topfile, out = resultfile, perm.prefix = prefix.permutations, work.dir = work.dir))
+
+    if(verbose != "NONE") {
+
+      op <- getOption('mbmdr')
+
+      op$p <- 0
+
+      check.options(op)
+
+      options(mbmdr = op)
+
+      waitForJobs(runSingleThread(file = file, trait = trait, out = tempfile(), log = logfile, work.dir = work.dir))
+
+    }
 
   }
 

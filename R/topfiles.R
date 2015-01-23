@@ -38,10 +38,8 @@ createPartialTopFiles <- function(file,
                                   reg.dir = file.path(work.dir, "registries", reg.id),
                                   out.prefix = file.path(work.dir,
                                                          "topfiles",
-                                                         paste0(gsub('(.+)\\.(.*)',
-                                                                     '\\1',
-                                                                     basename(file)),
-                                                                "_top")),
+                                                         paste(basename(file_path_sans_ext(file)),
+                                                               "top", sep = "_")),
                                   skip = TRUE) {
 
   assertFile(file)
@@ -127,15 +125,11 @@ combinePartialTopFiles <- function(file,
                                    reg.dir = file.path(work.dir, "registries", reg.id),
                                    topfiles.prefix = file.path(work.dir,
                                                                "topfiles",
-                                                               paste0(gsub('(.+)\\.(.*)',
-                                                                           '\\1',
-                                                                           basename(file)),
-                                                                      "_top")),
+                                                               paste(basename(file_path_sans_ext(file)),
+                                                                     "top", sep = "_")),
                                    out = file.path(work.dir,
-                                                          paste0(gsub('(.+)\\.(.*)',
-                                                                      '\\1',
-                                                                      basename(file)),
-                                                                 ".topfile")),
+                                                   paste(basename(file_path_sans_ext(file)),
+                                                         "topfile", sep = ".")),
                                    skip = TRUE) {
 
   assertFile(file)

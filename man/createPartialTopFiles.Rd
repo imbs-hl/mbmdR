@@ -6,8 +6,8 @@
 \usage{
 createPartialTopFiles(file, trait, cpus, reg.id = "partialTopFiles",
   work.dir = getwd(), reg.dir = file.path(work.dir, "registries", reg.id),
-  out.prefix = file.path(work.dir, "topfiles", paste0(gsub("(.+)\\\\.(.*)",
-  "\\\\1", basename(file)), "_top")), skip = TRUE)
+  out.prefix = file.path(work.dir, "topfiles",
+  paste(basename(file_path_sans_ext(file)), "top", sep = "_")), skip = TRUE)
 }
 \arguments{
 \item{file}{[\code{string}]\cr

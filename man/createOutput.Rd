@@ -6,11 +6,11 @@
 \usage{
 createOutput(file, trait, cpus, reg.id = "output", work.dir = getwd(),
   reg.dir = file.path(work.dir, "registries", reg.id),
-  topfile = file.path(work.dir, paste0(gsub("(.+)\\\\.(.*)", "\\\\1",
-  basename(file)), ".topfile")), perm.prefix = file.path(work.dir,
-  "permutations", paste0(gsub("(.+)\\\\.(.*)", "\\\\1", basename(file)),
-  "_perm")), out = file.path(work.dir, paste0(gsub("(.+)\\\\.(.*)", "\\\\1",
-  basename(file)), ".result")), skip = TRUE)
+  topfile = file.path(work.dir, paste(basename(file_path_sans_ext(file)),
+  "topfile", sep = ".")), perm.prefix = file.path(work.dir, "permutations",
+  paste(basename(file_path_sans_ext(file)), "perm", sep = "_")),
+  out = file.path(work.dir, paste(basename(file_path_sans_ext(file)),
+  "result", sep = ".")), skip = TRUE)
 }
 \arguments{
 \item{file}{[\code{string}]\cr

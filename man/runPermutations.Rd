@@ -6,10 +6,9 @@
 \usage{
 runPermutations(file, trait, cpus, reg.id = "permutations",
   work.dir = getwd(), reg.dir = file.path(work.dir, "registries", reg.id),
-  topfile = file.path(work.dir, paste0(gsub("(.+)\\\\.(.*)", "\\\\1",
-  basename(file)), ".topfile")), out.prefix = file.path(work.dir,
-  "permutations", paste0(gsub("(.+)\\\\.(.*)", "\\\\1", basename(file)),
-  "_perm")), skip = TRUE)
+  topfile = file.path(work.dir, paste(basename(file_path_sans_ext(file)),
+  "topfile", sep = ".")), out.prefix = file.path(work.dir, "permutations",
+  paste(basename(file_path_sans_ext(file)), "perm", sep = "_")), skip = TRUE)
 }
 \arguments{
 \item{file}{[\code{string}]\cr

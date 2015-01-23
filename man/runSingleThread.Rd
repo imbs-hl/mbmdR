@@ -5,8 +5,9 @@
 \title{MB-MDR Analysis}
 \usage{
 runSingleThread(file, trait, out = file.path(work.dir,
-  paste0(gsub("(.+)\\\\.(.*)", "\\\\1", basename(file)), ".result")),
-  reg.id = "singleThread", work.dir = getwd(),
+  paste(basename(file_path_sans_ext(file)), "result", sep = ".")),
+  log = file.path(work.dir, paste(basename(file_path_sans_ext(file)), "log",
+  sep = ".")), reg.id = "singleThread", work.dir = getwd(),
   reg.dir = file.path(work.dir, "registries", reg.id), skip = TRUE)
 }
 \arguments{
@@ -18,6 +19,9 @@ runSingleThread(file, trait, out = file.path(work.dir,
 
 \item{out}{[\code{string}]\cr
   Sets the output file name. Defaults to <\code{work.dir}>/<\code{file}>.result.}
+
+\item{log}{[\code{string}]\cr
+  Sets the log file name. Defaults to <\code{work.dir}>/<\code{file}>.log.}
 
 \item{reg.id}{[\code{string}]\cr
   Name for the \link{BatchJobs} \link{Registry}. Defaults to "singleThread".}

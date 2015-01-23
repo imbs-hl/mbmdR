@@ -33,7 +33,7 @@
 #' @param skip [\code{logical}]\cr
 #'   Skip creation of a new registry if a registry is found in file.dir. Defaults to TRUE.
 #'
-#' @return Vector of type \code{integer} with job ids.
+#' @return BatchJobs registry object.
 #'
 #' @export
 createOutput <- function(file,

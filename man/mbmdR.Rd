@@ -6,13 +6,15 @@
 \usage{
 mbmdr(file, trait, cpus.topfiles, cpus.permutations, work.dir = getwd(),
   prefix.topfiles = file.path(work.dir, "topfiles",
-  paste0(gsub("(.+)\\\\.(.*)", "\\\\1", basename(file)), "_top")),
-  topfile = file.path(work.dir, paste0(gsub("(.+)\\\\.(.*)", "\\\\1",
-  basename(file)), ".topfile")), prefix.permutations = file.path(work.dir,
-  "permutations", paste0(gsub("(.+)\\\\.(.*)", "\\\\1", basename(file)),
-  "_perm")), resultfile = file.path(work.dir, paste0(gsub("(.+)\\\\.(.*)",
-  "\\\\1", basename(file)), ".result")), exec = "mbmdr", n.pvalues = 1000,
-  permutations = 999, random.seed = NULL, group.size = 10, alpha = 0.1,
+  paste(basename(file_path_sans_ext(file)), "top", sep = "_")),
+  topfile = file.path(work.dir, paste(basename(file_path_sans_ext(file)),
+  "topfile", sep = ".")), prefix.permutations = file.path(work.dir,
+  "permutations", paste(basename(file_path_sans_ext(file)), "perm", sep = "_")),
+  resultfile = file.path(work.dir, paste(basename(file_path_sans_ext(file)),
+  "result", sep = ".")), logfile = file.path(work.dir,
+  paste(basename(file_path_sans_ext(file)), "log", sep = ".")),
+  exec = "mbmdr", n.pvalues = 1000, permutations = 999,
+  random.seed = NULL, group.size = 10, alpha = 0.1,
   multi.test.corr = "gammaMAXT", adjustment = "CODOMINANT", dim = "2D",
   verbose = "NONE", progressbar = "NORMAL", erase = NULL,
   erase.file = NULL, filter = NULL, filter.file = NULL,
@@ -35,16 +37,19 @@ mbmdr(file, trait, cpus.topfiles, cpus.permutations, work.dir = getwd(),
   Working directory for MB-MDR. Defaults to current working directory.}
 
 \item{prefix.topfiles}{[\code{string}]\cr
-  Path for saving the partial topfiles. Defaults to <\code{\link{getwd}()}>/topfiles/<\code{file}>_top.}
+  Path for saving the partial topfiles. Defaults to <\code{work.dir}>/topfiles/<\code{file}>_top.}
 
 \item{topfile}{[\code{string}]\cr
-  Path for saving the final topfile. Defaults to <\code{\link{getwd}()}>/<\code{file}>.topfile.}
+  Path for saving the final topfile. Defaults to <\code{work.dir}>/<\code{file}>.topfile.}
 
 \item{prefix.permutations}{[\code{string}]\cr
-  Path for saving the permutation files. Defaults to <\code{\link{getwd}()}>/permutations/<\code{file}>_perm.}
+  Path for saving the permutation files. Defaults to <\code{work.dir}>/permutations/<\code{file}>_perm.}
 
 \item{resultfile}{[\code{string}]\cr
-  Sets the output file name. Defaults to <\code{\link{getwd}()}>/<\code{file}>.result.}
+  Sets the output file name. Defaults to <\code{work.dir}>/<\code{file}>.result.}
+
+\item{logfile}{[\code{string}]\cr
+  Sets the output file name. Defaults to <\code{work.dir}>/<\code{file}>.log.}
 
 \item{exec}{[\code{string}]\cr
   Default mbmdr executable. Default: "mbmdr"}

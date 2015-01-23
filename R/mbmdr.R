@@ -28,10 +28,10 @@
 #'   Path for saving the permutation files. Defaults to <\code{work.dir}>/permutations/<\code{file}>_perm.
 #'
 #' @param resultfile [\code{string}]\cr
-#'   Sets the output file name. Defaults to <\code{\link{work.dir}>/<\code{file}>.result.
+#'   Sets the output file name. Defaults to <\code{work.dir}>/<\code{file}>.result.
 #'
 #' @param logfile [\code{string}]\cr
-#'   Sets the output file name. Defaults to <\code{\link{work.dir}>/<\code{file}>.log.
+#'   Sets the output file name. Defaults to <\code{work.dir}>/<\code{file}>.log.
 #'
 #' @param exec [\code{string}]\cr
 #'   Default mbmdr executable. Default: "mbmdr"

@@ -82,7 +82,7 @@ configure <- function(exec = "mbmdr",
                       input.format = "MBMDR",
                       transform = "NONE") {
 
-  mbmdr <- list(exec = exec,                      # Set default mbmdr executable
+  mbmdr <- list(exec = exec,                 # Set default mbmdr executable
                 n = n.pvalues,               # Number of p-value to compute
                 p = permutations,            # Permutation amount for multiple-testing
                 r = random.seed,             # Random seed parameter

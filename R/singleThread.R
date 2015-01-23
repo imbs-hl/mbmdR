@@ -83,7 +83,7 @@ runSingleThread <- function(file,
 
 }
 
-singleThread <- function(file, trait, o, options) {
+singleThread <- function(file, trait, o, log, options) {
 
   check.options(options)
 

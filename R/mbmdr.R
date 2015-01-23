@@ -163,9 +163,19 @@ mbmdr <- function(file,
             input.format,
             transform)
 
-  waitForJobs(createPartialTopFiles(file = file, trait = trait, cpus = cpus.topfiles, out.prefix = prefix.topfiles, work.dir = work.dir))
-  waitForJobs(combinePartialTopFiles(file = file, trait = trait, cpus = cpus.topfiles, topfiles.prefix = prefix.topfiles, out = topfile, work.dir = work.dir))
-  waitForJobs(runPermutations(file = file, trait = trait, cpus = cpus.permutations, topfile = topfile, out.prefix = prefix.permutations, work.dir = work.dir))
-  waitForJobs(createOutput(file = file, trait = trait, cpus = cpus.permutations, topfile = topfile, out = resultfile, perm.prefix = prefix.permutations, work.dir = work.dir))
+  input <- read.table(file, header = TRUE, nrows = 1)
+
+  if(ncol(input)<1000) {
+
+    waitForJobs(runSingleThread(file = file, trait = trait, out = resultfile, work.dir = work.dir))
+
+  } else {
+
+    waitForJobs(createPartialTopFiles(file = file, trait = trait, cpus = cpus.topfiles, out.prefix = prefix.topfiles, work.dir = work.dir))
+    waitForJobs(combinePartialTopFiles(file = file, trait = trait, cpus = cpus.topfiles, topfiles.prefix = prefix.topfiles, out = topfile, work.dir = work.dir))
+    waitForJobs(runPermutations(file = file, trait = trait, cpus = cpus.permutations, topfile = topfile, out.prefix = prefix.permutations, work.dir = work.dir))
+    waitForJobs(createOutput(file = file, trait = trait, cpus = cpus.permutations, topfile = topfile, out = resultfile, perm.prefix = prefix.permutations, work.dir = work.dir))
+
+  }
 
 }

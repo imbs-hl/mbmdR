@@ -4,7 +4,8 @@
 \alias{mbmdr}
 \title{MB-MDR Analysis}
 \usage{
-mbmdr(file, trait, cpus.topfiles, cpus.permutations, work.dir = getwd(),
+mbmdr(formula = NULL, data = NULL, file = NULL, trait, cpus.topfiles,
+  cpus.permutations, work.dir = getwd(),
   prefix.topfiles = file.path(work.dir, "topfiles",
   paste(basename(file_path_sans_ext(file)), "top", sep = "_")),
   topfile = file.path(work.dir, paste(basename(file_path_sans_ext(file)),
@@ -21,6 +22,12 @@ mbmdr(file, trait, cpus.topfiles, cpus.permutations, work.dir = getwd(),
   input.format = "MBMDR", transform = "NONE")
 }
 \arguments{
+\item{formula}{[\code{formula}]\cr
+  Object of class \code{formula} describing the model to fit.}
+
+\item{data}{[\code{data.frame}]\cr
+  Object containing all the data.}
+
 \item{file}{[\code{string}]\cr
   File path of input MB-MDR file.}
 

@@ -3,10 +3,10 @@
 #' @description
 #' Run a complete MB-MDR analysis. Necessary files and directories will be created in given working directory.
 #'
-#' @param file [\code{formula}]\cr
+#' @param formula [\code{formula}]\cr
 #'   Object of class \code{formula} describing the model to fit.
 #'
-#' @param file [\code{data.frame}]\cr
+#' @param data [\code{data.frame}]\cr
 #'   Object containing all the data.
 #'
 #' @param file [\code{string}]\cr

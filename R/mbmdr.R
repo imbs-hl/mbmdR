@@ -3,6 +3,12 @@
 #' @description
 #' Run a complete MB-MDR analysis. Necessary files and directories will be created in given working directory.
 #'
+#' @param file [\code{formula}]\cr
+#'   Object of class \code{formula} describing the model to fit.
+#'
+#' @param file [\code{data.frame}]\cr
+#'   Object containing all the data.
+#'
 #' @param file [\code{string}]\cr
 #'   File path of input MB-MDR file.
 #'
@@ -94,7 +100,9 @@
 #' Throws an error if any check fails and returns TRUE otherwise.
 #'
 #' @export
-mbmdr <- function(file,
+mbmdr <- function(formula = NULL,
+                  data = NULL,
+                  file = NULL,
                   trait,
                   cpus.topfiles,
                   cpus.permutations,
@@ -134,7 +142,21 @@ mbmdr <- function(file,
                   input.format = "MBMDR",
                   transform = "NONE") {
 
-  assertFile(file)
+  if(!testNull(file)) {
+    assertFile(file)
+  }
+  if(testNull(file) & testNull(formula)) {
+    stop("Either a file or formula and data must be given!")
+  }
+  if(!testNull(formula) & testNull(data)) {
+    stop("Formula without data object given!")
+  }
+  if(!testNull(formula)) {
+    assertClass(formula, "formula")
+  }
+  if(!testNull(data)) {
+    assertDataFrame(data)
+  }
   assertChoice(trait, c("binary", "continuous", "survival"))
   assertInt(cpus.topfiles)
   assertInt(cpus.permutations)
@@ -161,9 +183,21 @@ mbmdr <- function(file,
             input.format,
             transform)
 
-  input <- read.table(file, header = TRUE, nrows = 1)
+  if(!testNull(formula)) {
+    file <- file.path(work.dir, "input.mbmdr")
+    write.table(x = sapply(X = model.frame(formula, data),
+                           FUN = function(x){as.numeric(as.character(x))}),
+                file = file,
+                quote = FALSE,
+                na = "-9",
+                row.names = FALSE,
+                col.names = TRUE)
+  } else {
+    data <- read.table(file, header = TRUE, nrows = 1)
+  }
 
-  if(ncol(input)<1000) {
+
+  if(ncol(data)<1000) {
 
     waitForJobs(runSingleThread(file = file, trait = trait, out = resultfile, log = logfile, work.dir = work.dir))
 

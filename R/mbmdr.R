@@ -96,6 +96,9 @@
 #'   Rank transformation (continuous trait only).
 #'   "RANK_TRANSFORM" or "NONE" (default)
 #'
+#' @param ... [\code{any}]\cr
+#'   Additional parameter passed to and from other methods.
+#'
 #' @return
 #' Throws an error if any check fails and returns TRUE otherwise.
 #'
@@ -140,7 +143,7 @@ mbmdr <- function(formula = NULL,
                   filter = NULL,
                   filter.file = NULL,
                   input.format = "MBMDR",
-                  transform = "NONE") {
+                  transform = "NONE", ...) {
 
   if(!testNull(file)) {
     assertFile(file)

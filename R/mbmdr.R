@@ -96,6 +96,10 @@
 #'   Rank transformation (continuous trait only).
 #'   "RANK_TRANSFORM" or "NONE" (default)
 #'
+#' @param bj.config [\code{string}]\cr
+#'   Location of the configuration file to load.
+#'   Default is “.BatchJobs.conf” in the current working directory.
+#'
 #' @param ... [\code{any}]\cr
 #'   Additional parameter passed to and from other methods.
 #'
@@ -143,7 +147,8 @@ mbmdr <- function(formula = NULL,
                   filter = NULL,
                   filter.file = NULL,
                   input.format = "MBMDR",
-                  transform = "NONE", ...) {
+                  transform = "NONE",
+                  bj.config = NULL, ...) {
 
   if(!testNull(file)) {
     assertFile(file)
@@ -167,6 +172,10 @@ mbmdr <- function(formula = NULL,
   assertString(topfile)
   assertString(prefix.permutations)
   assertString(resultfile)
+  if(!testNull(bj.config)) {
+    assertFile(bj.config)
+    loadConfig(conffile = bj.config)
+  }
 
   configure(exec,
             n.pvalues,

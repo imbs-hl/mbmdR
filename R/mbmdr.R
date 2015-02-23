@@ -196,8 +196,7 @@ mbmdr <- function(formula = NULL,
                                       x
                                     }
                   })
-    write.table(x = sapply(X = model.frame(formula, data),
-                           FUN = function(x){as.numeric(as.character(x))}),
+    write.table(x = out,
                 file = file,
                 quote = FALSE,
                 na = "-9",

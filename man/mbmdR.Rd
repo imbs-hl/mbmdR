@@ -22,7 +22,7 @@ mbmdr(formula = NULL, data = NULL, file = NULL, trait, cpus.topfiles,
   adjustment = "CODOMINANT", dim = "2D", verbose = "NONE",
   progressbar = "NORMAL", erase = NULL, erase.file = NULL,
   filter = NULL, filter.file = NULL, input.format = "MBMDR",
-  transform = "NONE", ...)
+  transform = "NONE", bj.config = NULL, ...)
 }
 \arguments{
 \item{formula}{[\code{formula}]\cr
@@ -117,6 +117,10 @@ mbmdr(formula = NULL, data = NULL, file = NULL, trait, cpus.topfiles,
 \item{transform}{[\code{string}]\cr
   Rank transformation (continuous trait only).
   "RANK_TRANSFORM" or "NONE" (default)}
+
+\item{bj.config}{[\code{string}]\cr
+  Location of the configuration file to load.
+  Default is “.BatchJobs.conf” in the current working directory.}
 
 \item{...}{[\code{any}]\cr
   Additional parameter passed to and from other methods.}

@@ -207,7 +207,7 @@ mbmdr <- function(formula = NULL,
   }
 
 
-  if(ncol(data)<1000) {
+  if(ncol(data)<1000 | (cpus.topfiles==1 & cpus.permutations==1)) {
 
     waitForJobs(runSingleThread(file = file, trait = trait, out = resultfile, log = logfile, work.dir = work.dir))
 

@@ -189,7 +189,13 @@ mbmdr <- function(formula = NULL,
   if(!testNull(formula)) {
     file <- file.path(work.dir, "input.mbmdr")
     out <- sapply(X = model.frame(formula, data),
-                  FUN = function(x){x <- as.numeric(as.character(x)); if(min(x)<0){x+abs(min(x))} else {x}})
+                  FUN = function(x){x <- as.numeric(as.character(x))
+                                    if(min(x)<0){
+                                      x+abs(min(x))
+                                    } else {
+                                      x
+                                    }
+                  })
     write.table(x = sapply(X = model.frame(formula, data),
                            FUN = function(x){as.numeric(as.character(x))}),
                 file = file,

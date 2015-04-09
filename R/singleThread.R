@@ -80,7 +80,7 @@ runSingleThread <- function(file,
     Sys.sleep(1)
     retries <- retries + 1
   }
-  assertFile(file.path(reg.dir, "BatchJobs.db"))
+  assertFile(file.path(reg.dir, "jobs","01","1.pbs"))
 
   submitJobs(reg, chunk(jobs, chunk.size = 1000),
              chunks.as.arrayjobs = getConfig()$ssh,
@@ -90,6 +90,27 @@ runSingleThread <- function(file,
 
 }
 
+#' @title MB-MDR Wrapper
+#'
+#' @description
+#' Wrapper function for external function call.
+#'
+#' @param file [\code{string}]\cr
+#'   File path of input MB-MDR file.
+#'
+#' @param trait [\code{string}]\cr
+#'   Type of trait. "binary", "continuous" or "survival".
+#'
+#' @param o [\code{string}]\cr
+#'   Sets the output file name.
+#'
+#' @param log [\code{string}]\cr
+#'   Sets the log file name.
+#'
+#' @param options [\code{list}]
+#'   MB-MDR options set by \code{\link{configure}}.
+#'
+#' @export
 singleThread <- function(file, trait, o, log, options) {
 
   check.options(options)

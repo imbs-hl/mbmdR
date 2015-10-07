@@ -176,6 +176,7 @@ mbmdr <- function(formula = NULL,
     assertFile(bj.config)
     loadConfig(conffile = bj.config)
   }
+  dir.create(work.dir, recursive = TRUE)
 
   configure(exec,
             n.pvalues,

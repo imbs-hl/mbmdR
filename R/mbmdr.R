@@ -98,7 +98,7 @@
 #'
 #' @param bj.config [\code{string}]\cr
 #'   Location of the configuration file to load.
-#'   Default is “.BatchJobs.conf” in the current working directory.
+#'   Default is ".BatchJobs.conf" in the current working directory.
 #'
 #' @param ... [\code{any}]\cr
 #'   Additional parameter passed to and from other methods.

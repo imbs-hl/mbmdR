@@ -75,13 +75,6 @@ runSingleThread <- function(file,
                                     log = log,
                                     options = getOption("mbmdr")))
 
-  retries <- 0
-  while(!testFile(file.path(reg.dir, "BatchJobs.db")) & retries < 100) {
-    Sys.sleep(1)
-    retries <- retries + 1
-  }
-  assertFile(file.path(reg.dir, "jobs","01","1.pbs"))
-
   submitJobs(reg, chunk(jobs, chunk.size = 1000),
              chunks.as.arrayjobs = getConfig()$ssh,
              job.delay = TRUE)
@@ -145,6 +138,6 @@ singleThread <- function(file, trait, o, log, options) {
 
   print(cmd)
 
-  system(cmd)
+  try(system(cmd, intern=TRUE))
 
 }

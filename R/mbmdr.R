@@ -221,28 +221,23 @@ mbmdr <- function(formula = NULL,
 
   if(ncol(data)<1000 | (cpus.topfiles==1 & cpus.permutations==1)) {
 
-    waitForJobs(runSingleThread(file = file, trait = trait, out = resultfile, log = logfile, work.dir = work.dir, ...))
+    message("Running the analysis as a single thread...")
+
+    invisible(waitForJobs(runSingleThread(file = file, trait = trait, out = resultfile, log = logfile, work.dir = work.dir, ...)))
 
   } else {
 
-    waitForJobs(createPartialTopFiles(file = file, trait = trait, cpus = cpus.topfiles, out.prefix = prefix.topfiles, work.dir = work.dir, ...))
-    waitForJobs(combinePartialTopFiles(file = file, trait = trait, cpus = cpus.topfiles, topfiles.prefix = prefix.topfiles, out = topfile, work.dir = work.dir, ...))
-    waitForJobs(runPermutations(file = file, trait = trait, cpus = cpus.permutations, topfile = topfile, out.prefix = prefix.permutations, work.dir = work.dir, ...))
-    waitForJobs(createOutput(file = file, trait = trait, cpus = cpus.permutations, topfile = topfile, out = resultfile, perm.prefix = prefix.permutations, work.dir = work.dir, ...))
+    message("Creating partial topfiles on ", cpus.topfiles, " CPUs...")
+    invisible(waitForJobs(createPartialTopFiles(file = file, trait = trait, cpus = cpus.topfiles, out.prefix = prefix.topfiles, work.dir = work.dir, ...)))
 
-    if(verbose != "NONE") {
+    message("Combining partial topfiles...")
+    invisible(waitForJobs(combinePartialTopFiles(file = file, trait = trait, cpus = cpus.topfiles, topfiles.prefix = prefix.topfiles, out = topfile, work.dir = work.dir, ...)))
 
-      op <- getOption('mbmdr')
+    message("Running permutation test on ", cpus.permutations, " CPUs...")
+    invisible(waitForJobs(runPermutations(file = file, trait = trait, cpus = cpus.permutations, topfile = topfile, out.prefix = prefix.permutations, work.dir = work.dir, ...)))
 
-      op$p <- 0
-
-      check.options(op)
-
-      options(mbmdr = op)
-
-      waitForJobs(runSingleThread(file = file, trait = trait, out = tempfile(), log = logfile, work.dir = work.dir))
-
-    }
+    message("Creating output...")
+    invisible(waitForJobs(createOutput(file = file, trait = trait, cpus = cpus.permutations, topfile = topfile, out = resultfile, perm.prefix = prefix.permutations, work.dir = work.dir, ...)))
 
   }
 

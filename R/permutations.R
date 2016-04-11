@@ -63,6 +63,7 @@ runPermutations <- function(file,
     dir.create(dirname(out.prefix), recursive = TRUE)
   }
   assertDirectory(dirname(out.prefix))
+  assertFile(topfile)
   assertLogical(skip)
 
   reg <- makeRegistry(reg.id,

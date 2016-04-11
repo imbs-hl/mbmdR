@@ -13,3 +13,4 @@ Depends:
 SoftwareRequirements: mbmdr (>= 4.2.2)
 License: GPL-3
 LazyData: true
+RoxygenNote: 5.0.1

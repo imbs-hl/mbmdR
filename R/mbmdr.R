@@ -196,6 +196,8 @@ mbmdr <- function(formula = NULL,
             input.format,
             transform)
 
+  clean(work.dir = work.dir)
+
   if(!testNull(formula)) {
     file <- file.path(work.dir, "input.mbmdr")
     out <- sapply(X = model.frame(formula, data),

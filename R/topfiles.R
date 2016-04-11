@@ -147,6 +147,7 @@ combinePartialTopFiles <- function(file,
     dir.create(dirname(out), recursive = TRUE)
   }
   assertDirectory(dirname(topfiles.prefix))
+  assertFile(paste0(topfiles.prefix, 1:cpus, ".txt"))
   assertDirectory(dirname(out))
   assertLogical(skip)
 

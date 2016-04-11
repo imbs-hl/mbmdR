@@ -59,10 +59,13 @@ createPartialTopFiles <- function(file,
   assertDirectory(dirname(out.prefix))
   assertLogical(skip)
 
+  options <- getOption("mbmdr")
+
   reg <- makeRegistry(reg.id,
                       file.dir = reg.dir,
                       work.dir = work.dir,
                       skip = skip,
+                      seed = options$r,
                       packages = c('mbmdR'))
 
   ids <- 1:cpus
@@ -151,10 +154,13 @@ combinePartialTopFiles <- function(file,
   assertDirectory(dirname(out))
   assertLogical(skip)
 
+  options <- getOption("mbmdr")
+
   reg <- makeRegistry(reg.id,
                       file.dir = reg.dir,
                       work.dir = work.dir,
                       skip = skip,
+                      seed = options$r,
                       packages = c('mbmdR'))
 
   jobs <- batchMap(reg, gammastep2,

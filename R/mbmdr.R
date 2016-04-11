@@ -134,7 +134,7 @@ mbmdr <- function(formula = NULL,
                   exec = "mbmdr",
                   n.pvalues = 1000,
                   permutations = 999,
-                  random.seed = NULL,
+                  random.seed = as.integer(Sys.Date()),
                   group.size = 10,
                   alpha = 0.1,
                   multi.test.corr = "gammaMAXT",
@@ -168,6 +168,7 @@ mbmdr <- function(formula = NULL,
   assertChoice(trait, c("binary", "continuous", "survival"))
   assertInt(cpus.topfiles)
   assertInt(cpus.permutations)
+  assertInt(random.seed)
   assertString(prefix.topfiles)
   assertString(topfile)
   assertString(prefix.permutations)
@@ -223,21 +224,44 @@ mbmdr <- function(formula = NULL,
 
     message("Running the analysis as a single thread...")
 
-    invisible(waitForJobs(runSingleThread(file = file, trait = trait, out = resultfile, log = logfile, work.dir = work.dir, ...)))
+    invisible(waitForJobs(runSingleThread(file = file,
+                                          trait = trait,
+                                          out = resultfile,
+                                          log = logfile,
+                                          work.dir = work.dir, ...)))
 
   } else {
 
     message("Creating partial topfiles on ", cpus.topfiles, " CPUs...")
-    invisible(waitForJobs(createPartialTopFiles(file = file, trait = trait, cpus = cpus.topfiles, out.prefix = prefix.topfiles, work.dir = work.dir, ...)))
+    invisible(waitForJobs(createPartialTopFiles(file = file,
+                                                trait = trait,
+                                                cpus = cpus.topfiles,
+                                                out.prefix = prefix.topfiles,
+                                                work.dir = work.dir, ...)))
 
     message("Combining partial topfiles...")
-    invisible(waitForJobs(combinePartialTopFiles(file = file, trait = trait, cpus = cpus.topfiles, topfiles.prefix = prefix.topfiles, out = topfile, work.dir = work.dir, ...)))
+    invisible(waitForJobs(combinePartialTopFiles(file = file,
+                                                 trait = trait,
+                                                 cpus = cpus.topfiles,
+                                                 topfiles.prefix = prefix.topfiles,
+                                                 out = topfile,
+                                                 work.dir = work.dir, ...)))
 
     message("Running permutation test on ", cpus.permutations, " CPUs...")
-    invisible(waitForJobs(runPermutations(file = file, trait = trait, cpus = cpus.permutations, topfile = topfile, out.prefix = prefix.permutations, work.dir = work.dir, ...)))
+    invisible(waitForJobs(runPermutations(file = file,
+                                          trait = trait,
+                                          cpus = cpus.permutations,
+                                          topfile = topfile,
+                                          out.prefix = prefix.permutations,
+                                          work.dir = work.dir, ...)))
 
     message("Creating output...")
-    invisible(waitForJobs(createOutput(file = file, trait = trait, cpus = cpus.permutations, topfile = topfile, out = resultfile, perm.prefix = prefix.permutations, work.dir = work.dir, ...)))
+    invisible(waitForJobs(createOutput(file = file, trait = trait,
+                                       cpus = cpus.permutations,
+                                       topfile = topfile,
+                                       out = resultfile,
+                                       perm.prefix = prefix.permutations,
+                                       work.dir = work.dir, ...)))
 
   }
 

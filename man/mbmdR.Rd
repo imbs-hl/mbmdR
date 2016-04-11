@@ -17,12 +17,12 @@ mbmdr(formula = NULL, data = NULL, file = NULL, trait, cpus.topfiles,
   basename(file_path_sans_ext(file))), "result", sep = ".")),
   logfile = file.path(work.dir, paste(ifelse(is.null(file), "input",
   basename(file_path_sans_ext(file))), "log", sep = ".")), exec = "mbmdr",
-  n.pvalues = 1000, permutations = 999, random.seed = NULL,
-  group.size = 10, alpha = 0.1, multi.test.corr = "gammaMAXT",
-  adjustment = "CODOMINANT", dim = "2D", verbose = "MEDIUM",
-  progressbar = "NORMAL", erase = NULL, erase.file = NULL,
-  filter = NULL, filter.file = NULL, input.format = "MBMDR",
-  transform = "NONE", bj.config = NULL, ...)
+  n.pvalues = 1000, permutations = 999,
+  random.seed = as.integer(Sys.Date()), group.size = 10, alpha = 0.1,
+  multi.test.corr = "gammaMAXT", adjustment = "CODOMINANT", dim = "2D",
+  verbose = "MEDIUM", progressbar = "NORMAL", erase = NULL,
+  erase.file = NULL, filter = NULL, filter.file = NULL,
+  input.format = "MBMDR", transform = "NONE", bj.config = NULL, ...)
 }
 \arguments{
 \item{formula}{[\code{formula}]\cr

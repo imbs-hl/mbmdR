@@ -60,13 +60,14 @@ runSingleThread <- function(file,
   assertDirectory(dirname(out))
   assertLogical(skip)
 
+  options <- getOption("mbmdr")
+
   reg <- makeRegistry(reg.id,
                       file.dir = reg.dir,
                       work.dir = work.dir,
                       skip = skip,
+                      seed = options$r,
                       packages = c('mbmdR'))
-
-  options <- getOption("mbmdr")
 
   jobs <- batchMap(reg, singleThread,
                    file = file,
@@ -112,7 +113,7 @@ singleThread <- function(file, trait, o, log, options) {
                " --", trait,
                " -n ", sprintf("%d", options$n),
                " -p ", sprintf("%d", options$p),
-               ifelse(testNull(options$r), "", paste0(" -r ", sprintf("%d", options$r))),
+               " -r ", runif(1, 0, .Machine$integer.max),
                " -m ", sprintf("%d", options$m),
                " -x ", sprintf("%f", options$x),
                " -mt ", options$mt,

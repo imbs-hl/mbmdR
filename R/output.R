@@ -73,13 +73,14 @@ createOutput <- function(file,
   assertFile(paste0(perm.prefix, 1:cpus, ".txt"))
   assertLogical(skip)
 
+  options <- getOption("mbmdr")
+
   reg <- makeRegistry(reg.id,
                       file.dir = reg.dir,
                       work.dir = work.dir,
                       skip = skip,
+                      seed = options$r,
                       packages = c('mbmdR'))
-
-  options <- getOption("mbmdr")
 
   jobs <- batchMap(reg, gammastep4,
                    c = perm.prefix,
@@ -112,7 +113,7 @@ gammastep4 <- function(file, trait, c, q, p, t, o, options) {
                " -x ", sprintf("%f", options$x),
                " -t ", t,
                " -o ", o,
-               ifelse(testNull(options$r), "", paste0(" -r ", options$r)),
+               " -r ", options$r,
                " -a ", options$a,
                ifelse(testCharacter(options$e),
                       paste(" -e ", paste(options$e, collapse = ",")), ""),

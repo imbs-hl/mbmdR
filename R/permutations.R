@@ -66,13 +66,14 @@ runPermutations <- function(file,
   assertFile(topfile)
   assertLogical(skip)
 
+  options <- getOption("mbmdr")
+
   reg <- makeRegistry(reg.id,
                       file.dir = reg.dir,
                       work.dir = work.dir,
                       skip = skip,
+                      seed = options$r,
                       packages = c('mbmdR'))
-
-  options <- getOption("mbmdr")
 
   p <- rep(options$p %/% cpus, cpus)
   rem <- options$p %% cpus
@@ -107,7 +108,7 @@ gammastep3 <- function(file, trait, p, i, t, out.prefix, options) {
                " -p ", sprintf("%d", p),
                " -t ", t,
                " -o ", paste0(out.prefix, sprintf("%d", i), '.txt'),
-               ifelse(testNull(options$r), "", paste0(" -r ", sprintf("%d", options$r))),
+               " -r ", runif(1, 0, .Machine$integer.max),
                " -m ", sprintf("%d", options$m),
                " -x ", sprintf("%f", options$x),
                " -a ", options$a,

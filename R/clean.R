@@ -17,11 +17,12 @@ clean <- function(work.dir = getwd()) {
   files <- list.files(path = work.dir, pattern = "*.mbmdr", full.names = TRUE)
   results <- list.files(path = work.dir, pattern = "*.result", full.names = TRUE)
   topfile <- list.files(path = work.dir, pattern = "*.topfile", full.names = TRUE)
+  modelsfile <- list.files(path = work.dir, pattern = "*.models", full.names = TRUE)
   registries <- grep("registries", list.dirs(path = work.dir, recursive = FALSE), value = TRUE)
   topfiles <- grep("topfiles", list.dirs(path = work.dir, recursive = FALSE), value = TRUE)
   permutations <- grep("permutation", list.dirs(path = work.dir, recursive = FALSE), value = TRUE)
 
-  oldstuff <- c(logs, models, files, results, topfile, registries, topfiles, permutations)
+  oldstuff <- c(logs, models, files, results, topfile, modelsfile, registries, topfiles, permutations)
 
   if(length(oldstuff) > 0) {
     message("Found the following files and directories from previous MB-MDR analyses:")

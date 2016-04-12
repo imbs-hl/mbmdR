@@ -17,7 +17,7 @@ install_git("ssh://git@10.15.59.180:22222/gola/mbmdr.git")
 ```
 
 ### MB-MDR binaries
-You can find MB-MDR binaries [here](http://www.statgen.ulg.ac.be/software_mbmdr.html).
+You can find MB-MDR binaries [here](http://www.statgen.ulg.ac.be/software_mbmdr.html). Install the appropriate binary for your operating system.
 
 ## Configuration
 

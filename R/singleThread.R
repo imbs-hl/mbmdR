@@ -15,6 +15,9 @@
 #' @param log [\code{string}]\cr
 #'   Sets the log file name. Defaults to <\code{work.dir}>/<\code{file}>.log.
 #'
+#' @param mod [\code{string}]\cr
+#'   Sets the models file name. Defaults to <\code{work.dir}>/<\code{file}>.models.
+#'
 #' @param reg.id [\code{string}]\cr
 #'   Name for the \link{BatchJobs} \link{Registry}. Defaults to "singleThread".
 #'
@@ -38,6 +41,9 @@ runSingleThread <- function(file,
                             log = file.path(work.dir,
                                             paste(basename(file_path_sans_ext(file)),
                                                   "log", sep = ".")),
+                            mod = file.path(work.dir,
+                                            paste(basename(file_path_sans_ext(file)),
+                                                  "models", sep = ".")),
                             reg.id = "singleThread",
                             work.dir = getwd(),
                             reg.dir = file.path(work.dir, "registries", reg.id),
@@ -74,6 +80,7 @@ runSingleThread <- function(file,
                    more.args = list(trait = trait,
                                     o = out,
                                     log = log,
+                                    mod = mod,
                                     options = getOption("mbmdr")))
 
   submitJobs(reg, chunk(jobs, chunk.size = 1000),
@@ -101,11 +108,14 @@ runSingleThread <- function(file,
 #' @param log [\code{string}]\cr
 #'   Sets the log file name.
 #'
+#' @param mod [\code{string}]\cr
+#'   Sets the models file name.
+#'
 #' @param options [\code{list}]
 #'   MB-MDR options set by \code{\link{configure}}.
 #'
 #' @export
-singleThread <- function(file, trait, o, log, options) {
+singleThread <- function(file, trait, o, log, mod, options) {
 
   check.options(options)
 
@@ -115,11 +125,16 @@ singleThread <- function(file, trait, o, log, options) {
                " -p ", sprintf("%d", options$p),
                " -r ", runif(1, 0, .Machine$integer.max),
                " -m ", sprintf("%d", options$m),
+               " -at ", sprintf("%d", options$at),
+               " -ct ", sprintf("%d", options$ct),
+               " -ac ", sprintf("%d", options$ac),
                " -x ", sprintf("%f", options$x),
                " -mt ", options$mt,
                " -o ", o,
+               " -o2 ", mod,
                ifelse(testNull(options$r), "", paste0(" -r ", options$r)),
                " -a ", options$a,
+               " -rc ", options$rc,
                " -d ", options$d,
                " -v ", options$v,
                ifelse(testCharacter(options$e),
@@ -130,6 +145,12 @@ singleThread <- function(file, trait, o, log, options) {
                       paste(" -f ", paste(options$filter, collapse = ",")), ""),
                ifelse(testString(options$filter.file),
                       paste(" -F ", options$filter.file), ""),
+               ifelse(testCharacter(options$k),
+                      paste(" -k ", paste(options$k, collapse = ",")), ""),
+               ifelse(testString(options$K),
+                      paste(" -K ", options$K), ""),
+               ifelse(testString(options$s),
+                      paste(" -s ", options$s), ""),
                " -if ", options$input.format,
                ifelse(trait == "continuous", paste0(" -rt ", options$rt), ""),
                " -pb ", options$pb,

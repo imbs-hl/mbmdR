@@ -18,6 +18,18 @@
 #' @param group.size [\code{integer}]\cr
 #'   Minimum group size to be statistically relevant. Default: 10
 #'
+#' @param num.traits [\code{integer}]\cr
+#'   Amount of traits.
+#'   Default: 1
+#'
+#' @param current.trait [\code{integer}]\cr
+#'   The selected trait.
+#'   Default: 1
+#'
+#' @param num.covariates [\code{integer}]\cr
+#'   Amount of covariates.
+#'   Default: 0
+#'
 #' @param alpha [\code{number}]\cr
 #'   Cutoff value for the chi-square test. Default: 0.1
 #'
@@ -27,6 +39,9 @@
 #'
 #' @param adjustment [\code{string}]\cr
 #'   Adjust method to be used. "CODOMINANT" (default), "ADDITIVE" or "NONE".
+#'
+#' @param cov.adjustment [\code{string}]\cr
+#'   Covariable adjust method to be used. "RESIDUALS" (default) or "ONTHEFLY.
 #'
 #' @param dim [\code{string}]\cr
 #'   Dimension of interactions. "1D", "2D" (defaut) or "3D".
@@ -53,6 +68,19 @@
 #'   (for instance an environment variable) from the file of markers names.
 #'   One marker per line. Default: \code{NULL}
 #'
+#' @param keep [\code{character} or \code{NULL}]\cr
+#'   Keep only the markers from this vector of marker names.
+#'   Default: \code{NULL}
+#'
+#' @param keep.file [\code{string} or \code{NULL}]\cr
+#'   Keep only the markers from the given file. One marker per line.
+#'   Default: \code{NULL}
+#'
+#' @param replicate.file [\code{string} or \code{NULL}]\cr
+#'   Used as the second stage of a discovery-replication analysis: keep only the
+#'   pairs from the given output of the first stage.
+#'   Default: \code{NULL}
+#'
 #' @param input.format [\code{string}]\cr
 #'   Input file format. "MDR" or "MBMDR" (default).
 #'
@@ -69,9 +97,13 @@ configure <- function(exec = "mbmdr",
                       permutations = 999,
                       random.seed = NULL,
                       group.size = 10,
+                      num.traits = 1,
+                      current.trait = 1,
+                      num.covariates = 0,
                       alpha = 0.1,
                       multi.test.corr = "gammaMAXT",
                       adjustment = "CODOMINANT",
+                      cov.adjustment = "RESIDUALS",
                       dim = "2D",
                       verbose = "NONE",
                       progressbar  = "NORMAL",
@@ -79,6 +111,9 @@ configure <- function(exec = "mbmdr",
                       erase.file = NULL,
                       filter = NULL,
                       filter.file = NULL,
+                      keep = NULL,
+                      keep.file = NULL,
+                      replicate.file = NULL,
                       input.format = "MBMDR",
                       transform = "NONE") {
 
@@ -87,9 +122,13 @@ configure <- function(exec = "mbmdr",
                 p = permutations,            # Permutation amount for multiple-testing
                 r = random.seed,             # Random seed parameter
                 m = group.size,              # Minimum group size to be statistically relevant
+                at = num.traits,             # Number of traits
+                ct = current.trait,          # Current trait
+                ac = num.covariates,         # Number of covariates
                 x = alpha,                   # Cutoff value for the chi-square test
                 mt = multi.test.corr,        # Multiple-testing correction algorithm
                 a = adjustment,              # Adjust method to be used
+                rc = cov.adjustment,         # Covariable adjustment method to be used
                 d = dim,                     # Dimension of interactions
                 v = verbose,                 # Verbose
                 pb = progressbar,            # Progress bar
@@ -97,6 +136,9 @@ configure <- function(exec = "mbmdr",
                 E = erase.file,              # Erase markers (file)
                 filter = filter,             # Filter (list)
                 filter.file = filter.file,   # Filter (file)
+                k = keep,                    # Keep markers (list)
+                K = keep.file,               # Keep markers (file)
+                s = replicate.file,          # Keep only the pairs from the given output file
                 input.format = input.format, # Input format
                 rt = transform)              # Rank transformation
 

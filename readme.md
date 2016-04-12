@@ -16,6 +16,9 @@ library(devtools)
 install_git("ssh://git@10.15.59.180:22222/gola/mbmdr.git")
 ```
 
+### MB-MDR binaries
+You can find MB-MDR binaries [here](http://www.statgen.ulg.ac.be/software_mbmdr.html).
+
 ## Configuration
 
 You have to configure BatchJobs properly. See [here](https://bioweb2.imbs.uk-sh.de/gitlab/imbs/imbs-general/tree/master/templates/batchjobs) and [here](https://github.com/tudo-r/BatchJobs).

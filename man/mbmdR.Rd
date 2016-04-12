@@ -16,13 +16,18 @@ mbmdr(formula = NULL, data = NULL, file = NULL, trait, cpus.topfiles,
   resultfile = file.path(work.dir, paste(ifelse(is.null(file), "input",
   basename(file_path_sans_ext(file))), "result", sep = ".")),
   logfile = file.path(work.dir, paste(ifelse(is.null(file), "input",
-  basename(file_path_sans_ext(file))), "log", sep = ".")), exec = "mbmdr",
+  basename(file_path_sans_ext(file))), "log", sep = ".")),
+  modelsfile = file.path(work.dir, paste(ifelse(is.null(file), "input",
+  basename(file_path_sans_ext(file))), "models", sep = ".")), exec = "mbmdr",
   n.pvalues = 1000, permutations = 999,
-  random.seed = as.integer(Sys.Date()), group.size = 10, alpha = 0.1,
-  multi.test.corr = "gammaMAXT", adjustment = "CODOMINANT", dim = "2D",
-  verbose = "MEDIUM", progressbar = "NORMAL", erase = NULL,
-  erase.file = NULL, filter = NULL, filter.file = NULL,
-  input.format = "MBMDR", transform = "NONE", bj.config = NULL, ...)
+  random.seed = as.integer(Sys.Date()), group.size = 10, num.traits = 1,
+  current.trait = 1, num.covariates = 0, alpha = 0.1,
+  multi.test.corr = "gammaMAXT", adjustment = "CODOMINANT",
+  cov.adjustment = "RESIDUALS", dim = "2D", verbose = "MEDIUM",
+  progressbar = "NORMAL", erase = NULL, erase.file = NULL,
+  filter = NULL, filter.file = NULL, keep = NULL, keep.file = NULL,
+  replicate.file = NULL, input.format = "MBMDR", transform = "NONE",
+  bj.config = NULL, ...)
 }
 \arguments{
 \item{formula}{[\code{formula}]\cr
@@ -61,6 +66,9 @@ Sets the output file name. Defaults to <\code{work.dir}>/<\code{file}>.result.}
 \item{logfile}{[\code{string}]\cr
 Sets the output file name. Defaults to <\code{work.dir}>/<\code{file}>.log.}
 
+\item{modelsfile}{[\code{string}]\cr
+Sets the models file name. Defaults to <\code{work.dir}>/<\code{file}>.models.}
+
 \item{exec}{[\code{string}]\cr
 Default mbmdr executable. Default: "mbmdr"}
 
@@ -76,6 +84,18 @@ Random seed parameter. Default: \code{NULL} (random value)}
 \item{group.size}{[\code{integer}]\cr
 Minimum group size to be statistically relevant. Default: 10}
 
+\item{num.traits}{[\code{integer}]\cr
+Amount of traits.
+Default: 1}
+
+\item{current.trait}{[\code{integer}]\cr
+The selected trait.
+Default: 1}
+
+\item{num.covariates}{[\code{integer}]\cr
+Amount of covariates.
+Default: 0}
+
 \item{alpha}{[\code{number}]\cr
 Cutoff value for the chi-square test. Default: 0.1}
 
@@ -85,6 +105,9 @@ Multiple-testing correction algorithm. "NONE", "MAXT", "MINP", "RAWP",
 
 \item{adjustment}{[\code{string}]\cr
 Adjust method to be used. "CODOMINANT" (default), "ADDITIVE" or "NONE".}
+
+\item{cov.adjustment}{[\code{string}]\cr
+Covariable adjust method to be used. "RESIDUALS" (default) or "ONTHEFLY.}
 
 \item{dim}{[\code{string}]\cr
 Dimension of interactions. "1D", "2D" (defaut) or "3D".}
@@ -110,6 +133,19 @@ Default: \code{NULL}}
 Analyse only the pairs composed of exactly one marker
 (for instance an environment variable) from the file of markers names.
 One marker per line. Default: \code{NULL}}
+
+\item{keep}{[\code{character} or \code{NULL}]\cr
+Keep only the markers from this vector of marker names.
+Default: \code{NULL}}
+
+\item{keep.file}{[\code{string} or \code{NULL}]\cr
+Keep only the markers from the given file. One marker per line.
+Default: \code{NULL}}
+
+\item{replicate.file}{[\code{string} or \code{NULL}]\cr
+Used as the second stage of a discovery-replication analysis: keep only the
+pairs from the given output of the first stage.
+Default: \code{NULL}}
 
 \item{input.format}{[\code{string}]\cr
 Input file format. "MDR" or "MBMDR" (default).}

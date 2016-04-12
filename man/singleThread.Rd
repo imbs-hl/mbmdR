@@ -4,7 +4,7 @@
 \alias{singleThread}
 \title{MB-MDR Wrapper}
 \usage{
-singleThread(file, trait, o, log, options)
+singleThread(file, trait, o, log, mod, options)
 }
 \arguments{
 \item{file}{[\code{string}]\cr
@@ -18,6 +18,9 @@ Sets the output file name.}
 
 \item{log}{[\code{string}]\cr
 Sets the log file name.}
+
+\item{mod}{[\code{string}]\cr
+Sets the models file name.}
 
 \item{options}{[\code{list}]
 MB-MDR options set by \code{\link{configure}}.}

@@ -7,7 +7,9 @@
 runSingleThread(file, trait, out = file.path(work.dir,
   paste(basename(file_path_sans_ext(file)), "result", sep = ".")),
   log = file.path(work.dir, paste(basename(file_path_sans_ext(file)), "log",
-  sep = ".")), reg.id = "singleThread", work.dir = getwd(),
+  sep = ".")), mod = file.path(work.dir,
+  paste(basename(file_path_sans_ext(file)), "models", sep = ".")),
+  reg.id = "singleThread", work.dir = getwd(),
   reg.dir = file.path(work.dir, "registries", reg.id), skip = TRUE)
 }
 \arguments{
@@ -22,6 +24,9 @@ Sets the output file name. Defaults to <\code{work.dir}>/<\code{file}>.result.}
 
 \item{log}{[\code{string}]\cr
 Sets the log file name. Defaults to <\code{work.dir}>/<\code{file}>.log.}
+
+\item{mod}{[\code{string}]\cr
+Sets the models file name. Defaults to <\code{work.dir}>/<\code{file}>.models.}
 
 \item{reg.id}{[\code{string}]\cr
 Name for the \link{BatchJobs} \link{Registry}. Defaults to "singleThread".}

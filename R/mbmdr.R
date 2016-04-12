@@ -150,6 +150,8 @@ mbmdr <- function(formula = NULL,
                   transform = "NONE",
                   bj.config = NULL, ...) {
 
+  tryCatch(suppressAll(system(exec, intern = TRUE)))
+
   if(!testNull(file)) {
     assertFile(file)
   }

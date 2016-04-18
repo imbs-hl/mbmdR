@@ -316,11 +316,15 @@ mbmdr <- function(formula = NULL,
                                        work.dir = work.dir, ...)))
 
   }
+  
+  
+  
   return(reading(cut_p.value = 1, 
                  cut_chi_square_value = 3, 
-                 correction = "CODOMINANT",
+                 correction = adjustment,
                  inputFile_tables = modelsfile,
-                 inputFile_list = resultfile
+                 inputFile_list = resultfile, 
+                 daten = data
                  )
          )
 }

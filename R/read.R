@@ -27,7 +27,8 @@ reading <- function(cut_p.value = NA,
   # Find the positions of the right matrices in the HLO-matrix-file.
   # In dependency of the given correction method the text search phrases (whole lines or distinct phrases) differ
   all_ends <- which(substr(input_tables, 1, 22) == "Categories contrasted:")
-  if (correction == "CODOMINANT"){
+  if (correction == "CODOMINANT"){list_of_attributes <- lapply(list_of_affecteds, unique)
+
     output$starting_line <- which(input_tables == "HLO matrix: with CODOMINANT correction")
     output$ending_line <- all_ends[3*(1:nrow(output))]
   }
@@ -39,6 +40,7 @@ reading <- function(cut_p.value = NA,
     output$starting_line <- which(input_tables == "HLO matrix: WITHOUT correction")
     output$ending_line <- all_ends[3*(1:nrow(output))-2]
   }
+  if ((nrow(output)) != 0 & (output$Chi.square[1] != 0)){
   # Remove all uninformative matrices, therefore select by p-value and chi-square test result.
   if (!is.na(cut_p.value)){
     output <- output[which(output$p.value < cut_p.value),]
@@ -54,9 +56,11 @@ reading <- function(cut_p.value = NA,
   }
   # cast the HLO-matrices from the text-input into a matric of type "character", using the support function "my_matrix_cast".
   output$matrix <- lapply(1:nrow(output), my_matrix_cast, output = output, input_tables = input_tables, daten = daten)
-  
+  }  
   return(output)
-}
+
+  }
+
 
 # support function that converts lines with HLO-atrix into a matrix of type "character".
 # The function is written to be called by lapply in function reading.
@@ -73,7 +77,6 @@ my_matrix_cast <- function(line_counter,
   teilschritt <- (strsplit(input_tables[(output$starting_line[line_counter] + 1) : (output$ending_line[line_counter] - 1)], " "))
   # creating the final matrix (in empty form)
   res <- matrix("O", output$length[line_counter], output$width[line_counter])
-
 
   rownames(res) <- sort(unique(daten[, as.character(output[line_counter, "First_Marker"])]))
   colnames(res) <- sort(unique(daten[, as.character(output[line_counter, "Second_Marker"])]))

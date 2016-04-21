@@ -27,9 +27,7 @@ reading <- function(cut_p.value = NA,
   # Find the positions of the right matrices in the HLO-matrix-file.
   # In dependency of the given correction method the text search phrases (whole lines or distinct phrases) differ
   all_ends <- which(substr(input_tables, 1, 22) == "Categories contrasted:")
-  if (correction == "CODOMINANT"){list_of_attributes <- lapply(list_of_affecteds, unique)
-
-    output$starting_line <- which(input_tables == "HLO matrix: with CODOMINANT correction")
+  if (correction == "CODOMINANT"){    output$starting_line <- which(input_tables == "HLO matrix: with CODOMINANT correction")
     output$ending_line <- all_ends[3*(1:nrow(output))]
   }
   if (correction == "ADDITIVE"){

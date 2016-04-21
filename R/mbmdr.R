@@ -130,6 +130,14 @@
 #' @param bj.config [\code{string}]\cr
 #'   Location of the configuration file to load.
 #'   Default is ".BatchJobs.conf" in the current working directory.
+#'   
+#' @param cut_p.value = NA [\code{double or NA}]\cr
+#'   If set to a numeric value, only resulting interaction pairs with 
+#'   p-values greater than this value will be read in at the end
+#'
+#' @param cut_chi_square_value = 0 [\code{double or NA}]\cr
+#'   If set to a numeric value, only resulting interaction pairs with 
+#'   Chi-square-values greater than this value will be read in at the end
 #'
 #' @param ... [\code{any}]\cr
 #'   Additional parameter passed to and from other methods.
@@ -189,7 +197,9 @@ mbmdr <- function(formula = NULL,
                   replicate.file = NULL,
                   input.format = "MBMDR",
                   transform = "NONE",
-                  bj.config = NULL, ...) {
+                  bj.config = NULL,
+                  cut_p.value = NA, 
+                  cut_chi_square_value = 0, ...) {
 
   tryCatch(suppressAll(system(exec, intern = TRUE)))
 
@@ -319,8 +329,8 @@ mbmdr <- function(formula = NULL,
   
   
   
-  return(reading(cut_p.value = 1, 
-                 cut_chi_square_value = 3, 
+  return(reading(cut_p.value = cut_p.value, 
+                 cut_chi_square_value = cut_chi_square_value, 
                  correction = adjustment,
                  inputFile_tables = modelsfile,
                  inputFile_list = resultfile, 

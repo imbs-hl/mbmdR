@@ -12,7 +12,7 @@ reading <- function(cut_p.value = NA,
                     inputFile_list = "input.result",
                     correction = "CODOMINANT",
                     daten = data
-){
+                    ){
   # read input files and save theese.
   # The data.rame "output" will collect all further information as well.
   input_tables <- readLines(inputFile_tables)
@@ -40,7 +40,6 @@ reading <- function(cut_p.value = NA,
     output$starting_line <- which(input_tables == "HLO matrix: WITHOUT correction")
     output$ending_line <- all_ends[3*(1:nrow(output))-2]
   }
-  if ((nrow(output)) != 0 & (output$Chi.square[1] != 0)){
   # Remove all uninformative matrices, therefore select by p-value and chi-square test result.
   if (!is.na(cut_p.value)){
     output <- output[which(output$p.value < cut_p.value),]
@@ -48,6 +47,8 @@ reading <- function(cut_p.value = NA,
   if (!is.na(cut_chi_square_value)){
     output <- output[which(output$Chi.square > cut_chi_square_value),]
   }
+  # Work on if there are matrices left
+  if (nrow(output) != 0){
   # read size of each HLO-matrix and saveto output-data.frame
   output$length <- output$ending_line - output$starting_line - 1
   output$width <- -1
@@ -58,8 +59,7 @@ reading <- function(cut_p.value = NA,
   output$matrix <- lapply(1:nrow(output), my_matrix_cast, output = output, input_tables = input_tables, daten = daten)
   }  
   return(output)
-
-  }
+}
 
 
 # support function that converts lines with HLO-atrix into a matrix of type "character".
@@ -72,15 +72,13 @@ my_matrix_cast <- function(line_counter,
                            output = output,
                            input_tables = input_tables, 
                            daten = daten
-){
+                           ){
   # cutting the lines that code the current matrix and bring in list form with single letters
   teilschritt <- (strsplit(input_tables[(output$starting_line[line_counter] + 1) : (output$ending_line[line_counter] - 1)], " "))
   # creating the final matrix (in empty form)
   res <- matrix("O", output$length[line_counter], output$width[line_counter])
-
   rownames(res) <- sort(unique(daten[, as.character(output[line_counter, "First_Marker"])]))
   colnames(res) <- sort(unique(daten[, as.character(output[line_counter, "Second_Marker"])]))
-  
   # fill the rresults-matrix element-wise
   for (j in 1:output$length[line_counter]){
     for (k in 1:output$width[line_counter]){

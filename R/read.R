@@ -6,8 +6,7 @@
 # inputFile_tables: mbmdr-output-file, that lisis the hlo-matrices
 # inputFile_list: mbmdr-output-file that lists the significance of all variable pairs
 # correction: which correction method should be choosen? (Values are "CODOMINANT"(default), "ADDITIVE" and "NONE")
-reading <- function(cut_p.value = NA,
-                    cut_chi_square_value = NA,
+reading <- function(cutting_value = "-a",
                     inputFile_tables, # = "input.m_models.txt",
                     inputFile_list = "input.result",
                     correction = "CODOMINANT",
@@ -39,23 +38,41 @@ reading <- function(cut_p.value = NA,
     output$ending_line <- all_ends[3*(1:nrow(output))-2]
   }
   # Remove all uninformative matrices, therefore select by p-value and chi-square test result.
-  if (!is.na(cut_p.value)){
-    output <- output[which(output$p.value < cut_p.value),]
+  if (is.numeric(cutting_value)){
+    output <- output[which(output$p.value < cutting_value),]
   }
-  if (!is.na(cut_chi_square_value)){
-    output <- output[which(output$Chi.square > cut_chi_square_value),]
+  if (cutting_value == "-a"){
+    output <- output[which(output$Chi.square > 0),]
+  }
+  if (cutting_value == "-b"){
+    output <- output[which(output$p.value < .05),]
   }
   # Work on if there are matrices left
   if (nrow(output) != 0){
-  # read size of each HLO-matrix and saveto output-data.frame
-  output$length <- output$ending_line - output$starting_line - 1
-  output$width <- -1
-  for (i in 1:nrow(output)){
-    output$width[i] <- length(strsplit(input_tables[output$starting_line + 1][[i]], " ")[[1]])
-  }
-  # cast the HLO-matrices from the text-input into a matric of type "character", using the support function "my_matrix_cast".
-  output$matrix <- lapply(1:nrow(output), my_matrix_cast, output = output, input_tables = input_tables, daten = daten)
+    # read size of each HLO-matrix and saveto output-data.frame
+    output$length <- output$ending_line - output$starting_line - 1
+    output$width <- -1
+    for (i in 1:nrow(output)){
+      output$width[i] <- length(strsplit(input_tables[output$starting_line + 1][[i]], " ")[[1]])
+    }
+    # cast the HLO-matrices from the text-input into a matric of type "character", using the support function "my_matrix_cast".
+    output$matrix <- lapply(1:nrow(output), my_matrix_cast, output = output, input_tables = input_tables, daten = daten)
+    if (cutting_value == "-b"){
+      print("---- output")
+      print(nrow(output))
+      print("---- j")
+      print(j)
+      for (j in nrow(output):1){
+        print(output$matrix[[j]])
+        if (sum(output$matrix[[j]]=="L") * sum(output$matrix[[j]]=="H") == 0){
+          output<- output[-j,]
+          print("deleted")
+        }
+      }
+    } 
   }  
+
+
   return(output)
 }
 

@@ -58,15 +58,9 @@ reading <- function(cutting_value = "-a",
     # cast the HLO-matrices from the text-input into a matric of type "character", using the support function "my_matrix_cast".
     output$matrix <- lapply(1:nrow(output), my_matrix_cast, output = output, input_tables = input_tables, daten = daten)
     if (cutting_value == "-b"){
-      print("---- output")
-      print(nrow(output))
-      print("---- j")
-      print(j)
       for (j in nrow(output):1){
-        print(output$matrix[[j]])
         if (sum(output$matrix[[j]]=="L") * sum(output$matrix[[j]]=="H") == 0){
           output<- output[-j,]
-          print("deleted")
         }
       }
     } 

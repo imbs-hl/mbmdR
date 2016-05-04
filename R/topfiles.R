@@ -133,6 +133,9 @@ combinePartialTopFiles <- function(file,
                                    out = file.path(work.dir,
                                                    paste(basename(file_path_sans_ext(file)),
                                                          "topfile", sep = ".")),
+                                   mod = file.path(work.dir,
+                                                   paste(basename(file_path_sans_ext(file)),
+                                                         "models", sep = ".")),
                                    skip = TRUE) {
 
   assertFile(file)
@@ -152,6 +155,7 @@ combinePartialTopFiles <- function(file,
   assertDirectory(dirname(topfiles.prefix))
   assertFile(paste0(topfiles.prefix, 1:cpus, ".txt"))
   assertDirectory(dirname(out))
+  assertDirectory(dirname(mod))
   assertLogical(skip)
 
   options <- getOption("mbmdr")
@@ -168,6 +172,7 @@ combinePartialTopFiles <- function(file,
                                           cpus = cpus,
                                           ti = topfiles.prefix,
                                           t = out,
+                                          o2 = mod,
                                           options = getOption("mbmdr")))
 
   submitJobs(reg, chunk(jobs, chunk.size = 1000),
@@ -222,7 +227,7 @@ gammastep1 <- function(file, trait, id, cpus, ti, options) {
 
 }
 
-gammastep2 <- function(file, trait, cpus, ti, t, options) {
+gammastep2 <- function(file, trait, cpus, ti, t, o2, options) {
 
   check.options(options)
 
@@ -232,6 +237,7 @@ gammastep2 <- function(file, trait, cpus, ti, t, options) {
                " -N ", sprintf("%d", cpus),
                " -ti ", ti,
                " -t ", t,
+               " -o2 ", o2,
                " -n ", sprintf("%d", options$n),
                " -m ", sprintf("%d", options$m),
                " -at ", sprintf("%d", options$at),

@@ -303,6 +303,7 @@ mbmdr <- function(formula = NULL,
                                                  trait = trait,
                                                  cpus = cpus.topfiles,
                                                  topfiles.prefix = prefix.topfiles,
+                                                 mod = modelsfile,
                                                  out = topfile,
                                                  work.dir = work.dir, ...)))
 

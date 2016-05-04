@@ -92,7 +92,7 @@ createOutput <- function(file,
                                     t = topfile,
                                     options = getOption("mbmdr")))
 
-  submitJobs(reg, chunk(jobs, chunk.size = 1000),
+  submitJobs(reg, chunk(jobs, chunk.size = 1),
              chunks.as.arrayjobs = getConfig()$ssh,
              job.delay = TRUE)
 

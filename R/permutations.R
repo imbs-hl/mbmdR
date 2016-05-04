@@ -90,7 +90,7 @@ runPermutations <- function(file,
                                     out.prefix = out.prefix,
                                     options = getOption("mbmdr")))
 
-  submitJobs(reg, chunk(jobs, chunk.size = 1000),
+  submitJobs(reg, chunk(jobs, chunk.size = cpus),
              chunks.as.arrayjobs = getConfig()$ssh,
              job.delay = TRUE)
 

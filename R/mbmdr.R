@@ -236,6 +236,9 @@ mbmdr <- function(formula = NULL,
   assertString(topfile)
   assertString(prefix.permutations)
   assertString(resultfile)
+  if(!testNull(replicate.file)) {
+    assertFile(replicate.file)
+  }
   if(!testNull(bj.config)) {
     assertFile(bj.config)
     loadConfig(conffile = bj.config)

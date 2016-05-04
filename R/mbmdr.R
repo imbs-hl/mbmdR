@@ -130,13 +130,13 @@
 #' @param bj.config [\code{string}]\cr
 #'   Location of the configuration file to load.
 #'   Default is ".BatchJobs.conf" in the current working directory.
-#'   
-#' @param cutting_value = "-a" [\code{"double"-a", "-b" or numeric}]\cr
+#'
+#' @param cutting_value = "-a" [\code{double"-a", "-b" or numeric}]\cr
 #'   Defines the rule, which HLO-tables should be read in at the end of mbmdr.
 #'   "-a" means: all with at least one significant value
 #'   "-b" means: all with at least one "H" and one "L" and p < .05
 #'   numeric: all with p-value below the given number ("=" excluded)
-#'   
+#'
 #' @param ... [\code{any}]\cr
 #'   Additional parameter passed to and from other methods.
 #'
@@ -323,13 +323,13 @@ mbmdr <- function(formula = NULL,
                                        work.dir = work.dir, ...)))
 
   }
-  
-  
-  
+
+
+
   return(reading(cutting_value = cutting_value,
                  correction = adjustment,
                  inputFile_tables = modelsfile,
-                 inputFile_list = resultfile, 
+                 inputFile_list = resultfile,
                  daten = data
                  )
          )

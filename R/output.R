@@ -94,6 +94,9 @@ createOutput <- function(file,
 
   submitJobs(reg, chunk(jobs, chunk.size = 1),
              chunks.as.arrayjobs = getConfig()$ssh,
+             resources = list(nodes = 1,
+                              ppn = 1,
+                              mem = paste0(ceiling(2*file.size(file)/1024^3), "GB")),
              job.delay = TRUE)
 
   return(reg)

@@ -86,7 +86,7 @@
 #'   Dimension of interactions. "1D", "2D" (defaut) or "3D".
 #'
 #' @param verbose [\code{string}]\cr
-#'   Verbose level. "NONE" (default), "SHORT", "MEDIUM" or "LONG".
+#'   Verbose level. "SHORT", "MEDIUM" (default) or "LONG".
 #'
 #' @param progressbar [\code{string}]\cr
 #'   Progress bar. "NONE" or "NORMAL" (default).
@@ -216,6 +216,7 @@ mbmdr <- function(formula = NULL,
     assertDataFrame(data)
   }
   assertChoice(trait, c("binary", "continuous", "survival"))
+  assertChoice(verbose, c("SHORT", "MEDIUM", "LONG"))
   assertInt(cpus.topfiles)
   assertInt(cpus.permutations)
   assertInt(random.seed)

@@ -113,7 +113,7 @@ Covariable adjust method to be used. "RESIDUALS" (default) or "ONTHEFLY.}
 Dimension of interactions. "1D", "2D" (defaut) or "3D".}
 
 \item{verbose}{[\code{string}]\cr
-Verbose level. "NONE" (default), "SHORT", "MEDIUM" or "LONG".}
+Verbose level. "SHORT", "MEDIUM" (default) or "LONG".}
 
 \item{progressbar}{[\code{string}]\cr
 Progress bar. "NONE" or "NORMAL" (default).}

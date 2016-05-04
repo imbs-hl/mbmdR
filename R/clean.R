@@ -28,24 +28,28 @@ clean <- function(work.dir = getwd()) {
     message("Found the following files and directories from previous MB-MDR analyses:")
     message(paste(oldstuff, collapse = "\n"))
 
-    answer <- readline("Delete [a]ll/[n]one/[s]ingle? ")
+    if(interactive()) {
+      answer <- readline("Delete [a]ll/[n]one/[s]ingle? ")
 
-    deleteSingle <- function(os) {
-      sapply(os, function(x) {
-        ans <- readline(paste("Delete", x, "? [y]es/[n]o/[c]ancel: "))
-        switch (ans,
-                y = invisible(unlink(x, recursive = TRUE, force = TRUE)),
-                n = return(),
-                c = stop("Cancelled!")
-        )
-      })
+      deleteSingle <- function(os) {
+        sapply(os, function(x) {
+          ans <- readline(paste("Delete", x, "? [y]es/[n]o/[c]ancel: "))
+          switch (ans,
+                  y = invisible(unlink(x, recursive = TRUE, force = TRUE)),
+                  n = return(),
+                  c = stop("Cancelled!"))
+        })
+      }
+    } else {
+      message("You are not in interactive mode. For safy reasons you have to delete the files manually!")
+      answer <- "c"
     }
 
     switch (answer,
             a = invisible(unlink(oldstuff, recursive = TRUE, force = TRUE)),
             n = stop("Nothing done!"),
-            s = deleteSingle(oldstuff)
-    )
+            s = deleteSingle(oldstuff),
+            c = stop("Cancelled!"))
   } else {
     message("No files and directories from previous MB-MDR analyses found.")
   }

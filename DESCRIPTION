@@ -6,11 +6,13 @@ Description: This package provides an interface to c++ MB-MDR software by
     François van Lishout.
 Depends:
     R (>= 3.1.0),
-    BatchJobs (>= 1.5),
+    BatchJobs (>= 1.5)
+Imports:
     checkmate (>= 1.5.0),
     BBmisc (>= 1.8),
     tools (>= 3.1.0),
-    data.table (>= 1.9.6)
+    data.table (>= 1.9.6),
+    backports (>= 1.0.2)
 SoftwareRequirements: mbmdr (>= 4.4.1)
 License: GPL-3
 LazyData: true

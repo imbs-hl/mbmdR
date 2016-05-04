@@ -3,7 +3,7 @@
 #' @name mbmdR
 #' @docType package
 #'
-#' @import BatchJobs checkmate BBmisc tools data.table
+#' @import BatchJobs checkmate BBmisc tools data.table backports
 NULL
 
 #' @title Global default options

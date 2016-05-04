@@ -153,24 +153,36 @@ mbmdr <- function(formula = NULL,
                   work.dir = getwd(),
                   prefix.topfiles = file.path(work.dir,
                                               "topfiles",
-                                              paste(ifelse(is.null(file), "input", basename(file_path_sans_ext(file))),
+                                              paste(ifelse(is.null(file),
+                                                           "input",
+                                                           basename(file_path_sans_ext(file))),
                                                     "top", sep = "_")),
                   topfile = file.path(work.dir,
-                                      paste(ifelse(is.null(file), "input", basename(file_path_sans_ext(file))),
+                                      paste(ifelse(is.null(file),
+                                                   "input",
+                                                   basename(file_path_sans_ext(file))),
                                             "topfile", sep = ".")),
                   prefix.permutations = file.path(work.dir,
                                                   "permutations",
-                                                  paste(ifelse(is.null(file), "input", basename(file_path_sans_ext(file))),
+                                                  paste(ifelse(is.null(file),
+                                                               "input",
+                                                               basename(file_path_sans_ext(file))),
                                                         "perm", sep = "_")),
                   resultfile = file.path(work.dir,
-                                         paste(ifelse(is.null(file), "input", basename(file_path_sans_ext(file))),
+                                         paste(ifelse(is.null(file),
+                                                      "input",
+                                                      basename(file_path_sans_ext(file))),
                                                "result", sep = ".")),
                   logfile = file.path(work.dir,
-                                      paste(ifelse(is.null(file), "input", basename(file_path_sans_ext(file))),
+                                      paste(ifelse(is.null(file),
+                                                   "input",
+                                                   basename(file_path_sans_ext(file))),
                                             "log", sep = ".")),
                   modelsfile = file.path(work.dir,
-                                        paste(ifelse(is.null(file), "input", basename(file_path_sans_ext(file))),
-                                              "models", sep = ".")),
+                                         paste(ifelse(is.null(file),
+                                                      "input",
+                                                      basename(file_path_sans_ext(file))),
+                                               "models", sep = ".")),
                   exec = "mbmdr",
                   n.pvalues = 1000,
                   permutations = 999,
@@ -261,11 +273,11 @@ mbmdr <- function(formula = NULL,
     file <- file.path(work.dir, "input.mbmdr")
     out <- sapply(X = model.frame(formula, data),
                   FUN = function(x){x <- as.numeric(as.character(x))
-                                    if(min(x)<0){
-                                      x+abs(min(x))
-                                    } else {
-                                      x
-                                    }
+                  if(min(x)<0){
+                    x+abs(min(x))
+                  } else {
+                    x
+                  }
                   })
     write.table(x = out,
                 file = file,
@@ -332,7 +344,5 @@ mbmdr <- function(formula = NULL,
                  correction = adjustment,
                  inputFile_tables = modelsfile,
                  inputFile_list = resultfile,
-                 daten = data
-                 )
-         )
+                 daten = data))
 }

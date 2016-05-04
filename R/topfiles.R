@@ -81,7 +81,7 @@ createPartialTopFiles <- function(file,
              chunks.as.arrayjobs = getConfig()$ssh,
              resources = list(nodes = 1,
                               ppn = 1,
-                              mem = paste0(ceiling(2*file.size(file)/1024^3), "g")),
+                              mem = paste0(1+ceiling(2*file.size(file)/1024^3), "g")),
              job.delay = TRUE)
 
   return(reg)
@@ -185,7 +185,7 @@ combinePartialTopFiles <- function(file,
              chunks.as.arrayjobs = getConfig()$ssh,
              resources = list(nodes = 1,
                               ppn = 1,
-                              mem = paste0(ceiling(2*file.size(file)/1024^3), "g")),
+                              mem = paste0(1+ceiling(2*file.size(file)/1024^3), "g")),
              job.delay = TRUE)
 
   return(reg)

@@ -114,6 +114,9 @@ createPartialTopFiles <- function(file,
 #' @param out [\code{string}]\cr
 #'   Path for saving the final topfile. Defaults to <\code{work.dir}>/<\code{file}>.topfile.
 #'
+#' @param mod [\code{string}]\cr
+#'   Path for saving the models file. Defaults to <\code{work.dir}>/<\code{file}>.models.
+#'
 #' @param skip [\code{logical}]\cr
 #'   Skip creation of a new registry if a registry is found in file.dir. Defaults to TRUE.
 #'

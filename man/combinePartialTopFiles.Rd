@@ -9,7 +9,9 @@ combinePartialTopFiles(file, trait, cpus, reg.id = "combineTopFiles",
   topfiles.prefix = file.path(work.dir, "topfiles",
   paste(basename(file_path_sans_ext(file)), "top", sep = "_")),
   out = file.path(work.dir, paste(basename(file_path_sans_ext(file)),
-  "topfile", sep = ".")), skip = TRUE)
+  "topfile", sep = ".")), mod = file.path(work.dir,
+  paste(basename(file_path_sans_ext(file)), "models", sep = ".")),
+  skip = TRUE)
 }
 \arguments{
 \item{file}{[\code{string}]\cr
@@ -35,6 +37,9 @@ Path of partial topfiles. Defaults to <\code{work.dir}>/topfiles/<\code{file}>_t
 
 \item{out}{[\code{string}]\cr
 Path for saving the final topfile. Defaults to <\code{work.dir}>/<\code{file}>.topfile.}
+
+\item{mod}{[\code{string}]\cr
+Path for saving the models file. Defaults to <\code{work.dir}>/<\code{file}>.models.}
 
 \item{skip}{[\code{logical}]\cr
 Skip creation of a new registry if a registry is found in file.dir. Defaults to TRUE.}

@@ -168,7 +168,7 @@ numeric: all with p-value below the given number ("=" excluded)}
 Additional parameter passed to and from other methods.}
 }
 \value{
-Throws an error if any check fails and returns TRUE otherwise.
+Throws an error if any check fails and returns a \code{\link{data.table}} otherwise.
 }
 \description{
 Run a complete MB-MDR analysis. Necessary files and directories will be created in given working directory.

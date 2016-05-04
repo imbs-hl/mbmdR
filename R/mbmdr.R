@@ -141,7 +141,7 @@
 #'   Additional parameter passed to and from other methods.
 #'
 #' @return
-#' Throws an error if any check fails and returns TRUE otherwise.
+#' Throws an error if any check fails and returns a \code{\link{data.table}} otherwise.
 #'
 #' @export
 mbmdr <- function(formula = NULL,
@@ -338,11 +338,8 @@ mbmdr <- function(formula = NULL,
 
   }
 
+  res <- data.table::fread(resultfile)
+  data.table::setnames(res, c("Marker1", "Marker2", "TestStat", "pValue"))
 
-
-  return(reading(cutting_value = cutting_value,
-                 correction = adjustment,
-                 inputFile_tables = modelsfile,
-                 inputFile_list = resultfile,
-                 daten = data))
+  return(res)
 }

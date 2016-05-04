@@ -338,11 +338,8 @@ mbmdr <- function(formula = NULL,
 
   }
 
+  res <- data.table::fread(resultfile)
+  data.table::setnames(r, c("Marker1", "Marker2", "TestStat", "pValue"))
 
-
-  return(reading(cutting_value = cutting_value,
-                 correction = adjustment,
-                 inputFile_tables = modelsfile,
-                 inputFile_list = resultfile,
-                 daten = data))
+  return(res)
 }

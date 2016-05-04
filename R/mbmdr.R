@@ -276,6 +276,7 @@ mbmdr <- function(formula = NULL,
   clean(work.dir = work.dir)
 
   if(!testNull(formula)) {
+    # write out the R object to disk
     file <- file.path(work.dir, "input.mbmdr")
     out <- sapply(X = model.frame(formula, data),
                   FUN = function(x){x <- as.numeric(as.character(x))
@@ -291,12 +292,12 @@ mbmdr <- function(formula = NULL,
                 na = "-9",
                 row.names = FALSE,
                 col.names = TRUE)
-  } else {
-    data <- read.table(file, header = TRUE, nrows = 1)
   }
 
+  # Check the number of columns
+  ncols <- as.numeric(BBmisc::system3(command = "awk", args = c("-F' '", "'{print NF; exit}'", file), stdout = TRUE, stderr = TRUE)$output)
 
-  if(ncol(data)<1000 | (cpus.topfiles==1 & cpus.permutations==1) | multi.test.corr != "gammaMAXT" | replicate) {
+  if(ncols < 1000 | (cpus.topfiles==1 & cpus.permutations==1) | multi.test.corr != "gammaMAXT" | replicate) {
 
     message("Running the analysis as a single thread...\n")
 

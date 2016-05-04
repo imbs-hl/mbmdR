@@ -238,6 +238,9 @@ mbmdr <- function(formula = NULL,
   assertString(resultfile)
   if(!testNull(replicate.file)) {
     assertFile(replicate.file)
+    replicate <- TRUE
+  } else {
+    replicate <- FALSE
   }
   if(!testNull(bj.config)) {
     assertFile(bj.config)
@@ -293,7 +296,7 @@ mbmdr <- function(formula = NULL,
   }
 
 
-  if(ncol(data)<1000 | (cpus.topfiles==1 & cpus.permutations==1) | multi.test.corr != "gammaMAXT") {
+  if(ncol(data)<1000 | (cpus.topfiles==1 & cpus.permutations==1) | multi.test.corr != "gammaMAXT" | replicate) {
 
     message("Running the analysis as a single thread...\n")
 

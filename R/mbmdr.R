@@ -137,6 +137,9 @@
 #'   "-b" means: all with at least one "H" and one "L" and p < .05
 #'   numeric: all with p-value below the given number ("=" excluded)
 #'
+#' @param resume [\code{flag}]\cr
+#'   Should previous found steps of a parallel workflow resumed?
+#'
 #' @param ... [\code{any}]\cr
 #'   Additional parameter passed to and from other methods.
 #'

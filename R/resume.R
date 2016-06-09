@@ -1,3 +1,18 @@
+#' @title Resume parallel workflow step
+#'
+#' @description
+#' Resumes a step of a parallel workflow of a crashed session.
+#'
+#' @param file.path [\code{string}]\cr
+#'   Name for the \link{BatchJobs} \link{Registry}.
+#'
+#' @param file [\code{string}]\cr
+#'   File path of input MB-MDR file.
+#'
+#' @param cpus [\code{string}]\cr
+#'   How many CPUs should be used for BatchJobs?
+#'
+#' @return BatchJobs registry object.
 resumeStep <- function(file.path, file, cpus) {
   # Load old registry
   reg <- BatchJobs::loadRegistry(file.path, adjust.paths = TRUE)

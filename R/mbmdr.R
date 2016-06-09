@@ -208,7 +208,8 @@ mbmdr <- function(formula = NULL,
                   input.format = "MBMDR",
                   transform = "NONE",
                   bj.config = NULL,
-                  cutting_value = "-a", ...) {
+                  cutting_value = "-a",
+                  resume = FALSE, ...) {
 
   tryCatch(suppressAll(system(exec, intern = TRUE)))
 
@@ -246,6 +247,7 @@ mbmdr <- function(formula = NULL,
     assertFile(bj.config)
     loadConfig(conffile = bj.config)
   }
+  assertFlag(resume)
   dir.create(work.dir, recursive = TRUE)
 
   configure(exec,
@@ -273,7 +275,9 @@ mbmdr <- function(formula = NULL,
             input.format,
             transform)
 
-  clean(work.dir = work.dir)
+  if(!resume) {
+    clean(work.dir = work.dir)
+  }
 
   if(!testNull(formula)) {
     # write out the R object to disk
@@ -312,36 +316,72 @@ mbmdr <- function(formula = NULL,
     message("Starting parallel workflow..\n")
 
     message("Creating partial topfiles on ", cpus.topfiles, " CPUs...\n")
-    invisible(waitForJobs(createPartialTopFiles(file = file,
-                                                trait = trait,
-                                                cpus = cpus.topfiles,
-                                                out.prefix = prefix.topfiles,
-                                                work.dir = work.dir, ...)))
+    if(resume) {
+      if(checkmate::testFile(file.path(work.dir, "registries", "partialTopFiles", "registry.RData"))) {
+        message("Resuming creation of partial topfiles on ", cpus.topfiles, " CPUs...\n")
+        invisible(waitForJobs(resumeStep(file.path = file.path(work.dir, "registries", "partialTopFiles"),
+                                         file = file,
+                                         cpus = cpus.topfiles)))
+      }
+    } else {
+      invisible(waitForJobs(createPartialTopFiles(file = file,
+                                                  trait = trait,
+                                                  cpus = cpus.topfiles,
+                                                  out.prefix = prefix.topfiles,
+                                                  work.dir = work.dir, ...)))
+    }
 
     message("Combining partial topfiles...\n")
-    invisible(waitForJobs(combinePartialTopFiles(file = file,
-                                                 trait = trait,
-                                                 cpus = cpus.topfiles,
-                                                 topfiles.prefix = prefix.topfiles,
-                                                 mod = modelsfile,
-                                                 out = topfile,
-                                                 work.dir = work.dir, ...)))
+    if(resume) {
+      if(checkmate::testFile(file.path(work.dir, "registries", "combineTopFiles", "registry.RData"))) {
+        message("Resuming combination of partial topfiles...\n")
+        invisible(waitForJobs(resumeStep(file.path = file.path(work.dir, "registries", "combineTopFiles"),
+                                         file = file,
+                                         cpus = 1)))
+      }
+    } else {
+      invisible(waitForJobs(combinePartialTopFiles(file = file,
+                                                   trait = trait,
+                                                   cpus = cpus.topfiles,
+                                                   topfiles.prefix = prefix.topfiles,
+                                                   mod = modelsfile,
+                                                   out = topfile,
+                                                   work.dir = work.dir, ...)))
+    }
 
     message("Running permutation test on ", cpus.permutations, " CPUs...\n")
+    if(resume) {
+      if(checkmate::testFile(file.path(work.dir, "registries", "permutations", "registry.RData"))) {
+        message("Resuming permutations on ", cpus.permutations, " CPUs...\n")
+        invisible(waitForJobs(resumeStep(file.path = file.path(work.dir, "registries", "permutations"),
+                                         file = file,
+                                         cpus = cpus.permutations)))
+      }
+    } else {
     invisible(waitForJobs(runPermutations(file = file,
                                           trait = trait,
                                           cpus = cpus.permutations,
                                           topfile = topfile,
                                           out.prefix = prefix.permutations,
                                           work.dir = work.dir, ...)))
+    }
 
     message("Creating output...\n")
+    if(resume) {
+      if(checkmate::testFile(file.path(work.dir, "registries", "output", "registry.RData"))) {
+        message("Resuming creation of output...\n")
+        invisible(waitForJobs(resumeStep(file.path = file.path(work.dir, "registries", "output"),
+                                         file = file,
+                                         cpus = 1)))
+      }
+    } else {
     invisible(waitForJobs(createOutput(file = file, trait = trait,
                                        cpus = cpus.permutations,
                                        topfile = topfile,
                                        out = resultfile,
                                        perm.prefix = prefix.permutations,
                                        work.dir = work.dir, ...)))
+    }
 
   }
 

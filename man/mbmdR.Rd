@@ -31,7 +31,7 @@ mbmdr(formula = NULL, data = NULL, file = NULL, trait, cpus.topfiles,
 }
 \arguments{
 \item{formula}{[\code{formula}]\cr
-Object of class \code{formula} describing the model to fit.}
+Object of class \code{formula} describing the model to fit. See details.}
 
 \item{data}{[\code{data.frame}]\cr
 Object containing all the data.}
@@ -175,5 +175,13 @@ Throws an error if any check fails and returns a \code{\link{data.table}} otherw
 }
 \description{
 Run a complete MB-MDR analysis. Necessary files and directories will be created in given working directory.
+}
+\details{
+The \code{formula} must have the following form:\cr
+  \code{~trait1+trait2+...+traitnt+cov1+cov2+...+covnc+marker1+marker2+...+markernm}\cr
+  or\cr
+  \code{~trait1+trait2+...+cov1+cov2+.}, if there are many markers.\cr
+  Here \code{trait1, trait2,..., traitnt} are the \code{nt} traits, \code{cov1, cov2, ..., covnc} are the \code{nc} covariates and \code{marker1, marker2, ..., markernm} are the \code{nm} markers, i.e. SNPs and/or environment variables to be exported to the MB-MDR file format. The first form let's you explicitly choose which variables are exported whereas the latter form exports all variables in data, but let's you re-arrange the ordering of variables. If you know that the variables in your data are correctly ordered, i.e. first the \code{nt} traits, then the \code{nc} variables and then the \code{nm} markers, you can simply provide the formula \code{~.}.\cr\cr
+  WARNING: The formula interface is generally slow for big datasets. Consider to provide a correctly formatted file on the filesystem via \code{file} instead.
 }
 

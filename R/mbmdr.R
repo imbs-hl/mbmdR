@@ -4,7 +4,7 @@
 #' Run a complete MB-MDR analysis. Necessary files and directories will be created in given working directory.
 #'
 #' @param formula [\code{formula}]\cr
-#'   Object of class \code{formula} describing the model to fit.
+#'   Object of class \code{formula} describing the model to fit. See details.
 #'
 #' @param data [\code{data.frame}]\cr
 #'   Object containing all the data.
@@ -143,6 +143,13 @@
 #' @param ... [\code{any}]\cr
 #'   Additional parameter passed to and from other methods.
 #'
+#' @details  The \code{formula} must have the following form:\cr
+#'   \code{~trait1+trait2+...+traitnt+cov1+cov2+...+covnc+marker1+marker2+...+markernm}\cr
+#'   or\cr
+#'   \code{~trait1+trait2+...+cov1+cov2+.}, if there are many markers.\cr
+#'   Here \code{trait1, trait2,..., traitnt} are the \code{nt} traits, \code{cov1, cov2, ..., covnc} are the \code{nc} covariates and \code{marker1, marker2, ..., markernm} are the \code{nm} markers, i.e. SNPs and/or environment variables to be exported to the MB-MDR file format. The first form let's you explicitly choose which variables are exported whereas the latter form exports all variables in data, but let's you re-arrange the ordering of variables. If you know that the variables in your data are correctly ordered, i.e. first the \code{nt} traits, then the \code{nc} variables and then the \code{nm} markers, you can simply provide the formula \code{~.}.\cr\cr
+#'   WARNING: The formula interface is generally slow for big datasets. Consider to provide a correctly formatted file on the filesystem via \code{file} instead.
+#'
 #' @return
 #' Throws an error if any check fails and returns a \code{\link{data.table}} otherwise.
 #'
@@ -214,43 +221,43 @@ mbmdr <- function(formula = NULL,
                   cutting_value = "-a",
                   resume = FALSE, ...) {
 
-  tryCatch(suppressAll(system(exec, intern = TRUE)))
+  tryCatch(BBmisc::suppressAll(system(exec, intern = TRUE)))
 
-  if(!testNull(file)) {
-    assertFile(file)
+  if(!checkmate::testNull(file)) {
+    checkmate::assertFile(file)
   }
-  if(testNull(file) & testNull(formula)) {
+  if(checkmate::testNull(file) & checkmate::testNull(formula)) {
     stop("Either a file or formula and data must be given!")
   }
-  if(!testNull(formula) & testNull(data)) {
+  if(!checkmate::testNull(formula) & checkmate::testNull(data)) {
     stop("Formula without data object given!")
   }
-  if(!testNull(formula)) {
-    assertClass(formula, "formula")
+  if(!checkmate::testNull(formula)) {
+    checkmate::assertClass(formula, "formula")
   }
-  if(!testNull(data)) {
-    assertDataFrame(data)
+  if(!checkmate::testNull(data)) {
+    checkmate::assertDataFrame(data)
   }
-  assertChoice(trait, c("binary", "continuous", "survival"))
-  assertChoice(verbose, c("SHORT", "MEDIUM", "LONG"))
-  assertInt(cpus.topfiles)
-  assertInt(cpus.permutations)
-  assertInt(random.seed)
-  assertString(prefix.topfiles)
-  assertString(topfile)
-  assertString(prefix.permutations)
-  assertString(resultfile)
-  if(!testNull(replicate.file)) {
-    assertFile(replicate.file)
+  checkmate::assertChoice(trait, c("binary", "continuous", "survival"))
+  checkmate::assertChoice(verbose, c("SHORT", "MEDIUM", "LONG"))
+  checkmate::assertInt(cpus.topfiles)
+  checkmate::assertInt(cpus.permutations)
+  checkmate::assertInt(random.seed)
+  checkmate::assertString(prefix.topfiles)
+  checkmate::assertString(topfile)
+  checkmate::assertString(prefix.permutations)
+  checkmate::assertString(resultfile)
+  if(!checkmate::testNull(replicate.file)) {
+    checkmate::assertFile(replicate.file)
     replicate <- TRUE
   } else {
     replicate <- FALSE
   }
-  if(!testNull(bj.config)) {
-    assertFile(bj.config)
-    loadConfig(conffile = bj.config)
+  if(!checkmate::testNull(bj.config)) {
+    checkmate::assertFile(bj.config)
+    BatchJobs::loadConfig(conffile = bj.config)
   }
-  assertFlag(resume)
+  checkmate::assertFlag(resume)
   dir.create(work.dir, recursive = TRUE)
 
   configure(exec,
@@ -282,27 +289,42 @@ mbmdr <- function(formula = NULL,
     clean(work.dir = work.dir)
   }
 
-  if(!testNull(formula)) {
+  if(!checkmate::testNull(formula)) {
     # write out the R object to disk
     file <- file.path(work.dir, "input.mbmdr")
-    out <- sapply(X = model.frame(formula, data),
-                  FUN = function(x){x <- as.numeric(as.character(x))
-                  if(min(x)<0){
-                    x+abs(min(x))
-                  } else {
-                    x
-                  }
-                  })
-    write.table(x = out,
-                file = file,
-                quote = FALSE,
-                na = "-9",
-                row.names = FALSE,
-                col.names = TRUE)
+    out <- model.frame(formula, data)
+    out <- as.data.frame(lapply(out, FUN = function(x) {
+      if(is.factor(x)) {
+        levels(x) <- 0:(length(levels(x))-1)
+        return(as.character(x))
+      } else {
+        return(x)
+      }
+    }))
+    readr::write_delim(x = out,
+                       path = file,
+                       delim = " ",
+                       na = "-9",
+                       append = FALSE)
   }
 
   # Check the number of columns
-  ncols <- as.numeric(BBmisc::system3(command = "awk", args = c("-F' '", "'{print NF; exit}'", file), stdout = TRUE, stderr = TRUE)$output)
+  awk <- tryCatch({
+    BBmisc::suppressAll(system("awk -V", intern = TRUE))
+    TRUE},
+    error = function(e) {
+      FALSE
+    })
+  if(awk) {
+    # awk is available on the OS
+    ncols <- as.numeric(BBmisc::system3(command = "awk",
+                                        args = c("-F' '", "'{print NF; exit}'", file),
+                                        stdout = TRUE,
+                                        stderr = TRUE)$output)
+  } else {
+    # awk is not availabe on the OS, fall back to data.table's fread
+    ncols <- ncol(data.table::fread(input = file, nrows = 1, header = FALSE))
+  }
 
   if(ncols < 1000 | (cpus.topfiles==1 & cpus.permutations==1) | multi.test.corr != "gammaMAXT" | replicate) {
 

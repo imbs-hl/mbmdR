@@ -10,28 +10,64 @@
 #' Throws an error if any check fails and invisibly returns TRUE otherwise.
 check.options <- function(options = getOption("mbmdr")) {
 
-  assertInt(options$n)
-  assertInt(options$p)
-  assert(checkInt(options$r), checkNull(options$r))
-  assertInt(options$m)
-  assertInt(options$at)
-  assertInt(options$ct)
-  assertInt(options$ac)
-  assertNumber(options$x)
-  assertChoice(options$mt, c("NONE", "MAXT", "MINP", "RAWP", "STRAT1", "STRAT2", "gammaMAXT"))
-  assertChoice(options$a, c("CODOMINANT", "ADDITIVE", "NONE"))
-  assertChoice(options$rc, c("RESIDUALS", "ONTHEFLY"))
-  assertChoice(options$d, c("1D", "2D", "3D"))
-  assertChoice(options$v, c("SHORT", "MEDIUM", "LONG"))
-  assertChoice(options$pb, c("NONE", "NORMAL"))
-  assert(checkCharacter(options$e), checkNull(options$e))
-  assert(checkFile(options$E), checkNull(options$E))
-  assert(checkCharacter(options$filter), checkNull(options$filter))
-  assert(checkFile(options$filter.file), checkNull(options$filter.file))
-  assert(checkCharacter(options$k), checkNull(options$k))
-  assert(checkFile(options$K), checkNull(options$K))
-  assert(checkFile(options$s), checkNull(options$s))
-  assertChoice(options$input.format, c("MDR", "MBMDR"))
-  assertChoice(options$rt, c("NONE", "RANK_TRANSFORM"))
+  assertions <- checkmate::makeAssertCollection()
+
+  checkmate::assertInt(options$n,
+                       add = assertions)
+  checkmate::assertInt(options$p,
+                       add = assertions)
+  checkmate::assert(checkInt(options$r), checkNull(options$r),
+                    add = assertions)
+  checkmate::assertInt(options$m,
+                       add = assertions)
+  checkmate::assertInt(options$at,
+                       add = assertions)
+  checkmate::assertInt(options$ct,
+                       add = assertions)
+  checkmate::assertInt(options$ac,
+                       add = assertions)
+  checkmate::assertNumber(options$x,
+                          add = assertions)
+  checkmate::assertChoice(options$mt,
+                          choices = c("NONE", "MAXT", "MINP", "RAWP", "STRAT1",
+                                      "STRAT2", "gammaMAXT"),
+                          add = assertions)
+  checkmate::assertChoice(options$a, c("CODOMINANT", "ADDITIVE", "NONE"),
+                          add = assertions)
+  checkmate::assertChoice(options$rc, c("RESIDUALS", "ONTHEFLY"),
+                          add = assertions)
+  checkmate::assertChoice(options$d, c("1D", "2D", "3D"),
+                          add = assertions)
+  checkmate::assertChoice(options$v, c("SHORT", "MEDIUM", "LONG"),
+                          add = assertions)
+  checkmate::assertChoice(options$pb, c("NONE", "NORMAL"),
+                          add = assertions)
+  checkmate::assert(checkmate::checkCharacter(options$e),
+                    checkmate::checkNull(options$e),
+                    add = assertions)
+  checkmate::assert(checkmate::checkFile(options$E),
+                    checkmate::checkNull(options$E),
+                    add = assertions)
+  checkmate::assert(checkmate::checkCharacter(options$filter),
+                    checkmate::checkNull(options$filter),
+                    add = assertions)
+  checkmate::assert(checkmate::checkFile(options$filter.file),
+                    checkmate::checkNull(options$filter.file),
+                    add = assertions)
+  checkmate::assert(checkmate::checkCharacter(options$k),
+                    checkmate::checkNull(options$k),
+                    add = assertions)
+  checkmate::assert(checkmate::checkFile(options$K),
+                    checkmate::checkNull(options$K),
+                    add = assertions)
+  checkmate::assert(checkmate::checkFile(options$s),
+                    checkmate::checkNull(options$s),
+                    add = assertions)
+  checkmate::assertChoice(options$input.format,
+                          choices = c("MDR", "MBMDR"),
+                          add = assertions)
+  checkmate::assertChoice(options$rt,
+                          choices = c("NONE", "RANK_TRANSFORM"),
+                          add = assertions)
 
 }

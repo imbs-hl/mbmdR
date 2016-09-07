@@ -17,7 +17,7 @@ NULL
 #'   The name of the package.
 .onLoad <- function(libname, pkgname, ...) {
 
-  options(mbmdr = list(exec = "mbmdr",        # Set default mbmdr executable
+  options(mbmdr = list(exec = "mbmdr",         # Set default mbmdr executable
                        n = 1000,               # Number of p-value to compute
                        p = 999,                # Permutation amount for multiple-testing
                        r = NULL,               # Random seed parameter

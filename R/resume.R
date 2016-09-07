@@ -18,7 +18,7 @@ resumeStep <- function(file.path, file, cpus) {
   reg <- BatchJobs::loadRegistry(file.path, adjust.paths = TRUE)
 
   # Reset not yet finished jobs
-  ids <- BatchJobs::resetJobs(reg, BatchJobs::findDone(reg))
+  ids <- BatchJobs::resetJobs(reg, BatchJobs::findNotDone(reg))
 
   # Submit not yet finished jobs
   if(length(ids)) {

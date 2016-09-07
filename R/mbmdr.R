@@ -341,12 +341,14 @@ mbmdr <- function(formula = NULL,
     message("Starting parallel workflow..\n")
 
     message("Creating partial topfiles on ", cpus.topfiles, " CPUs...\n")
-    if(resume) {
-      if(checkmate::testFile(file.path(work.dir, "registries", "partialTopFiles", "registry.RData"))) {
+    if(checkmate::testFile(file.path(work.dir, "registries", "partialTopFiles", "registry.RData"))) {
+      if(resume) {
         message("Resuming creation of partial topfiles on ", cpus.topfiles, " CPUs...\n")
         invisible(waitForJobs(resumeStep(file.path = file.path(work.dir, "registries", "partialTopFiles"),
                                          file = file,
                                          cpus = cpus.topfiles)))
+      } else {
+        stop("Found existing BatchJobs registry for creating partial topfiles, but resuming is disabled!")
       }
     } else {
       invisible(waitForJobs(createPartialTopFiles(file = file,
@@ -357,12 +359,14 @@ mbmdr <- function(formula = NULL,
     }
 
     message("Combining partial topfiles...\n")
-    if(resume) {
-      if(checkmate::testFile(file.path(work.dir, "registries", "combineTopFiles", "registry.RData"))) {
+    if(checkmate::testFile(file.path(work.dir, "registries", "combineTopFiles", "registry.RData"))) {
+      if(resume) {
         message("Resuming combination of partial topfiles...\n")
         invisible(waitForJobs(resumeStep(file.path = file.path(work.dir, "registries", "combineTopFiles"),
                                          file = file,
                                          cpus = 1)))
+      } else {
+        stop("Found existing BatchJobs registry for combining partial topfiles, but resuming is disabled!")
       }
     } else {
       invisible(waitForJobs(combinePartialTopFiles(file = file,
@@ -375,37 +379,41 @@ mbmdr <- function(formula = NULL,
     }
 
     message("Running permutation test on ", cpus.permutations, " CPUs...\n")
-    if(resume) {
-      if(checkmate::testFile(file.path(work.dir, "registries", "permutations", "registry.RData"))) {
+    if(checkmate::testFile(file.path(work.dir, "registries", "permutations", "registry.RData"))) {
+      if(resume) {
         message("Resuming permutations on ", cpus.permutations, " CPUs...\n")
         invisible(waitForJobs(resumeStep(file.path = file.path(work.dir, "registries", "permutations"),
                                          file = file,
                                          cpus = cpus.permutations)))
+      } else {
+        stop("Found existing BatchJobs registry for permutations, but resuming is disabled!")
       }
     } else {
-    invisible(waitForJobs(runPermutations(file = file,
-                                          trait = trait,
-                                          cpus = cpus.permutations,
-                                          topfile = topfile,
-                                          out.prefix = prefix.permutations,
-                                          work.dir = work.dir, ...)))
+      invisible(waitForJobs(runPermutations(file = file,
+                                            trait = trait,
+                                            cpus = cpus.permutations,
+                                            topfile = topfile,
+                                            out.prefix = prefix.permutations,
+                                            work.dir = work.dir, ...)))
     }
 
     message("Creating output...\n")
-    if(resume) {
-      if(checkmate::testFile(file.path(work.dir, "registries", "output", "registry.RData"))) {
+    if(checkmate::testFile(file.path(work.dir, "registries", "output", "registry.RData"))) {
+      if(resume) {
         message("Resuming creation of output...\n")
         invisible(waitForJobs(resumeStep(file.path = file.path(work.dir, "registries", "output"),
                                          file = file,
                                          cpus = 1)))
+      } else {
+        stop("Found existing BatchJobs registry for creating the output, but resuming is disabled!")
       }
     } else {
-    invisible(waitForJobs(createOutput(file = file, trait = trait,
-                                       cpus = cpus.permutations,
-                                       topfile = topfile,
-                                       out = resultfile,
-                                       perm.prefix = prefix.permutations,
-                                       work.dir = work.dir, ...)))
+      invisible(waitForJobs(createOutput(file = file, trait = trait,
+                                         cpus = cpus.permutations,
+                                         topfile = topfile,
+                                         out = resultfile,
+                                         perm.prefix = prefix.permutations,
+                                         work.dir = work.dir, ...)))
     }
 
   }

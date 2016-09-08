@@ -246,7 +246,6 @@ mbmdr <- function(formula = NULL,
     checkmate::assertFile(bj.config)
     BatchJobs::loadConfig(conffile = bj.config)
   }
-  checkmate::assertFlag(resume)
   dir.create(work.dir, recursive = TRUE)
 
   configure(exec,
@@ -274,27 +273,34 @@ mbmdr <- function(formula = NULL,
             input.format,
             transform)
 
-  if(!resume) {
-    clean(work.dir = work.dir)
-  }
+  clean(work.dir = work.dir)
 
   if(!checkmate::testNull(formula)) {
-    # write out the R object to disk
     file <- file.path(work.dir, "input.mbmdr")
-    out <- stats::model.frame(formula, data)
-    out <- as.data.frame(lapply(out, FUN = function(x) {
-      if(is.factor(x)) {
-        levels(x) <- 0:(length(levels(x))-1)
-        return(as.character(x))
-      } else {
-        return(x)
-      }
-    }))
-    readr::write_delim(x = out,
-                       path = file,
-                       delim = " ",
-                       na = "-9",
-                       append = FALSE)
+
+    if(file.exists(file.path(work.dir, "input.mbmdr"))) {
+      message("Input file already exists. Using the existing one...")
+      writeOut <- FALSE
+    } else {
+      # write out the R object to disk
+      message("Writing out the R object to MB-MDR format on disk...")
+      file <- file.path(work.dir, "input.mbmdr")
+      out <- stats::model.frame(formula, data)
+      out <- as.data.frame(lapply(out, FUN = function(x) {
+        if(is.factor(x)) {
+          levels(x) <- 0:(length(levels(x))-1)
+          return(as.character(x))
+        } else {
+          return(x)
+        }
+      }))
+      readr::write_delim(x = out,
+                         path = file,
+                         delim = " ",
+                         na = "-9",
+                         append = FALSE)
+      writeOut <- TRUE
+    }
   }
 
   # Check the number of columns
@@ -329,80 +335,60 @@ mbmdr <- function(formula = NULL,
   } else {
     message("Starting parallel workflow..\n")
 
-    message("Creating partial topfiles on ", cpus.topfiles, " CPUs...\n")
-    if(checkmate::testFile(file.path(work.dir, "registries", "partialTopFiles", "registry.RData"))) {
-      if(resume) {
-        message("Resuming creation of partial topfiles on ", cpus.topfiles, " CPUs...\n")
-        invisible(waitForJobs(resumeStep(file.path = file.path(work.dir, "registries", "partialTopFiles"),
-                                         file = file,
-                                         cpus = cpus.topfiles)))
-      } else {
-        stop("Found existing BatchJobs registry for creating partial topfiles, but resuming is disabled!")
-      }
+    if(all(file.exists(paste0(prefix.topfiles, 1:cpus.topfiles, ".txt")))) {
+      message("Found all topfiles. Skipping this step...")
+      step1new <- FALSE
     } else {
+      message("Creating partial topfiles on ", cpus.topfiles, " CPUs...\n")
       invisible(createPartialTopFiles(file = file,
-                                                  trait = trait,
-                                                  cpus = cpus.topfiles,
-                                                  out.prefix = prefix.topfiles,
-                                                  work.dir = work.dir, ...))
+                                      trait = trait,
+                                      cpus = cpus.topfiles,
+                                      out.prefix = prefix.topfiles,
+                                      work.dir = work.dir, ...))
+      step1new <- TRUE
     }
 
-    message("Combining partial topfiles...\n")
-    if(checkmate::testFile(file.path(work.dir, "registries", "combineTopFiles", "registry.RData"))) {
-      if(resume) {
-        message("Resuming combination of partial topfiles...\n")
-        invisible(resumeStep(file.path = file.path(work.dir, "registries", "combineTopFiles"),
-                                         file = file,
-                                         cpus = 1))
-      } else {
-        stop("Found existing BatchJobs registry for combining partial topfiles, but resuming is disabled!")
-      }
+    if(file.exists(topfile)) {
+      message("Found the combined topfile. Skipping this step...")
+      step2new <- FALSE
     } else {
+      message("Combining partial topfiles...\n")
       invisible(combinePartialTopFiles(file = file,
-                                                   trait = trait,
-                                                   cpus = cpus.topfiles,
-                                                   topfiles.prefix = prefix.topfiles,
-                                                   mod = modelsfile,
-                                                   out = topfile,
-                                                   work.dir = work.dir, ...))
+                                       trait = trait,
+                                       cpus = cpus.topfiles,
+                                       topfiles.prefix = prefix.topfiles,
+                                       mod = modelsfile,
+                                       out = topfile,
+                                       work.dir = work.dir, ...))
+      step2new <- TRUE
     }
 
-    message("Running permutation test on ", cpus.permutations, " CPUs...\n")
-    if(checkmate::testFile(file.path(work.dir, "registries", "permutations", "registry.RData"))) {
-      if(resume) {
-        message("Resuming permutations on ", cpus.permutations, " CPUs...\n")
-        invisible(resumeStep(file.path = file.path(work.dir, "registries", "permutations"),
-                                         file = file,
-                                         cpus = cpus.permutations))
-      } else {
-        stop("Found existing BatchJobs registry for permutations, but resuming is disabled!")
-      }
+    if(all(file.exists(paste0(prefix.permutations, 1:cpus.permutations, ".txt")))) {
+      message("Found all permutation files. Skipping this step...")
+      step3new <- FALSE
     } else {
+      message("Running permutation test on ", cpus.permutations, " CPUs...\n")
       invisible(runPermutations(file = file,
-                                            trait = trait,
-                                            cpus = cpus.permutations,
-                                            topfile = topfile,
-                                            out.prefix = prefix.permutations,
-                                            work.dir = work.dir, ...))
+                                trait = trait,
+                                cpus = cpus.permutations,
+                                topfile = topfile,
+                                out.prefix = prefix.permutations,
+                                work.dir = work.dir, ...))
+      step3new <- TRUE
     }
 
-    message("Creating output...\n")
-    if(checkmate::testFile(file.path(work.dir, "registries", "output", "registry.RData"))) {
-      if(resume) {
-        message("Resuming creation of output...\n")
-        invisible(resumeStep(file.path = file.path(work.dir, "registries", "output"),
-                                         file = file,
-                                         cpus = 1))
-      } else {
-        stop("Found existing BatchJobs registry for creating the output, but resuming is disabled!")
-      }
+    if(file.exists(resultfile)) {
+      message("Found the result file. Skipping this step...")
+      step4new <- FALSE
     } else {
+      message("Creating output...\n")
       invisible(createOutput(file = file, trait = trait,
-                                         cpus = cpus.permutations,
-                                         topfile = topfile,
-                                         out = resultfile,
-                                         perm.prefix = prefix.permutations,
-                                         work.dir = work.dir, ...))
+                             cpus = cpus.permutations,
+                             topfile = topfile,
+                             out = resultfile,
+                             perm.prefix = prefix.permutations,
+                             work.dir = work.dir, ...))
+      step4new <- TRUE
     }
 
   }

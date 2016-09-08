@@ -131,15 +131,6 @@
 #'   Location of the configuration file to load.
 #'   Default is ".BatchJobs.conf" in the current working directory.
 #'
-#' @param cutting_value = "-a" [\code{double"-a", "-b" or numeric}]\cr
-#'   Defines the rule, which HLO-tables should be read in at the end of mbmdr.
-#'   "-a" means: all with at least one significant value
-#'   "-b" means: all with at least one "H" and one "L" and p < .05
-#'   numeric: all with p-value below the given number ("=" excluded)
-#'
-#' @param resume [\code{flag}]\cr
-#'   Should previous found steps of a parallel workflow resumed?
-#'
 #' @param ... [\code{any}]\cr
 #'   Additional parameter passed to and from other methods.
 #'
@@ -165,33 +156,33 @@ mbmdr <- function(formula = NULL,
                                               "topfiles",
                                               paste(ifelse(is.null(file),
                                                            "input",
-                                                           basename(file_path_sans_ext(file))),
+                                                           basename(tools::file_path_sans_ext(file))),
                                                     "top", sep = "_")),
                   topfile = file.path(work.dir,
                                       paste(ifelse(is.null(file),
                                                    "input",
-                                                   basename(file_path_sans_ext(file))),
+                                                   basename(tools::file_path_sans_ext(file))),
                                             "topfile", sep = ".")),
                   prefix.permutations = file.path(work.dir,
                                                   "permutations",
                                                   paste(ifelse(is.null(file),
                                                                "input",
-                                                               basename(file_path_sans_ext(file))),
+                                                               basename(tools::file_path_sans_ext(file))),
                                                         "perm", sep = "_")),
                   resultfile = file.path(work.dir,
                                          paste(ifelse(is.null(file),
                                                       "input",
-                                                      basename(file_path_sans_ext(file))),
+                                                      basename(tools::file_path_sans_ext(file))),
                                                "result", sep = ".")),
                   logfile = file.path(work.dir,
                                       paste(ifelse(is.null(file),
                                                    "input",
-                                                   basename(file_path_sans_ext(file))),
+                                                   basename(tools::file_path_sans_ext(file))),
                                             "log", sep = ".")),
                   modelsfile = file.path(work.dir,
                                          paste(ifelse(is.null(file),
                                                       "input",
-                                                      basename(file_path_sans_ext(file))),
+                                                      basename(tools::file_path_sans_ext(file))),
                                                "models", sep = ".")),
                   exec = "mbmdr",
                   n.pvalues = 1000,
@@ -217,9 +208,7 @@ mbmdr <- function(formula = NULL,
                   replicate.file = NULL,
                   input.format = "MBMDR",
                   transform = "NONE",
-                  bj.config = NULL,
-                  cutting_value = "-a",
-                  resume = FALSE, ...) {
+                  bj.config = NULL, ...) {
 
   tryCatch(BBmisc::suppressAll(system(exec, intern = TRUE)))
 
@@ -292,7 +281,7 @@ mbmdr <- function(formula = NULL,
   if(!checkmate::testNull(formula)) {
     # write out the R object to disk
     file <- file.path(work.dir, "input.mbmdr")
-    out <- model.frame(formula, data)
+    out <- stats::model.frame(formula, data)
     out <- as.data.frame(lapply(out, FUN = function(x) {
       if(is.factor(x)) {
         levels(x) <- 0:(length(levels(x))-1)
@@ -351,69 +340,69 @@ mbmdr <- function(formula = NULL,
         stop("Found existing BatchJobs registry for creating partial topfiles, but resuming is disabled!")
       }
     } else {
-      invisible(waitForJobs(createPartialTopFiles(file = file,
+      invisible(createPartialTopFiles(file = file,
                                                   trait = trait,
                                                   cpus = cpus.topfiles,
                                                   out.prefix = prefix.topfiles,
-                                                  work.dir = work.dir, ...)))
+                                                  work.dir = work.dir, ...))
     }
 
     message("Combining partial topfiles...\n")
     if(checkmate::testFile(file.path(work.dir, "registries", "combineTopFiles", "registry.RData"))) {
       if(resume) {
         message("Resuming combination of partial topfiles...\n")
-        invisible(waitForJobs(resumeStep(file.path = file.path(work.dir, "registries", "combineTopFiles"),
+        invisible(resumeStep(file.path = file.path(work.dir, "registries", "combineTopFiles"),
                                          file = file,
-                                         cpus = 1)))
+                                         cpus = 1))
       } else {
         stop("Found existing BatchJobs registry for combining partial topfiles, but resuming is disabled!")
       }
     } else {
-      invisible(waitForJobs(combinePartialTopFiles(file = file,
+      invisible(combinePartialTopFiles(file = file,
                                                    trait = trait,
                                                    cpus = cpus.topfiles,
                                                    topfiles.prefix = prefix.topfiles,
                                                    mod = modelsfile,
                                                    out = topfile,
-                                                   work.dir = work.dir, ...)))
+                                                   work.dir = work.dir, ...))
     }
 
     message("Running permutation test on ", cpus.permutations, " CPUs...\n")
     if(checkmate::testFile(file.path(work.dir, "registries", "permutations", "registry.RData"))) {
       if(resume) {
         message("Resuming permutations on ", cpus.permutations, " CPUs...\n")
-        invisible(waitForJobs(resumeStep(file.path = file.path(work.dir, "registries", "permutations"),
+        invisible(resumeStep(file.path = file.path(work.dir, "registries", "permutations"),
                                          file = file,
-                                         cpus = cpus.permutations)))
+                                         cpus = cpus.permutations))
       } else {
         stop("Found existing BatchJobs registry for permutations, but resuming is disabled!")
       }
     } else {
-      invisible(waitForJobs(runPermutations(file = file,
+      invisible(runPermutations(file = file,
                                             trait = trait,
                                             cpus = cpus.permutations,
                                             topfile = topfile,
                                             out.prefix = prefix.permutations,
-                                            work.dir = work.dir, ...)))
+                                            work.dir = work.dir, ...))
     }
 
     message("Creating output...\n")
     if(checkmate::testFile(file.path(work.dir, "registries", "output", "registry.RData"))) {
       if(resume) {
         message("Resuming creation of output...\n")
-        invisible(waitForJobs(resumeStep(file.path = file.path(work.dir, "registries", "output"),
+        invisible(resumeStep(file.path = file.path(work.dir, "registries", "output"),
                                          file = file,
-                                         cpus = 1)))
+                                         cpus = 1))
       } else {
         stop("Found existing BatchJobs registry for creating the output, but resuming is disabled!")
       }
     } else {
-      invisible(waitForJobs(createOutput(file = file, trait = trait,
+      invisible(createOutput(file = file, trait = trait,
                                          cpus = cpus.permutations,
                                          topfile = topfile,
                                          out = resultfile,
                                          perm.prefix = prefix.permutations,
-                                         work.dir = work.dir, ...)))
+                                         work.dir = work.dir, ...))
     }
 
   }

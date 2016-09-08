@@ -8,7 +8,7 @@ configure(exec = "mbmdr", n.pvalues = 1000, permutations = 999,
   random.seed = NULL, group.size = 10, num.traits = 1,
   current.trait = 1, num.covariates = 0, alpha = 0.1,
   multi.test.corr = "gammaMAXT", adjustment = "CODOMINANT",
-  cov.adjustment = "RESIDUALS", dim = "2D", verbose = "NONE",
+  cov.adjustment = "RESIDUALS", dim = "2D", verbose = "SHORT",
   progressbar = "NORMAL", erase = NULL, erase.file = NULL,
   filter = NULL, filter.file = NULL, keep = NULL, keep.file = NULL,
   replicate.file = NULL, input.format = "MBMDR", transform = "NONE")

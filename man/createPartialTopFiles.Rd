@@ -4,8 +4,7 @@
 \alias{createPartialTopFiles}
 \title{Create partial top files}
 \usage{
-createPartialTopFiles(file, trait, cpus, reg.id = "partialTopFiles",
-  work.dir = getwd(), reg.dir = file.path(work.dir, "registries", reg.id),
+createPartialTopFiles(file, trait, cpus, work.dir = getwd(),
   out.prefix = file.path(work.dir, "topfiles",
   paste(basename(file_path_sans_ext(file)), "top", sep = "_")), skip = TRUE)
 }
@@ -19,14 +18,8 @@ Type of trait. "binary", "continuous" or "survival".}
 \item{cpus}{[\code{integer}]\cr
 Total amount of CPUs to be used.}
 
-\item{reg.id}{[\code{string}]\cr
-Name for the \link{BatchJobs} \link{Registry}. Defaults to "partialTopFiles".}
-
 \item{work.dir}{[\code{string}]\cr
 Working directory for MB-MDR. Defaults to current working directory.}
-
-\item{reg.dir}{[\code{string}]\cr
-Path for saving the \link{BatchJobs} \link{Registry}. Defaults to <\code{work.dir}>/registries/<\code{reg.id}>.}
 
 \item{out.prefix}{[\code{string}]\cr
 Path for saving the partial topfiles. Defaults to <\code{work.dir}>/topfiles/<\code{file}>_top.}

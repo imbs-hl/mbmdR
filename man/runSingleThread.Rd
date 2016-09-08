@@ -9,8 +9,7 @@ runSingleThread(file, trait, out = file.path(work.dir,
   log = file.path(work.dir, paste(basename(file_path_sans_ext(file)), "log",
   sep = ".")), mod = file.path(work.dir,
   paste(basename(file_path_sans_ext(file)), "models", sep = ".")),
-  reg.id = "singleThread", work.dir = getwd(),
-  reg.dir = file.path(work.dir, "registries", reg.id), skip = TRUE)
+  work.dir = getwd())
 }
 \arguments{
 \item{file}{[\code{string}]\cr
@@ -28,17 +27,8 @@ Sets the log file name. Defaults to <\code{work.dir}>/<\code{file}>.log.}
 \item{mod}{[\code{string}]\cr
 Sets the models file name. Defaults to <\code{work.dir}>/<\code{file}>.models.}
 
-\item{reg.id}{[\code{string}]\cr
-Name for the \link{BatchJobs} \link{Registry}. Defaults to "singleThread".}
-
 \item{work.dir}{[\code{string}]\cr
 Working directory for MB-MDR. Defaults to current working directory.}
-
-\item{reg.dir}{[\code{string}]\cr
-Path for saving the \link{BatchJobs} \link{Registry}. Defaults to <\code{work.dir}>/registries/<\code{reg.id}>.}
-
-\item{skip}{[\code{logical}]\cr
-Skip creation of a new registry if a registry is found in file.dir. Defaults to TRUE.}
 }
 \value{
 \link{BatchJobs} \link{Registry} object.

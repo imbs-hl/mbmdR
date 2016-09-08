@@ -12,20 +12,11 @@
 #' @param cpus [\code{integer}]\cr
 #'   Total amount of CPUs to be used.
 #'
-#' @param reg.id [\code{string}]\cr
-#'   Name for the \link{BatchJobs} \link{Registry}. Defaults to "partialTopFiles".
-#'
 #' @param work.dir [\code{string}]\cr
 #'   Working directory for MB-MDR. Defaults to current working directory.
 #'
-#' @param reg.dir [\code{string}]\cr
-#'   Path for saving the \link{BatchJobs} \link{Registry}. Defaults to <\code{work.dir}>/registries/<\code{reg.id}>.
-#'
 #' @param out.prefix [\code{string}]\cr
 #'   Path for saving the partial topfiles. Defaults to <\code{work.dir}>/topfiles/<\code{file}>_top.
-#'
-#' @param skip [\code{logical}]\cr
-#'   Skip creation of a new registry if a registry is found in file.dir. Defaults to TRUE.
 #'
 #' @return BatchJobs registry object.
 #'
@@ -33,58 +24,31 @@
 createPartialTopFiles <- function(file,
                                   trait,
                                   cpus,
-                                  reg.id = "partialTopFiles",
                                   work.dir = getwd(),
-                                  reg.dir = file.path(work.dir, "registries", reg.id),
                                   out.prefix = file.path(work.dir,
                                                          "topfiles",
                                                          paste(basename(file_path_sans_ext(file)),
-                                                               "top", sep = "_")),
-                                  skip = TRUE) {
+                                                               "top", sep = "_"))) {
 
-  assertFile(file)
-  assertChoice(trait, c("binary", "continuous", "survival"))
-  assertNumber(cpus)
-  assertString(reg.id)
-  assertDirectory(work.dir)
-  if(!testDirectory(reg.dir)) {
-    warning(paste(checkDirectory(reg.dir), "will be created!", sep = ", "))
-    dir.create(reg.dir, recursive = TRUE)
-  }
-  assertDirectory(reg.dir)
-  if(!testDirectory(dirname(out.prefix))) {
-    warning(paste(checkDirectory(dirname(out.prefix)), "will be created!", sep = ", "))
+  checkmate::assertFile(file)
+  checkmate::assertChoice(trait, c("binary", "continuous", "survival"))
+  checkmate::assertNumber(cpus)
+  checkmate::assertDirectory(work.dir)
+  if(!checkmate::testDirectory(dirname(out.prefix))) {
+    warning(paste(checkmate::checkDirectory(dirname(out.prefix)), "will be created!", sep = ", "))
     dir.create(dirname(out.prefix), recursive = TRUE)
   }
-  assertDirectory(dirname(out.prefix))
-  assertLogical(skip)
+  checkmate::assertDirectory(dirname(out.prefix))
 
-  options <- getOption("mbmdr")
+  sysOut <- parallelMap::parallelMap(gammastep1,
+                                     id = 1:cpus,
+                                     more.args = list(file = file,
+                                                                    trait = trait,
+                                                                    cpus = cpus,
+                                                                    ti = out.prefix,
+                                                                    options = getOption("mbmdr")))
 
-  reg <- makeRegistry(reg.id,
-                      file.dir = reg.dir,
-                      work.dir = work.dir,
-                      skip = skip,
-                      seed = options$r,
-                      packages = c('mbmdR'))
-
-  ids <- 1:cpus
-
-  jobs <- batchMap(reg, gammastep1,
-                   ids, more.args = list(file = file,
-                                         trait = trait,
-                                         cpus = cpus,
-                                         ti = out.prefix,
-                                         options = getOption("mbmdr")))
-
-  submitJobs(reg, chunk(jobs, chunk.size = cpus),
-             chunks.as.arrayjobs = getConfig()$ssh,
-             resources = list(nodes = 1,
-                              ppn = 1,
-                              mem = paste0(1+ceiling(2*file.size(file)/1024^3), "g")),
-             job.delay = TRUE)
-
-  return(reg)
+  return(sysOut)
 
 }
 
@@ -102,14 +66,8 @@ createPartialTopFiles <- function(file,
 #' @param cpus [\code{integer}]\cr
 #'   Sets the total amount of CPUs used in \link{createPartialTopFiles}.
 #'
-#' @param reg.id [\code{string}]\cr
-#'   Name for the \link{BatchJobs} \link{Registry}. Defaults to "combineTopFiles".
-#'
 #' @param work.dir [\code{string}]\cr
 #'   Working directory for MB-MDR. Defaults to current working directory.
-#'
-#' @param reg.dir [\code{string}]\cr
-#'   Path for saving the \link{BatchJobs} \link{Registry}. Defaults to <\code{work.dir}>/registries/<\code{reg.id}>.
 #'
 #' @param topfiles.prefix [\code{string}]\cr
 #'   Path of partial topfiles. Defaults to <\code{work.dir}>/topfiles/<\code{file}>_top.
@@ -120,18 +78,13 @@ createPartialTopFiles <- function(file,
 #' @param mod [\code{string}]\cr
 #'   Path for saving the models file. Defaults to <\code{work.dir}>/<\code{file}>.models.
 #'
-#' @param skip [\code{logical}]\cr
-#'   Skip creation of a new registry if a registry is found in file.dir. Defaults to TRUE.
-#'
 #' @return BatchJobs registry object.
 #'
 #' @export
 combinePartialTopFiles <- function(file,
                                    trait,
                                    cpus,
-                                   reg.id = "combineTopFiles",
                                    work.dir = getwd(),
-                                   reg.dir = file.path(work.dir, "registries", reg.id),
                                    topfiles.prefix = file.path(work.dir,
                                                                "topfiles",
                                                                paste(basename(file_path_sans_ext(file)),
@@ -141,54 +94,31 @@ combinePartialTopFiles <- function(file,
                                                          "topfile", sep = ".")),
                                    mod = file.path(work.dir,
                                                    paste(basename(file_path_sans_ext(file)),
-                                                         "models", sep = ".")),
-                                   skip = TRUE) {
+                                                         "models", sep = "."))) {
 
-  assertFile(file)
-  assertChoice(trait, c("binary", "continuous", "survival"))
-  assertInt(cpus)
-  assertString(reg.id)
-  assertDirectory(work.dir)
-  if(!testDirectory(reg.dir)) {
-    warning(paste(checkDirectory(reg.dir), "will be created!", sep = ", "))
-    dir.create(reg.dir, recursive = TRUE)
-  }
-  assertDirectory(reg.dir)
-  if(!testDirectory(dirname(out))) {
-    warning(paste(checkDirectory(dirname(out)), "will be created!", sep = ", "))
+  checkmate::assertFile(file)
+  checkmate::assertChoice(trait, c("binary", "continuous", "survival"))
+  checkmate::assertInt(cpus)
+  checkmate::assertDirectory(work.dir)
+  if(!checkmate::testDirectory(dirname(out))) {
+    warning(paste(checkmate::checkDirectory(dirname(out)), "will be created!", sep = ", "))
     dir.create(dirname(out), recursive = TRUE)
   }
-  assertDirectory(dirname(topfiles.prefix))
-  assertFile(paste0(topfiles.prefix, 1:cpus, ".txt"))
-  assertDirectory(dirname(out))
-  assertDirectory(dirname(mod))
-  assertLogical(skip)
+  checkmate::assertDirectory(dirname(topfiles.prefix))
+  checkmate::assertFile(paste0(topfiles.prefix, 1:cpus, ".txt"))
+  checkmate::assertDirectory(dirname(out))
+  checkmate::assertDirectory(dirname(mod))
 
-  options <- getOption("mbmdr")
+  sysOut <- parallelMap::parallelMap(gammastep2,
+                                     file,
+                                     more.args = list(trait = trait,
+                                                      cpus = cpus,
+                                                      ti = topfiles.prefix,
+                                                      t = out,
+                                                      o2 = mod,
+                                                      options = getOption("mbmdr")))
 
-  reg <- makeRegistry(reg.id,
-                      file.dir = reg.dir,
-                      work.dir = work.dir,
-                      skip = skip,
-                      seed = options$r,
-                      packages = c('mbmdR'))
-
-  jobs <- batchMap(reg, gammastep2,
-                   file, more.args = list(trait = trait,
-                                          cpus = cpus,
-                                          ti = topfiles.prefix,
-                                          t = out,
-                                          o2 = mod,
-                                          options = getOption("mbmdr")))
-
-  submitJobs(reg, chunk(jobs, chunk.size = 1),
-             chunks.as.arrayjobs = getConfig()$ssh,
-             resources = list(nodes = 1,
-                              ppn = 1,
-                              mem = paste0(1+ceiling(2*file.size(file)/1024^3), "g")),
-             job.delay = TRUE)
-
-  return(reg)
+  return(sysOut)
 
 }
 
@@ -233,8 +163,6 @@ gammastep1 <- function(file, trait, id, cpus, ti, options) {
                    ""),
             "-pb", options$pb,
             file)
-
-  print(paste(options$exec, paste(args, collapse = " ")))
 
   BBmisc::system3(command = options$exec,
                   args = args,
@@ -287,8 +215,6 @@ gammastep2 <- function(file, trait, cpus, ti, t, o2, options) {
                       ""),
                "-pb", options$pb,
                file)
-
-  print(paste(options$exec, paste(args, collapse = " ")))
 
   BBmisc::system3(command = options$exec,
                   args = args,

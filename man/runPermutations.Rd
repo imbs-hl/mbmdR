@@ -4,8 +4,7 @@
 \alias{runPermutations}
 \title{Create permutation files}
 \usage{
-runPermutations(file, trait, cpus, reg.id = "permutations",
-  work.dir = getwd(), reg.dir = file.path(work.dir, "registries", reg.id),
+runPermutations(file, trait, cpus, work.dir = getwd(),
   topfile = file.path(work.dir, paste(basename(file_path_sans_ext(file)),
   "topfile", sep = ".")), out.prefix = file.path(work.dir, "permutations",
   paste(basename(file_path_sans_ext(file)), "perm", sep = "_")), skip = TRUE)
@@ -20,14 +19,8 @@ Type of trait. "binary", "continuous" or "survival".}
 \item{cpus}{[\code{integer}]\cr
 Sets the total amount of CPUs to be used.}
 
-\item{reg.id}{[\code{string}]\cr
-Name for the \link{BatchJobs} \link{Registry}. Defaults to "permutations".}
-
 \item{work.dir}{[\code{string}]\cr
 Working directory for MB-MDR. Defaults to current working directory.}
-
-\item{reg.dir}{[\code{string}]\cr
-Path for saving the \link{BatchJobs} \link{Registry}. Defaults to <\code{work.dir}>/registries/<\code{reg.id}>.}
 
 \item{topfile}{[\code{string}]\cr
 Path of topfile. Defaults to <\code{work.dir}>/<\code{file}>.topfile.}

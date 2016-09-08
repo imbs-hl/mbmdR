@@ -4,8 +4,7 @@
 \alias{combinePartialTopFiles}
 \title{Combine partial top files}
 \usage{
-combinePartialTopFiles(file, trait, cpus, reg.id = "combineTopFiles",
-  work.dir = getwd(), reg.dir = file.path(work.dir, "registries", reg.id),
+combinePartialTopFiles(file, trait, cpus, work.dir = getwd(),
   topfiles.prefix = file.path(work.dir, "topfiles",
   paste(basename(file_path_sans_ext(file)), "top", sep = "_")),
   out = file.path(work.dir, paste(basename(file_path_sans_ext(file)),
@@ -23,14 +22,8 @@ Type of trait. "binary", "continuous" or "survival".}
 \item{cpus}{[\code{integer}]\cr
 Sets the total amount of CPUs used in \link{createPartialTopFiles}.}
 
-\item{reg.id}{[\code{string}]\cr
-Name for the \link{BatchJobs} \link{Registry}. Defaults to "combineTopFiles".}
-
 \item{work.dir}{[\code{string}]\cr
 Working directory for MB-MDR. Defaults to current working directory.}
-
-\item{reg.dir}{[\code{string}]\cr
-Path for saving the \link{BatchJobs} \link{Registry}. Defaults to <\code{work.dir}>/registries/<\code{reg.id}>.}
 
 \item{topfiles.prefix}{[\code{string}]\cr
 Path of partial topfiles. Defaults to <\code{work.dir}>/topfiles/<\code{file}>_top.}

@@ -127,10 +127,6 @@
 #'   Rank transformation (continuous trait only).
 #'   "RANK_TRANSFORM" or "NONE" (default)
 #'
-#' @param bj.config [\code{string}]\cr
-#'   Location of the configuration file to load.
-#'   Default is ".BatchJobs.conf" in the current working directory.
-#'
 #' @param ... [\code{any}]\cr
 #'   Additional parameter passed to and from other methods.
 #'
@@ -207,8 +203,7 @@ mbmdr <- function(formula = NULL,
                   keep.file = NULL,
                   replicate.file = NULL,
                   input.format = "MBMDR",
-                  transform = "NONE",
-                  bj.config = NULL, ...) {
+                  transform = "NONE", ...) {
 
   tryCatch(BBmisc::suppressAll(system(exec, intern = TRUE)))
 
@@ -241,10 +236,6 @@ mbmdr <- function(formula = NULL,
     replicate <- TRUE
   } else {
     replicate <- FALSE
-  }
-  if(!checkmate::testNull(bj.config)) {
-    checkmate::assertFile(bj.config)
-    BatchJobs::loadConfig(conffile = bj.config)
   }
   dir.create(work.dir, recursive = TRUE)
 

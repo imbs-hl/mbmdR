@@ -27,8 +27,7 @@ mbmdr(formula = NULL, data = NULL, file = NULL, trait, cpus.topfiles,
   cov.adjustment = "RESIDUALS", dim = "2D", verbose = "MEDIUM",
   progressbar = "NORMAL", erase = NULL, erase.file = NULL,
   filter = NULL, filter.file = NULL, keep = NULL, keep.file = NULL,
-  replicate.file = NULL, input.format = "MBMDR", transform = "NONE",
-  bj.config = NULL, cutting_value = "-a", resume = FALSE, ...)
+  replicate.file = NULL, input.format = "MBMDR", transform = "NONE", ...)
 }
 \arguments{
 \item{formula}{[\code{formula}]\cr
@@ -154,19 +153,6 @@ Input file format. "MDR" or "MBMDR" (default).}
 \item{transform}{[\code{string}]\cr
 Rank transformation (continuous trait only).
 "RANK_TRANSFORM" or "NONE" (default)}
-
-\item{bj.config}{[\code{string}]\cr
-Location of the configuration file to load.
-Default is ".BatchJobs.conf" in the current working directory.}
-
-\item{cutting_value}{= "-a" [\code{double"-a", "-b" or numeric}]\cr
-Defines the rule, which HLO-tables should be read in at the end of mbmdr.
-"-a" means: all with at least one significant value
-"-b" means: all with at least one "H" and one "L" and p < .05
-numeric: all with p-value below the given number ("=" excluded)}
-
-\item{resume}{[\code{flag}]\cr
-Should previous found steps of a parallel workflow resumed?}
 
 \item{...}{[\code{any}]\cr
 Additional parameter passed to and from other methods.}

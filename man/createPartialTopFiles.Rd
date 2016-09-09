@@ -6,7 +6,7 @@
 \usage{
 createPartialTopFiles(file, trait, cpus, work.dir = getwd(),
   out.prefix = file.path(work.dir, "topfiles",
-  paste(basename(file_path_sans_ext(file)), "top", sep = "_")), skip = TRUE)
+  paste(basename(file_path_sans_ext(file)), "top", sep = "_")))
 }
 \arguments{
 \item{file}{[\code{string}]\cr
@@ -23,9 +23,6 @@ Working directory for MB-MDR. Defaults to current working directory.}
 
 \item{out.prefix}{[\code{string}]\cr
 Path for saving the partial topfiles. Defaults to <\code{work.dir}>/topfiles/<\code{file}>_top.}
-
-\item{skip}{[\code{logical}]\cr
-Skip creation of a new registry if a registry is found in file.dir. Defaults to TRUE.}
 }
 \value{
 BatchJobs registry object.

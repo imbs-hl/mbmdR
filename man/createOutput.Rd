@@ -9,7 +9,7 @@ createOutput(file, trait, cpus, work.dir = getwd(),
   "topfile", sep = ".")), perm.prefix = file.path(work.dir, "permutations",
   paste(basename(file_path_sans_ext(file)), "perm", sep = "_")),
   out = file.path(work.dir, paste(basename(file_path_sans_ext(file)),
-  "result", sep = ".")), skip = TRUE)
+  "result", sep = ".")))
 }
 \arguments{
 \item{file}{[\code{string}]\cr
@@ -32,9 +32,6 @@ Path of the permutation files. Defaults to <\code{work.dir}>/permutations/<\code
 
 \item{out}{[\code{string}]\cr
 Sets the output file name. Defaults to <\code{work.dir}>/<\code{file}>.result.}
-
-\item{skip}{[\code{logical}]\cr
-Skip creation of a new registry if a registry is found in file.dir. Defaults to TRUE.}
 }
 \value{
 BatchJobs registry object.

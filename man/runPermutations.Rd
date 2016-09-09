@@ -7,7 +7,7 @@
 runPermutations(file, trait, cpus, work.dir = getwd(),
   topfile = file.path(work.dir, paste(basename(file_path_sans_ext(file)),
   "topfile", sep = ".")), out.prefix = file.path(work.dir, "permutations",
-  paste(basename(file_path_sans_ext(file)), "perm", sep = "_")), skip = TRUE)
+  paste(basename(file_path_sans_ext(file)), "perm", sep = "_")))
 }
 \arguments{
 \item{file}{[\code{string}]\cr
@@ -27,9 +27,6 @@ Path of topfile. Defaults to <\code{work.dir}>/<\code{file}>.topfile.}
 
 \item{out.prefix}{[\code{string}]\cr
 Path for saving the permutation files. Defaults to <\code{work.dir}>/permutations/<\code{file}>_perm.}
-
-\item{skip}{[\code{logical}]\cr
-Skip creation of a new registry if a registry is found in file.dir. Defaults to TRUE.}
 }
 \value{
 BatchJobs registry object.

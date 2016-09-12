@@ -41,7 +41,7 @@ createPartialTopFiles <- function(file,
   checkmate::assertDirectory(dirname(out.prefix))
 
   sysOut <- parallelMap::parallelMap(gammastep1,
-                                     id = 1:cpus,
+                                     id = 1:cpus, level = "mbmdR.parallelSteps",
                                      more.args = list(file = file,
                                                                     trait = trait,
                                                                     cpus = cpus,

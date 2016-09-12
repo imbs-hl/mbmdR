@@ -53,7 +53,7 @@ runPermutations <- function(file,
 
   sysOut <- parallelMap::parallelMap(gammastep3,
                                      p = p,
-                                     i = 1:cpus,
+                                     i = 1:cpus, level = "mbmdR.parallelSteps",
                                      more.args = list(file = file,
                                                       trait = trait,
                                                       t = topfile,

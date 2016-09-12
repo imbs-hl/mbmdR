@@ -38,3 +38,17 @@ NULL
   )
 
 }
+
+#' Register parallelMap levels
+#'
+#' @param libname [character string]\cr
+#'   The library directory where the package defining the namespace was found.
+#' @param pkgname [character string]\cr
+#'   The name of the package.
+#'
+#' @return
+#'
+#' @examples
+.onAttach = function(libname, pkgname) {
+  parallelMap::parallelRegisterLevels(package = pkgname, levels = c("parallelSteps"))
+}

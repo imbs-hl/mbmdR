@@ -264,7 +264,7 @@ mbmdr <- function(formula = NULL,
             input.format,
             transform)
 
-  clean(work.dir = work.dir)
+  #clean(work.dir = work.dir)
 
   if(!checkmate::testNull(formula)) {
     file <- file.path(work.dir, "input.mbmdr")
@@ -278,6 +278,7 @@ mbmdr <- function(formula = NULL,
       file <- file.path(work.dir, "input.mbmdr")
       out <- stats::model.frame(formula, data)
       out <- as.data.frame(lapply(out, FUN = function(x) {
+        x <- factor(x)
         if(is.factor(x)) {
           levels(x) <- 0:(length(levels(x))-1)
           return(as.character(x))
@@ -312,16 +313,21 @@ mbmdr <- function(formula = NULL,
     ncols <- ncol(data.table::fread(input = file, nrows = 1, header = FALSE))
   }
 
-  if(ncols < 1000 | (cpus.topfiles==1 & cpus.permutations==1) | multi.test.corr != "gammaMAXT" | replicate) {
+  options <- getOption("mbmdr")
+
+  if(ncols < 1000 |
+     (cpus.topfiles==1 & cpus.permutations==1) |
+     options$mt != "gammaMAXT" |
+     replicate) {
 
     message("Running the analysis as a single thread...\n")
 
-    invisible(waitForJobs(runSingleThread(file = file,
+    invisible(runSingleThread(file = file,
                                           trait = trait,
                                           out = resultfile,
                                           log = logfile,
                                           mod = modelsfile,
-                                          work.dir = work.dir, ...)))
+                                          work.dir = work.dir, ...))
 
   } else {
     message("Starting parallel workflow..\n")
@@ -385,7 +391,11 @@ mbmdr <- function(formula = NULL,
   }
 
   res <- data.table::fread(resultfile)
-  data.table::setnames(res, c("Marker1", "Marker2", "TestStat", "pValue"))
+  switch (options$d,
+    "1D" = data.table::setnames(res, c("Marker1", "TestStat", "pValue")),
+    "2D" = data.table::setnames(res, c("Marker1", "Marker2", "TestStat", "pValue")),
+    "3D" = data.table::setnames(res, c("Marker1", "Marker2", "Marker3", "TestStat", "pValue"))
+  )
 
   return(res)
 }

@@ -38,6 +38,14 @@ check.options <- function(options = getOption("mbmdr")) {
                           add = assertions)
   checkmate::assertChoice(options$d, c("1D", "2D", "3D"),
                           add = assertions)
+  if(options$d == "1D" & options$mt == "gammaMAXT") {
+    warning("Requested 1D analysis with 'gamamMAXT' correction algorithm. This is not possible. Falling back to 'MAXT' correction algorithm.")
+    options$mt <- "MAXT"
+  }
+  if(options$a != "NONE" & options$d == "1D") {
+    warning("Requested 1D analysis with '", options$a, "' adjustment. This is not possible. Setting adjustment to 'NONE'.")
+    options$a <- "NONE"
+  }
   checkmate::assertChoice(options$v, c("SHORT", "MEDIUM", "LONG"),
                           add = assertions)
   checkmate::assertChoice(options$pb, c("NONE", "NORMAL"),
@@ -69,5 +77,11 @@ check.options <- function(options = getOption("mbmdr")) {
   checkmate::assertChoice(options$rt,
                           choices = c("NONE", "RANK_TRANSFORM"),
                           add = assertions)
+
+  checkmate::reportAssertions(assertions)
+
+  options(mbmdr = options)
+
+  invisible(TRUE)
 
 }

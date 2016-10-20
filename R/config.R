@@ -142,10 +142,8 @@ configure <- function(exec = "mbmdr",
                 input.format = input.format, # Input format
                 rt = transform)              # Rank transformation
 
-  check.options(mbmdr)
-
-  options(mbmdr = mbmdr)
-
-  invisible(TRUE)
+  if(check.options(mbmdr)) {
+    invisible(TRUE)
+  }
 
 }

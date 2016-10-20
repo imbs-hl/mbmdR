@@ -305,7 +305,7 @@ mbmdr <- function(formula = NULL,
   if(awk) {
     # awk is available on the OS
     ncols <- as.numeric(BBmisc::system3(command = "awk",
-                                        args = c("-F' '", "'{print NF; exit}'", file),
+                                        args = c("-F' '", "'{print NF; exit}'", shQuote(file)),
                                         stdout = TRUE,
                                         stderr = TRUE)$output)
   } else {

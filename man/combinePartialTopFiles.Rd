@@ -6,10 +6,10 @@
 \usage{
 combinePartialTopFiles(file, trait, cpus, work.dir = getwd(),
   topfiles.prefix = file.path(work.dir, "topfiles",
-  paste(basename(file_path_sans_ext(file)), "top", sep = "_")),
-  out = file.path(work.dir, paste(basename(file_path_sans_ext(file)),
+  paste(basename(tools::file_path_sans_ext(file)), "top", sep = "_")),
+  out = file.path(work.dir, paste(basename(tools::file_path_sans_ext(file)),
   "topfile", sep = ".")), mod = file.path(work.dir,
-  paste(basename(file_path_sans_ext(file)), "models", sep = ".")))
+  paste(basename(tools::file_path_sans_ext(file)), "models", sep = ".")))
 }
 \arguments{
 \item{file}{[\code{string}]\cr

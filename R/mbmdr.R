@@ -296,22 +296,22 @@ mbmdr <- function(formula = NULL,
   }
 
   # Check the number of columns
-  awk <- tryCatch({
-    BBmisc::suppressAll(system("awk -V", intern = TRUE))
-    TRUE},
-    error = function(e) {
-      FALSE
-    })
-  if(awk) {
-    # awk is available on the OS
-    ncols <- as.numeric(BBmisc::system3(command = "awk",
-                                        args = c("-F' '", "'{print NF; exit}'", shQuote(file)),
-                                        stdout = TRUE,
-                                        stderr = TRUE)$output)
-  } else {
-    # awk is not availabe on the OS, fall back to data.table's fread
-    ncols <- ncol(data.table::fread(input = file, nrows = 1, header = FALSE))
-  }
+  ncols <- tryCatch({
+    sysOut <- (system2(command = "awk",
+                      args = c("-F' '", "'{print NF; exit}'", shQuote(file)),
+                      stdout = TRUE,
+                      stderr = TRUE))
+
+    if(!is.null(attr(sysOut, "status"))) {
+      stop(sysOut)
+    } else {
+      as.integer(sysOut)
+    }
+
+  }, error = function(e) {
+    message("Command line program 'awk' not found or failed. Using R code as fallback.")
+    ncol(data.table::fread(input = file, nrows = 1, header = FALSE))
+  })
 
   options <- getOption("mbmdr")
 

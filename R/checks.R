@@ -48,6 +48,9 @@ check.options <- function(options = getOption("mbmdr")) {
   }
   checkmate::assertChoice(options$v, c("SHORT", "MEDIUM", "LONG"),
                           add = assertions)
+  if(options$d != "1D" & options$v == "LONG") {
+    warning("Requested non-2D analysis with '", options$v, "' verbose. This is not possible. Setting verbose level to 'MEDIUM'.")
+  }
   checkmate::assertChoice(options$pb, c("NONE", "NORMAL"),
                           add = assertions)
   checkmate::assert(checkmate::checkCharacter(options$e),

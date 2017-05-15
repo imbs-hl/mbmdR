@@ -135,8 +135,6 @@ singleThread <- function(file, trait, o, log, mod, options) {
                 file,
                 " > ", log)
 
-  print(paste(options$exec, paste(args, collapse = " ")))
-
   BBmisc::system3(command = options$exec,
                   args = args,
                   stdout = TRUE,

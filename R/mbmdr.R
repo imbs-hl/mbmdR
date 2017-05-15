@@ -290,11 +290,11 @@ mbmdr <- function(formula = NULL,
           return(x)
         }
       }))
-      readr::write_delim(x = cbind("y" = mf[, 1], out),
-                         path = file,
-                         delim = " ",
-                         na = "-9",
-                         append = FALSE)
+      data.table::fwrite(cbind("y" = mf[, 1], out),
+                         file = file,
+                         sep = " ",
+                         append = FALSE,
+                         na = "-9")
       writeOut <- TRUE
     }
   }

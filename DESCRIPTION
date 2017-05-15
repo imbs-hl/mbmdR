@@ -2,7 +2,7 @@ Package: mbmdR
 Title: Interface to MB-MDR
 Version: 0.4
 Authors@R: "Damian Gola <gola@imbs.uni-luebeck.de> [aut, cre]"
-Description: This package provides an interface to c++ MB-MDR software by
+Description: This package provides an interface to the C++ MB-MDR software by
     François van Lishout.
 Depends:
     R (>= 3.1.0),

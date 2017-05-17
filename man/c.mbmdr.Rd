@@ -19,3 +19,7 @@ A \code{mbmdr} object of concatenated \code{mbmdr} objects.
 \description{
 Combine MB-MDR objects
 }
+\details{
+The concatenated results are sorted according to the test statistics
+of the models.
+}

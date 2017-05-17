@@ -1,98 +1,116 @@
 
-# Function that converts mbmdr-output into a R-readable data.frame
-# Parameters: 
-# cut_p.value: upper bound for p-value of variable-pairs. Pairs with p-value >= cut_p.value will be ignored 
-# cut_chi_square: lower bound for Chi.square value of variable-pairs. Pairs with Chi.square <= cut_chi_square will be ignored
-# inputFile_tables: mbmdr-output-file, that lisis the hlo-matrices
-# inputFile_list: mbmdr-output-file that lists the significance of all variable pairs
-# correction: which correction method should be choosen? (Values are "CODOMINANT"(default), "ADDITIVE" and "NONE")
-reading <- function(cutting_value = "-a",
-                    inputFile_tables, # = "input.m_models.txt",
-                    inputFile_list = "input.result",
-                    correction = "CODOMINANT",
-                    daten = data
-                    ){
-  # read input files and save theese.
-  # The data.rame "output" will collect all further information as well.
-  input_tables <- readLines(inputFile_tables)
-  output <- read.table(inputFile_list, 
-                       header = FALSE, 
-                       skip = 3,
-                       col.names = c("First_Marker", 
-                                     "Second_Marker", 
-                                     "Chi.square", 
-                                     "p.value")
-  )
-  # Find the positions of the right matrices in the HLO-matrix-file.
-  # In dependency of the given correction method the text search phrases (whole lines or distinct phrases) differ
-  all_ends <- which(substr(input_tables, 1, 22) == "Categories contrasted:")
-  if (correction == "CODOMINANT"){    output$starting_line <- which(input_tables == "HLO matrix: with CODOMINANT correction")
-    output$ending_line <- all_ends[3*(1:nrow(output))]
+read <- function(resultfile, logfile, modelsfile, trait, options) {
+
+  # Prepare output
+  out <- list()
+
+  # Read result file ----
+  result <- data.table::fread(resultfile)
+
+  # Set column names of result file
+  colnames <- switch(options$d,
+           "1D" = c("Marker1", "TestStat"),
+           "2D" = c("Marker1", "Marker2", "TestStat"),
+           "3D" = c("Marker1", "Marker2", "Marker3", "TestStat"))
+  if(ncol(result) > length(colnames)) {
+    colnames <- c(colnames, "pValue")
   }
-  if (correction == "ADDITIVE"){
-    output$starting_line <- which(input_tables == "HLO matrix: with ADDITIVE correction")
-    output$ending_line <- all_ends[3*(1:nrow(output)) - 1]
-  }
-  if (correction == "NONE"){
-    output$starting_line <- which(input_tables == "HLO matrix: WITHOUT correction")
-    output$ending_line <- all_ends[3*(1:nrow(output))-2]
-  }
-  # Remove all uninformative matrices, therefore select by p-value and chi-square test result.
-  if (is.numeric(cutting_value)){
-    output <- output[which(output$p.value < cutting_value),]
-  }
-  if (cutting_value == "-a"){
-    output <- output[which(output$Chi.square > 0),]
-  }
-  if (cutting_value == "-b"){
-    output <- output[which(output$p.value < .05),]
-  }
-  # Work on if there are matrices left
-  if (nrow(output) != 0){
-    # read size of each HLO-matrix and saveto output-data.frame
-    output$length <- output$ending_line - output$starting_line - 1
-    output$width <- -1
-    for (i in 1:nrow(output)){
-      output$width[i] <- length(strsplit(input_tables[output$starting_line + 1][[i]], " ")[[1]])
+  data.table::setnames(result, colnames)
+
+  out$result <- result
+
+  # Read log file ----
+  log <- readLines(logfile)
+
+  out$log <- log
+
+  # Read models file ----
+  models <- readLines(modelsfile)
+  models <- models[models != ""]
+
+  if(trait == "binary") {
+    models <- if(options$v == "MEDIUM") {
+      read_medium_models(models)
+    } else if(options$v == "LONG") {
+      read_long_models(models, options$a)
     }
-    # cast the HLO-matrices from the text-input into a matric of type "character", using the support function "my_matrix_cast".
-    output$matrix <- lapply(1:nrow(output), my_matrix_cast, output = output, input_tables = input_tables, daten = daten)
-    if (cutting_value == "-b"){
-      for (j in nrow(output):1){
-        if (sum(output$matrix[[j]]=="L") * sum(output$matrix[[j]]=="H") == 0){
-          output<- output[-j,]
-        }
-      }
-    } 
-  }  
+  }
 
+  out$models <- models
 
-  return(output)
+  models <- list()
+  for(i in 1:nrow(result)) {
+    model <- list()
+    model$features <- out$models$modelnames[[i]]
+    model$statistic <- out$result[i]$TestStat
+    model$pvalue <- out$result[i]$pValue
+    model$cell_predictions <- out$models$cell_proportion[[i]]
+    model$cell_labels <- out$models$cell_labels[[i]]
+    models[[i]] <- model
+  }
+
+  return(models)
+
 }
 
+read_long_models <- function(models, adjustment) {
+  affected_begin <- grep("Affected subjects:", models)
+  unaffected_begin <- grep("Unaffected subjects:", models)
+  matrices_begin <- grep(switch(adjustment,
+                                "ADDITIVE" = "HLO matrix: with ADDITIVE correction",
+                                "CODOMINANT" = "HLO matrix: with CODOMINANT correction",
+                                "HLO matrix: WITHOUT correction"), models)
 
-# support function that converts lines with HLO-atrix into a matrix of type "character".
-# The function is written to be called by lapply in function reading.
-# Input parameters are:
-# line_counter: an integer value defining the index of the currently computed matrix in the output-data.frame
-# output: an data.frame collecting all information from the mbmdr-output
-# input_tables: a transcript of the mbmrd-output "input.m_models.txt"
-my_matrix_cast <- function(line_counter, 
-                           output = output,
-                           input_tables = input_tables, 
-                           daten = daten
-                           ){
-  # cutting the lines that code the current matrix and bring in list form with single letters
-  teilschritt <- (strsplit(input_tables[(output$starting_line[line_counter] + 1) : (output$ending_line[line_counter] - 1)], " "))
-  # creating the final matrix (in empty form)
-  res <- matrix("O", output$length[line_counter], output$width[line_counter])
-  rownames(res) <- sort(unique(daten[, as.character(output[line_counter, "First_Marker"])]))
-  colnames(res) <- sort(unique(daten[, as.character(output[line_counter, "Second_Marker"])]))
-  # fill the rresults-matrix element-wise
-  for (j in 1:output$length[line_counter]){
-    for (k in 1:output$width[line_counter]){
-      res[j,k] <- teilschritt[[j]][[k]]   
-    }
+  process_long_medium(affected_begin, unaffected_begin, matrices_begin, models)
+}
+
+read_medium_models <- function(models) {
+  affected_begin <- grep("Affected subjects:", models)
+  unaffected_begin <- grep("Unaffected subjects:", models)
+  matrices_begin <- grep("HLO matrix:", models)
+
+  process_long_medium(affected_begin, unaffected_begin, matrices_begin, models)
+}
+
+process_long_medium <- function(affected_begin, unaffected_begin, matrices_begin, models) {
+  modelnames <- strsplit(models[affected_begin-1], split = " ")
+
+  num_models <- length(modelnames)
+
+  num_affected <- list()
+  num_unaffected <- list()
+  prop_affected <- list()
+  matrices <- list()
+
+  for(i in 1:num_models) {
+
+    num_rows <- unaffected_begin[i] - affected_begin[i] - 1
+
+    num_affected[[i]] <- as.numeric(matrix(scan(text = models[(affected_begin[i]+1):(affected_begin[i]+num_rows)],
+                                                quiet = TRUE),
+                                           nrow = num_rows, byrow = TRUE))
+    attr(num_affected[[i]], "num_rows") <- num_rows
+
+    num_unaffected[[i]] <- as.numeric(matrix(scan(text = models[(unaffected_begin[i]+1):(unaffected_begin[i]+num_rows)],
+                                                  quiet = TRUE),
+                                             nrow = num_rows, byrow = TRUE))
+    attr(num_unaffected[[i]], "num_rows") <- num_rows
+
+    prop_affected[[i]] <- num_affected[[i]]/(num_affected[[i]]+num_unaffected[[i]])
+
+    matrices[[i]] <- as.character(matrix(scan(text = models[(matrices_begin[i]+1):(matrices_begin[i]+num_rows)],
+                                              what = "character",
+                                              quiet = TRUE),
+                                         nrow = num_rows, byrow = TRUE))
+    attr(matrices[[i]], "num_rows") <- num_rows
+
   }
-  return(res)  
+
+  models <- list(modelnames = modelnames,
+                 cell_affected = num_affected,
+                 cell_unaffected = num_unaffected,
+                 cell_proportion = prop_affected,
+                 cell_labels = matrices)
+
+  return(models)
 }

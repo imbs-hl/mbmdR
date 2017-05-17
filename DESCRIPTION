@@ -18,4 +18,4 @@ Imports:
 SoftwareRequirements: mbmdr (>= 4.4.1)
 License: GPL-3
 LazyData: true
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

@@ -16,4 +16,3 @@ Returns nothing.
 \description{
 Searches for old MB-MDR analyses file in the given directory.
 }
-

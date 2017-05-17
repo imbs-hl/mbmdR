@@ -36,4 +36,3 @@ Working directory for MB-MDR. Defaults to current working directory.}
 \description{
 Non parallel MB-MDR analysis.
 }
-

@@ -39,4 +39,3 @@ BatchJobs registry object.
 \description{
 Fourth step of parallel workflow of MB-MDR. Creates final output file on one CPU.
 }
-

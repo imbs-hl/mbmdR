@@ -105,4 +105,3 @@ Throws an error if any check fails and invisibly returns TRUE otherwise.
 \description{
 Configure the options of MB-MDR.
 }
-

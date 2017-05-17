@@ -16,4 +16,3 @@ Throws an error if any check fails and invisibly returns TRUE otherwise.
 \description{
 Check options of mbmdR for correct type.
 }
-

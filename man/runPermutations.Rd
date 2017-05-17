@@ -34,4 +34,3 @@ BatchJobs registry object.
 \description{
 Third step of parallel workflow of MB-MDR. Run permutations on multiple CPUs.
 }
-

@@ -171,4 +171,3 @@ The \code{formula} must have the following form:\cr
   Here \code{trait1, trait2,..., traitnt} are the \code{nt} traits, \code{cov1, cov2, ..., covnc} are the \code{nc} covariates and \code{marker1, marker2, ..., markernm} are the \code{nm} markers, i.e. SNPs and/or environment variables to be exported to the MB-MDR file format. The first form let's you explicitly choose which variables are exported whereas the latter form exports all variables in data, but let's you re-arrange the ordering of variables. If you know that the variables in your data are correctly ordered, i.e. first the \code{nt} traits, then the \code{nc} variables and then the \code{nm} markers, you can simply provide the formula \code{~.}.\cr\cr
   WARNING: The formula interface is generally slow for big datasets. Consider to provide a correctly formatted file on the filesystem via \code{file} instead.
 }
-

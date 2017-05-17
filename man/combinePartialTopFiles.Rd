@@ -39,4 +39,3 @@ BatchJobs registry object.
 \description{
 Second step of parallel workflow of MB-MDR. Creates topfiles from multiple partial topfiles.
 }
-

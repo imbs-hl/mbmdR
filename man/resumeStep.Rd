@@ -22,4 +22,3 @@ BatchJobs registry object.
 \description{
 Resumes a step of a parallel workflow of a crashed session.
 }
-

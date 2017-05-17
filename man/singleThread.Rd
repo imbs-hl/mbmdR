@@ -28,4 +28,3 @@ MB-MDR options set by \code{\link{configure}}.}
 \description{
 Wrapper function for external function call.
 }
-

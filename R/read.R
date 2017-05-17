@@ -5,7 +5,7 @@ read <- function(resultfile, logfile, modelsfile, trait, options) {
   out <- list()
 
   # Read result file ----
-  result <- data.table::fread(resultfile)
+  result <- data.table::fread(resultfile, skip = 3, head = FALSE)
 
   # Set column names of result file
   colnames <- switch(options$d,

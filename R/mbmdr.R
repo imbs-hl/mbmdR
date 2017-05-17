@@ -418,6 +418,9 @@ mbmdr <- function(formula = NULL,
 #' @param recursive   [\code{logical}]\cr
 #'                    Not used.
 #'
+#' @details The concatenated results are sorted according to the test statistics
+#' of the models.
+#'
 #' @return A \code{mbmdr} object of concatenated \code{mbmdr} objects.
 #' @export
 c.mbmdr <- function(..., recursive = FALSE) {

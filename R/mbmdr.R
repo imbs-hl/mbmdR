@@ -405,12 +405,25 @@ mbmdr <- function(formula = NULL,
 
   }
 
-  res <- data.table::fread(resultfile)
-  switch (options$d,
-    "1D" = data.table::setnames(res, c("Marker1", "TestStat", "pValue")),
-    "2D" = data.table::setnames(res, c("Marker1", "Marker2", "TestStat", "pValue")),
-    "3D" = data.table::setnames(res, c("Marker1", "Marker2", "Marker3", "TestStat", "pValue"))
-  )
+  output <- read(resultfile, logfile, modelsfile, trait, options)
+  class(output) <- "mbmdr"
+  return(output)
 
+}
+
+#' Combine MB-MDR objects
+#'
+#' @param ...         [\code{mbmdr}]\cr
+#'                    \code{mbmdr} objects to be concatenated.
+#' @param recursive   [\code{logical}]\cr
+#'                    Not used.
+#'
+#' @return A \code{mbmdr} object of concatenated \code{mbmdr} objects.
+#' @export
+c.mbmdr <- function(..., recursive = FALSE) {
+  dots <- list(...)
+  res <- unlist(dots, recursive = FALSE)
+  res <- res[order(sapply(res, function(model) model$statistic), decreasing = TRUE)]
+  class(res) <- "mbmdr"
   return(res)
 }

@@ -48,8 +48,13 @@ check.options <- function(options = getOption("mbmdr")) {
   }
   checkmate::assertChoice(options$v, c("SHORT", "MEDIUM", "LONG"),
                           add = assertions)
-  if(options$d != "1D" & options$v == "LONG") {
+  if(options$v == "SHORT") {
+    warning("Requested verbose level 'SHORT' results in ambiguous model matrices. Setting verbose level to 'MEDIUM'.")
+    options$v = "MEDIUM"
+  }
+  if(options$d != "2D" & options$v == "LONG") {
     warning("Requested non-2D analysis with '", options$v, "' verbose. This is not possible. Setting verbose level to 'MEDIUM'.")
+    options$v = "MEDIUM"
   }
   checkmate::assertChoice(options$pb, c("NONE", "NORMAL"),
                           add = assertions)
@@ -84,6 +89,8 @@ check.options <- function(options = getOption("mbmdr")) {
   checkmate::reportAssertions(assertions)
 
   options(mbmdr = options)
+
+  flush.console()
 
   invisible(TRUE)
 

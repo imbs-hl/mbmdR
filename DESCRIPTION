@@ -3,7 +3,7 @@ Title: Interface to MB-MDR
 Version: 0.4
 Authors@R: "Damian Gola <gola@imbs.uni-luebeck.de> [aut, cre]"
 Description: This package provides an interface to the C++ MB-MDR software by
-    François van Lishout.
+    Francois van Lishout.
 Depends:
     R (>= 3.1.0),
     BatchJobs (>= 1.5)

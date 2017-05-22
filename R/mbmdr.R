@@ -271,12 +271,12 @@ mbmdr <- function(formula = NULL,
 
     if(file.exists(file.path(work.dir, "input.mbmdr"))) {
       message("Input file already exists. Using the existing one...")
-      flush.console()
+      utils::flush.console()
       writeOut <- FALSE
     } else {
       # write out the R object to disk
       message("Writing out the R object to MB-MDR format on disk...")
-      flush.console()
+      utils::flush.console()
       file <- file.path(work.dir, "input.mbmdr")
       mf <- stats::model.frame(formula, data)
       mt <- attr(mf, "terms")
@@ -314,7 +314,7 @@ mbmdr <- function(formula = NULL,
 
   }, error = function(e) {
     message("Command line program 'awk' not found or failed. Using R code as fallback.")
-    flush.console()
+    utils::flush.console()
     ncol(data.table::fread(input = file, nrows = 1, header = FALSE))
   })
 
@@ -326,7 +326,7 @@ mbmdr <- function(formula = NULL,
      replicate) {
 
     message("Running the analysis as a single thread...\n")
-    flush.console()
+    utils::flush.console()
 
     invisible(runSingleThread(file = file,
                                           trait = trait,
@@ -337,15 +337,15 @@ mbmdr <- function(formula = NULL,
 
   } else {
     message("Starting parallel workflow..\n")
-    flush.console()
+    utils::flush.console()
 
     if(all(file.exists(paste0(prefix.topfiles, 1:cpus.topfiles, ".txt")))) {
       message("Found all topfiles. Skipping this step...")
-      flush.console()
+      utils::flush.console()
       step1new <- FALSE
     } else {
       message("Creating partial topfiles on ", cpus.topfiles, " CPUs...\n")
-      flush.console()
+      utils::flush.console()
       invisible(createPartialTopFiles(file = file,
                                       trait = trait,
                                       cpus = cpus.topfiles,
@@ -356,11 +356,11 @@ mbmdr <- function(formula = NULL,
 
     if(file.exists(topfile)) {
       message("Found the combined topfile. Skipping this step...")
-      flush.console()
+      utils::flush.console()
       step2new <- FALSE
     } else {
       message("Combining partial topfiles...\n")
-      flush.console()
+      utils::flush.console()
       invisible(combinePartialTopFiles(file = file,
                                        trait = trait,
                                        cpus = cpus.topfiles,
@@ -373,11 +373,11 @@ mbmdr <- function(formula = NULL,
 
     if(all(file.exists(paste0(prefix.permutations, 1:cpus.permutations, ".txt")))) {
       message("Found all permutation files. Skipping this step...")
-      flush.console()
+      utils::flush.console()
       step3new <- FALSE
     } else {
       message("Running permutation test on ", cpus.permutations, " CPUs...\n")
-      flush.console()
+      utils::flush.console()
       invisible(runPermutations(file = file,
                                 trait = trait,
                                 cpus = cpus.permutations,
@@ -389,11 +389,11 @@ mbmdr <- function(formula = NULL,
 
     if(file.exists(resultfile)) {
       message("Found the result file. Skipping this step...")
-      flush.console()
+      utils::flush.console()
       step4new <- FALSE
     } else {
       message("Creating output...\n")
-      flush.console()
+      utils::flush.console()
       invisible(createOutput(file = file, trait = trait,
                              cpus = cpus.permutations,
                              topfile = topfile,

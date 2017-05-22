@@ -90,7 +90,7 @@ check.options <- function(options = getOption("mbmdr")) {
 
   options(mbmdr = options)
 
-  flush.console()
+  utils::flush.console()
 
   invisible(TRUE)
 

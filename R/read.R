@@ -9,9 +9,9 @@ read <- function(resultfile, logfile, modelsfile, trait, options) {
 
   # Set column names of result file
   colnames <- switch(options$d,
-           "1D" = c("Marker1", "TestStat"),
-           "2D" = c("Marker1", "Marker2", "TestStat"),
-           "3D" = c("Marker1", "Marker2", "Marker3", "TestStat"))
+                     "1D" = c("Marker1", "TestStat"),
+                     "2D" = c("Marker1", "Marker2", "TestStat"),
+                     "3D" = c("Marker1", "Marker2", "Marker3", "TestStat"))
   if(ncol(result) > length(colnames)) {
     colnames <- c(colnames, "pValue")
   }
@@ -28,12 +28,20 @@ read <- function(resultfile, logfile, modelsfile, trait, options) {
   models <- readLines(modelsfile)
   models <- models[models != ""]
 
-  if(trait == "binary") {
-    models <- if(options$v == "MEDIUM") {
-      read_medium_models(models)
+  models <- if(trait == "binary") {
+    if(options$v == "MEDIUM") {
+      read_medium_binary_models(models)
     } else if(options$v == "LONG") {
-      read_long_models(models, options$a)
+      read_long_binary_models(models, options$a)
     }
+  } else if(trait == "continuous") {
+    if(options$v == "MEDIUM") {
+      read_medium_contiuous_models(models)
+    } else if(options$v == "LONG") {
+      read_long_contiuous_models(models, options$a)
+    }
+  } else {
+    NULL
   }
 
   out$models <- models
@@ -44,7 +52,7 @@ read <- function(resultfile, logfile, modelsfile, trait, options) {
     model$features <- out$models$modelnames[[i]]
     model$statistic <- out$result[i]$TestStat
     model$pvalue <- out$result[i]$pValue
-    model$cell_predictions <- out$models$cell_proportion[[i]]
+    model$cell_predictions <- out$models$cell_predictions[[i]]
     model$cell_labels <- out$models$cell_labels[[i]]
     models[[i]] <- model
   }
@@ -53,7 +61,18 @@ read <- function(resultfile, logfile, modelsfile, trait, options) {
 
 }
 
-read_long_models <- function(models, adjustment) {
+read_long_contiuous_models <- function(models, adjustment) {
+  subject_begin <- grep("Amount subjects:", models)
+  trait_begin <- grep("Average continuous trait:", models)
+  matrices_begin <- grep(switch(adjustment,
+                                "ADDITIVE" = "HLO matrix: with ADDITIVE correction",
+                                "CODOMINANT" = "HLO matrix: with CODOMINANT correction",
+                                "HLO matrix: WITHOUT correction"), models)
+
+  process_continuous(subject_begin, trait_begin, matrices_begin, models)
+}
+
+read_long_binary_models <- function(models, adjustment) {
   affected_begin <- grep("Affected subjects:", models)
   unaffected_begin <- grep("Unaffected subjects:", models)
   matrices_begin <- grep(switch(adjustment,
@@ -61,18 +80,65 @@ read_long_models <- function(models, adjustment) {
                                 "CODOMINANT" = "HLO matrix: with CODOMINANT correction",
                                 "HLO matrix: WITHOUT correction"), models)
 
-  process_long_medium(affected_begin, unaffected_begin, matrices_begin, models)
+  process_binary(affected_begin, unaffected_begin, matrices_begin, models)
 }
 
-read_medium_models <- function(models) {
+read_medium_contiuous_models <- function(models) {
+  subject_begin <- grep("Amount subjects:", models)
+  trait_begin <- grep("Average continuous trait:", models)
+  matrices_begin <- grep("HLO matrix:", models)
+
+  process_continuous(subject_begin, trait_begin, matrices_begin, models)
+}
+
+read_medium_binary_models <- function(models) {
   affected_begin <- grep("Affected subjects:", models)
   unaffected_begin <- grep("Unaffected subjects:", models)
   matrices_begin <- grep("HLO matrix:", models)
 
-  process_long_medium(affected_begin, unaffected_begin, matrices_begin, models)
+  process_binary(affected_begin, unaffected_begin, matrices_begin, models)
 }
 
-process_long_medium <- function(affected_begin, unaffected_begin, matrices_begin, models) {
+process_continuous <- function(subject_begin, trait_begin, matrices_begin, models) {
+  modelnames <- strsplit(models[subject_begin-1], split = " ")
+
+  num_models <- length(modelnames)
+
+  num_subjects <- list()
+  average_trait <- list()
+  matrices <- list()
+
+  for(i in 1:num_models) {
+
+    num_rows <- trait_begin[i] - subject_begin[i] - 1
+
+    num_subjects[[i]] <- as.integer(matrix(scan(text = models[(subject_begin[i]+1):(subject_begin[i]+num_rows)],
+                                                quiet = TRUE),
+                                           nrow = num_rows, byrow = TRUE))
+    attr(num_subjects[[i]], "num_rows") <- num_rows
+
+    average_trait[[i]] <- as.numeric(matrix(scan(text = models[(trait_begin[i]+1):(trait_begin[i]+num_rows)],
+                                                 quiet = TRUE),
+                                            nrow = num_rows, byrow = TRUE))
+    attr(num_subjects[[i]], "num_rows") <- num_rows
+
+    matrices[[i]] <- as.character(matrix(scan(text = models[(matrices_begin[i]+1):(matrices_begin[i]+num_rows)],
+                                              what = "character",
+                                              quiet = TRUE),
+                                         nrow = num_rows, byrow = TRUE))
+    attr(matrices[[i]], "num_rows") <- num_rows
+
+  }
+
+  models <- list(modelnames = modelnames,
+                 cell_subjects = num_subjects,
+                 cell_predictions = average_trait,
+                 cell_labels = matrices)
+
+  return(models)
+}
+
+process_binary <- function(affected_begin, unaffected_begin, matrices_begin, models) {
   modelnames <- strsplit(models[affected_begin-1], split = " ")
 
   num_models <- length(modelnames)
@@ -109,7 +175,7 @@ process_long_medium <- function(affected_begin, unaffected_begin, matrices_begin
   models <- list(modelnames = modelnames,
                  cell_affected = num_affected,
                  cell_unaffected = num_unaffected,
-                 cell_proportion = prop_affected,
+                 cell_predictions = prop_affected,
                  cell_labels = matrices)
 
   return(models)

@@ -28,13 +28,13 @@ read <- function(resultfile, logfile, modelsfile, trait, options) {
   models <- readLines(modelsfile)
   models <- models[models != ""]
 
-  models <- if(trait == "binary") {
+  models <- if(trait == "binary" & options$ac == 0) {
     if(options$v == "MEDIUM") {
       read_medium_binary_models(models)
     } else if(options$v == "LONG") {
       read_long_binary_models(models, options$a)
     }
-  } else if(trait == "continuous") {
+  } else if(trait == "continuous" | (trait == "binary" & options$ac > 0)) {
     if(options$v == "MEDIUM") {
       read_medium_contiuous_models(models)
     } else if(options$v == "LONG") {

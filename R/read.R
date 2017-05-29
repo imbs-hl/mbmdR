@@ -6,9 +6,6 @@ read <- function(resultfile, logfile, modelsfile, trait, options, result.only) {
 
   # Read result file ----
   result <- data.table::fread(resultfile, skip = 3, head = FALSE)
-  if(result.only) {
-    return(result)
-  }
 
   # Set column names of result file
   colnames <- switch(options$d,
@@ -19,6 +16,9 @@ read <- function(resultfile, logfile, modelsfile, trait, options, result.only) {
     colnames <- c(colnames, "pValue")
   }
   data.table::setnames(result, colnames)
+  if(result.only) {
+    return(result)
+  }
 
   out$result <- result
 

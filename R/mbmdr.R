@@ -412,9 +412,7 @@ mbmdr <- function(formula = NULL,
   }
 
   output <- read(resultfile, logfile, modelsfile, trait, options, result.only)
-  if(result.only) {
-    class(output) <- "mbmdrresult"
-  } else {
+  if(!result.only) {
     class(output) <- "mbmdr"
   }
   return(output)

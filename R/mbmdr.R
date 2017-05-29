@@ -127,6 +127,10 @@
 #'   Rank transformation (continuous trait only).
 #'   "RANK_TRANSFORM" or "NONE" (default)
 #'
+#' @param result.only [\code{bool}]\cr
+#'   Return only a data.table object with the results or a list with an element
+#'   for each combination with more detailed informations about HLO tables etc. (default).
+#'
 #' @param ... [\code{any}]\cr
 #'   Additional parameter passed to and from other methods.
 #'
@@ -203,7 +207,8 @@ mbmdr <- function(formula = NULL,
                   keep.file = NULL,
                   replicate.file = NULL,
                   input.format = "MBMDR",
-                  transform = "NONE", ...) {
+                  transform = "NONE",
+                  result.only = FALSE, ...) {
 
   tryCatch(BBmisc::suppressAll(system(exec, intern = TRUE)))
 
@@ -238,6 +243,7 @@ mbmdr <- function(formula = NULL,
     replicate <- FALSE
   }
   dir.create(work.dir, recursive = TRUE)
+  checkmate::assertFlag(result.only)
 
   configure(exec,
             n.pvalues,
@@ -302,9 +308,9 @@ mbmdr <- function(formula = NULL,
   # Check the number of columns
   ncols <- tryCatch({
     sysOut <- (system2(command = "awk",
-                      args = c("-F' '", "'{print NF; exit}'", shQuote(file)),
-                      stdout = TRUE,
-                      stderr = TRUE))
+                       args = c("-F' '", "'{print NF; exit}'", shQuote(file)),
+                       stdout = TRUE,
+                       stderr = TRUE))
 
     if(!is.null(attr(sysOut, "status"))) {
       stop(sysOut)
@@ -329,11 +335,11 @@ mbmdr <- function(formula = NULL,
     utils::flush.console()
 
     invisible(runSingleThread(file = file,
-                                          trait = trait,
-                                          out = resultfile,
-                                          log = logfile,
-                                          mod = modelsfile,
-                                          work.dir = work.dir, ...))
+                              trait = trait,
+                              out = resultfile,
+                              log = logfile,
+                              mod = modelsfile,
+                              work.dir = work.dir, ...))
 
   } else {
     message("Starting parallel workflow..\n")
@@ -405,8 +411,12 @@ mbmdr <- function(formula = NULL,
 
   }
 
-  output <- read(resultfile, logfile, modelsfile, trait, options)
-  class(output) <- "mbmdr"
+  output <- read(resultfile, logfile, modelsfile, trait, options, result.only)
+  if(result.only) {
+    class(output) <- "mbmdrresult"
+  } else {
+    class(output) <- "mbmdr"
+  }
   return(output)
 
 }

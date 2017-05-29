@@ -1,11 +1,14 @@
 
-read <- function(resultfile, logfile, modelsfile, trait, options) {
+read <- function(resultfile, logfile, modelsfile, trait, options, result.only) {
 
   # Prepare output
   out <- list()
 
   # Read result file ----
   result <- data.table::fread(resultfile, skip = 3, head = FALSE)
+  if(result.only) {
+    return(result)
+  }
 
   # Set column names of result file
   colnames <- switch(options$d,

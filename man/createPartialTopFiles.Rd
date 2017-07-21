@@ -25,7 +25,7 @@ Working directory for MB-MDR. Defaults to current working directory.}
 Path for saving the partial topfiles. Defaults to <\code{work.dir}>/topfiles/<\code{file}>_top.}
 }
 \value{
-BatchJobs registry object.
+System output of MB-MDR executable.
 }
 \description{
 First step of parallel workflow of MB-MDR. Creates partial topfiles on multiple CPUs.

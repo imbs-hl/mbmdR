@@ -34,7 +34,7 @@ Path of the permutation files. Defaults to <\code{work.dir}>/permutations/<\code
 Sets the output file name. Defaults to <\code{work.dir}>/<\code{file}>.result.}
 }
 \value{
-BatchJobs registry object.
+System output of MB-MDR executable.
 }
 \description{
 Fourth step of parallel workflow of MB-MDR. Creates final output file on one CPU.

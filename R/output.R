@@ -24,7 +24,7 @@
 #' @param out [\code{string}]\cr
 #'   Sets the output file name. Defaults to <\code{work.dir}>/<\code{file}>.result.
 #'
-#' @return BatchJobs registry object.
+#' @return System output of MB-MDR executable.
 #'
 #' @export
 createOutput <- function(file,

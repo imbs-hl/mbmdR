@@ -40,20 +40,24 @@ check.options <- function(options = getOption("mbmdr")) {
                           add = assertions)
   if(options$d == "1D" & options$mt == "gammaMAXT") {
     warning("Requested 1D analysis with 'gamamMAXT' correction algorithm. This is not possible. Falling back to 'MAXT' correction algorithm.")
+    utils::flush.console()
     options$mt <- "MAXT"
   }
   if(options$a != "NONE" & options$d == "1D") {
     warning("Requested 1D analysis with '", options$a, "' adjustment. This is not possible. Setting adjustment to 'NONE'.")
+    utils::flush.console()
     options$a <- "NONE"
   }
   checkmate::assertChoice(options$v, c("SHORT", "MEDIUM", "LONG"),
                           add = assertions)
   if(options$v == "SHORT") {
     warning("Requested verbose level 'SHORT' results in ambiguous model matrices. Setting verbose level to 'MEDIUM'.")
+    utils::flush.console()
     options$v = "MEDIUM"
   }
   if(options$d != "2D" & options$v == "LONG") {
     warning("Requested non-2D analysis with '", options$v, "' verbose. This is not possible. Setting verbose level to 'MEDIUM'.")
+    utils::flush.console()
     options$v = "MEDIUM"
   }
   checkmate::assertChoice(options$pb, c("NONE", "NORMAL"),

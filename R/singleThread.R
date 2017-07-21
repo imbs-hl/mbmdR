@@ -21,7 +21,7 @@
 #' @param work.dir [\code{string}]\cr
 #'   Working directory for MB-MDR. Defaults to current working directory.
 #'
-#' @return \link{BatchJobs} \link{Registry} object.
+#' @return System output of MB-MDR executable.
 #'
 #' @export
 runSingleThread <- function(file,

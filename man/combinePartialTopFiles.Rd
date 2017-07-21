@@ -34,7 +34,7 @@ Path for saving the final topfile. Defaults to <\code{work.dir}>/<\code{file}>.t
 Path for saving the models file. Defaults to <\code{work.dir}>/<\code{file}>.models.}
 }
 \value{
-BatchJobs registry object.
+System output of MB-MDR executable.
 }
 \description{
 Second step of parallel workflow of MB-MDR. Creates topfiles from multiple partial topfiles.

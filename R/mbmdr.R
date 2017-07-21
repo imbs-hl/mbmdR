@@ -210,7 +210,14 @@ mbmdr <- function(formula = NULL,
                   transform = "NONE",
                   result.only = FALSE, ...) {
 
-  tryCatch(BBmisc::suppressAll(system(exec, intern = TRUE)))
+  old_warn_level <- getOption("warn")
+  options("warn" = 1)
+  on.exit(options("warn" = old_warn_level))
+
+  tryCatch(BBmisc::suppressAll(system(exec, intern = TRUE)),
+           error = function(e) {
+             stop("MB-MDR executable not found!")
+           })
 
   if(!checkmate::testNull(file)) {
     checkmate::assertFile(file)
@@ -270,7 +277,7 @@ mbmdr <- function(formula = NULL,
             input.format,
             transform)
 
-  #clean(work.dir = work.dir)
+  utils::flush.console()
 
   if(!checkmate::testNull(formula)) {
     file <- file.path(work.dir, "input.mbmdr")

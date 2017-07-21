@@ -21,7 +21,7 @@
 #' @param out.prefix [\code{string}]\cr
 #'   Path for saving the permutation files. Defaults to <\code{work.dir}>/permutations/<\code{file}>_perm.
 #'
-#' @return BatchJobs registry object.
+#' @return System output of MB-MDR executable.
 #'
 #' @export
 runPermutations <- function(file,

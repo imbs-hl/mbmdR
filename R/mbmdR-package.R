@@ -3,7 +3,7 @@
 #' @name mbmdR
 #' @docType package
 #'
-#' @import BatchJobs checkmate BBmisc tools data.table backports
+#' @import checkmate BBmisc tools data.table backports
 NULL
 
 .onLoad <- function(libname, pkgname, ...) {

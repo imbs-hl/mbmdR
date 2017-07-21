@@ -18,7 +18,7 @@
 #' @param out.prefix [\code{string}]\cr
 #'   Path for saving the partial topfiles. Defaults to <\code{work.dir}>/topfiles/<\code{file}>_top.
 #'
-#' @return BatchJobs registry object.
+#' @return System output of MB-MDR executable.
 #'
 #' @export
 createPartialTopFiles <- function(file,
@@ -78,7 +78,7 @@ createPartialTopFiles <- function(file,
 #' @param mod [\code{string}]\cr
 #'   Path for saving the models file. Defaults to <\code{work.dir}>/<\code{file}>.models.
 #'
-#' @return BatchJobs registry object.
+#' @return System output of MB-MDR executable.
 #'
 #' @export
 combinePartialTopFiles <- function(file,

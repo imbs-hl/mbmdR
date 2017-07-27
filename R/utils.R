@@ -22,7 +22,7 @@ waitForFiles = function(fns, timeout = NA_real_) {
 
   paths <- dirname(fns)
 
-  fns = setdiff(fns, list.files(paths))
+  fns = setdiff(fns, list.files(paths, full.names = TRUE))
   if (length(fns) == 0L) {
     return(TRUE)
   }
@@ -30,7 +30,7 @@ waitForFiles = function(fns, timeout = NA_real_) {
   timeout = timeout + Sys.time()
   repeat {
     Sys.sleep(0.5)
-    fns = setdiff(fns, list.files(paths))
+    fns = setdiff(fns, list.files(paths, full.names = TRUE))
     if (length(fns) == 0L)
       return(TRUE)
     if (Sys.time() > timeout)

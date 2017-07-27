@@ -111,10 +111,14 @@ gammastep3 <- function(file, trait, p, i, t, out.prefix, options) {
                 shQuote(file),
                 "&>", shQuote(paste0(out.prefix, sprintf("%d", i), '.log')))
 
-  BBmisc::system3(command = options$exec,
-                  args = args,
-                  stdout = TRUE,
-                  stderr = TRUE,
-                  stop.on.exit.code = TRUE)
+  sysOut <- BBmisc::system3(command = options$exec,
+                            args = args,
+                            stdout = TRUE,
+                            stderr = TRUE,
+                            stop.on.exit.code = TRUE)
+
+  waitForFiles(fns = sprintf("%s%d.txt", out.prefix, i), timeout = options$fs.latency)
+
+  return(sysOut)
 
 }

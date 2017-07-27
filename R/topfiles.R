@@ -124,7 +124,7 @@ combinePartialTopFiles <- function(file,
                                                       o2 = mod,
                                                       options = options))
 
-  waitForFiles(fns = out, timeout = options$fs.latency)
+  waitForFiles(fns = c(out, mod), timeout = options$fs.latency)
 
   return(sysOut)
 
@@ -173,11 +173,15 @@ gammastep1 <- function(file, trait, id, cpus, ti, options) {
             shQuote(file),
             "&>", shQuote(sprintf("%s%d.log", ti, id)))
 
-  BBmisc::system3(command = options$exec,
-                  args = args,
-                  stdout = TRUE,
-                  stderr = TRUE,
-                  stop.on.exit.code = TRUE)
+  sysOut <- BBmisc::system3(command = options$exec,
+                            args = args,
+                            stdout = TRUE,
+                            stderr = TRUE,
+                            stop.on.exit.code = TRUE)
+
+  waitForFiles(fns = sprintf("%s%d.txt", ti, 1:cpus), timeout = options$fs.latency)
+
+  return(sysOut)
 
 }
 
@@ -226,10 +230,14 @@ gammastep2 <- function(file, trait, cpus, ti, t, o2, options) {
                 shQuote(file),
                 "&>", shQuote(sprintf("%s.log", t)))
 
-  BBmisc::system3(command = options$exec,
-                  args = args,
-                  stdout = TRUE,
-                  stderr = TRUE,
-                  stop.on.exit.code = TRUE)
+  sysOut <- BBmisc::system3(command = options$exec,
+                            args = args,
+                            stdout = TRUE,
+                            stderr = TRUE,
+                            stop.on.exit.code = TRUE)
+
+  waitForFiles(fns = c(t, o2), timeout = options$fs.latency)
+
+  return(sysOut)
 
 }

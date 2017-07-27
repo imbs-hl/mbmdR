@@ -116,10 +116,14 @@ gammastep4 <- function(file, trait, c, q, p, t, o, options) {
                 shQuote(file),
                 "&>", shQuote(paste0(o, '.log')))
 
-  BBmisc::system3(command = options$exec,
-                  args = args,
-                  stdout = TRUE,
-                  stderr = TRUE,
-                  stop.on.exit.code = TRUE)
+  sysOut <- BBmisc::system3(command = options$exec,
+                            args = args,
+                            stdout = TRUE,
+                            stderr = TRUE,
+                            stop.on.exit.code = TRUE)
+
+  waitForFiles(fns = c(o, sprintf("%s.log", o)), timeout = options$fs.latency)
+
+  return(sysOut)
 
 }

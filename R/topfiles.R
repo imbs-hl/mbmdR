@@ -113,6 +113,8 @@ combinePartialTopFiles <- function(file,
   checkmate::assertDirectory(dirname(out))
   checkmate::assertDirectory(dirname(mod))
 
+  options <- getOption("mbmdr")
+
   sysOut <- parallelMap::parallelMap(gammastep2,
                                      file,
                                      more.args = list(trait = trait,
@@ -120,7 +122,7 @@ combinePartialTopFiles <- function(file,
                                                       ti = topfiles.prefix,
                                                       t = out,
                                                       o2 = mod,
-                                                      options = getOption("mbmdr")))
+                                                      options = options))
 
   waitForFiles(fns = out, timeout = options$fs.latency)
 

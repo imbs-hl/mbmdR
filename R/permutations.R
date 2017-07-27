@@ -60,6 +60,8 @@ runPermutations <- function(file,
                                                       out.prefix = out.prefix,
                                                       options = options))
 
+  waitForFiles(fns = sprintf("%s%d.txt", out.prefix, 1:cpus), timeout = options$fs.latency)
+
   return(sysOut)
 
 }

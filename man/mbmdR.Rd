@@ -29,7 +29,7 @@ mbmdr(formula = NULL, data = NULL, file = NULL, trait, cpus.topfiles,
   progressbar = "NORMAL", erase = NULL, erase.file = NULL,
   filter = NULL, filter.file = NULL, keep = NULL, keep.file = NULL,
   replicate.file = NULL, input.format = "MBMDR", transform = "NONE",
-  result.only = FALSE, ...)
+  result.only = FALSE, fs.latency = 65, ...)
 }
 \arguments{
 \item{formula}{[\code{formula}]\cr
@@ -159,6 +159,9 @@ Rank transformation (continuous trait only).
 \item{result.only}{[\code{bool}]\cr
 Return only a data.table object with the results or a list with an element
 for each combination with more detailed informations about HLO tables etc. (default).}
+
+\item{fs.latency}{[\code{number}]\cr
+File system latency in seconds to use to wait for files. Default is \code{65} seconds.}
 
 \item{...}{[\code{any}]\cr
 Additional parameter passed to and from other methods.}

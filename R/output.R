@@ -65,6 +65,8 @@ createOutput <- function(file,
                                                       t = topfile,
                                                       options = options))
 
+  waitForFiles(fns = out, timeout = options$fs.latency)
+
   return(sysOut)
 
 }

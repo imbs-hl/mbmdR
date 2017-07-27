@@ -11,7 +11,8 @@ configure(exec = "mbmdr", n.pvalues = 1000, permutations = 999,
   cov.adjustment = "RESIDUALS", dim = "2D", verbose = "SHORT",
   progressbar = "NORMAL", erase = NULL, erase.file = NULL,
   filter = NULL, filter.file = NULL, keep = NULL, keep.file = NULL,
-  replicate.file = NULL, input.format = "MBMDR", transform = "NONE")
+  replicate.file = NULL, input.format = "MBMDR", transform = "NONE",
+  fs.latency = 65)
 }
 \arguments{
 \item{exec}{[\code{string}]\cr
@@ -98,6 +99,9 @@ Input file format. "MDR" or "MBMDR" (default).}
 \item{transform}{[\code{string}]\cr
 Rank transformation (continuous trait only).
 "RANK_TRANSFORM" or "NONE" (default)}
+
+\item{fs.latency}{[\code{number}]\cr
+File system latency in seconds to use to wait for files. Default is \code{65} seconds.}
 }
 \value{
 Throws an error if any check fails and invisibly returns TRUE otherwise.

@@ -90,6 +90,11 @@ check.options <- function(options = getOption("mbmdr")) {
                           choices = c("NONE", "RANK_TRANSFORM"),
                           add = assertions)
 
+  checkmate::assertNumber(options$fs.latency,
+                          lower = 0, upper = Inf,
+                          na.ok = TRUE, finite = TRUE, null.ok = FALSE,
+                          add = assertions)
+
   checkmate::reportAssertions(assertions)
 
   options(mbmdr = options)

@@ -88,6 +88,9 @@
 #'   Rank transformation (continuous trait only).
 #'   "RANK_TRANSFORM" or "NONE" (default)
 #'
+#' @param fs.latency [\code{number}]\cr
+#'   File system latency in seconds to use to wait for files. Default is \code{65} seconds.
+#'
 #' @return
 #' Throws an error if any check fails and invisibly returns TRUE otherwise.
 #'
@@ -115,7 +118,8 @@ configure <- function(exec = "mbmdr",
                       keep.file = NULL,
                       replicate.file = NULL,
                       input.format = "MBMDR",
-                      transform = "NONE") {
+                      transform = "NONE",
+                      fs.latency = 65) {
 
   mbmdr <- list(exec = exec,                 # Set default mbmdr executable
                 n = n.pvalues,               # Number of p-value to compute
@@ -140,7 +144,8 @@ configure <- function(exec = "mbmdr",
                 K = keep.file,               # Keep markers (file)
                 s = replicate.file,          # Keep only the pairs from the given output file
                 input.format = input.format, # Input format
-                rt = transform)              # Rank transformation
+                rt = transform,              # Rank transformation
+                fs.latency = fs.latency)     # File system latency to use to wait for files
 
   if(check.options(mbmdr)) {
     invisible(TRUE)

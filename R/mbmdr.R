@@ -131,6 +131,9 @@
 #'   Return only a data.table object with the results or a list with an element
 #'   for each combination with more detailed informations about HLO tables etc. (default).
 #'
+#' @param fs.latency [\code{number}]\cr
+#'   File system latency in seconds to use to wait for files. Default is \code{65} seconds.
+#'
 #' @param ... [\code{any}]\cr
 #'   Additional parameter passed to and from other methods.
 #'
@@ -208,7 +211,8 @@ mbmdr <- function(formula = NULL,
                   replicate.file = NULL,
                   input.format = "MBMDR",
                   transform = "NONE",
-                  result.only = FALSE, ...) {
+                  result.only = FALSE,
+                  fs.latency = 65, ...) {
 
   old_warn_level <- getOption("warn")
   options("warn" = 1)
@@ -275,7 +279,8 @@ mbmdr <- function(formula = NULL,
             keep.file,
             replicate.file,
             input.format,
-            transform)
+            transform,
+            fs.latency)
 
   utils::flush.console()
 

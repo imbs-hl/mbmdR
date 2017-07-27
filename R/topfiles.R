@@ -40,13 +40,17 @@ createPartialTopFiles <- function(file,
   }
   checkmate::assertDirectory(dirname(out.prefix))
 
+  options <- getOption("mbmdr")
+
   sysOut <- parallelMap::parallelMap(gammastep1,
                                      id = 1:cpus, level = "mbmdR.parallelSteps",
                                      more.args = list(file = file,
                                                       trait = trait,
                                                       cpus = cpus,
                                                       ti = out.prefix,
-                                                      options = getOption("mbmdr")))
+                                                      options = options))
+
+  waitForFiles(fns = sprintf("%s%d.txt", out.prefix, 1:cpus), timeout = options$fs.latency)
 
   return(sysOut)
 
@@ -117,6 +121,8 @@ combinePartialTopFiles <- function(file,
                                                       t = out,
                                                       o2 = mod,
                                                       options = getOption("mbmdr")))
+
+  waitForFiles(fns = out, timeout = options$fs.latency)
 
   return(sysOut)
 

@@ -346,12 +346,19 @@ mbmdr <- function(formula = NULL,
     message("Running the analysis as a single thread...\n")
     utils::flush.console()
 
-    invisible(runSingleThread(file = file,
-                              trait = trait,
-                              out = resultfile,
-                              log = logfile,
-                              mod = modelsfile,
-                              work.dir = work.dir, ...))
+
+    if(any(file.exists(c(resultfile, logfile, modelsfile)))) {
+      message("Found output files. Skipping new analysis...")
+      utils::flush.console()
+      single_new <- FALSE
+    } else {
+      invisible(runSingleThread(file = file,
+                                trait = trait,
+                                out = resultfile,
+                                log = logfile,
+                                mod = modelsfile,
+                                work.dir = work.dir, ...))
+    }
 
   } else {
     message("Starting parallel workflow..\n")

@@ -134,6 +134,9 @@
 #' @param fs.latency [\code{number}]\cr
 #'   File system latency in seconds to use to wait for files. Default is \code{65} seconds.
 #'
+#' @param clean [\code{logical}]\cr
+#'   Shall intermediate files be deleted? Default is \code{FALSE}.
+#'
 #' @param ... [\code{any}]\cr
 #'   Additional parameter passed to and from other methods.
 #'
@@ -212,7 +215,8 @@ mbmdr <- function(formula = NULL,
                   input.format = "MBMDR",
                   transform = "NONE",
                   result.only = FALSE,
-                  fs.latency = 65, ...) {
+                  fs.latency = 65,
+                  clean = FALSE, ...) {
 
   old_warn_level <- getOption("warn")
   options("warn" = 1)
@@ -255,6 +259,7 @@ mbmdr <- function(formula = NULL,
   }
   dir.create(work.dir, recursive = TRUE)
   checkmate::assertFlag(result.only)
+  checkmate::assertFlag(clean)
 
   configure(exec,
             n.pvalues,
@@ -434,6 +439,17 @@ mbmdr <- function(formula = NULL,
   if(!result.only) {
     class(output) <- "mbmdr"
   }
+
+  # Clean up intermediate file
+  if(clean) {
+    unlink(topfile, recursive = TRUE, force = TRUE)
+    unlink(dirname(prefix.topfiles), recursive = TRUE, force = TRUE)
+    unlink(dirname(prefix.permutations), recursive = TRUE, force = TRUE)
+    unlink(modelsfile, recursive = TRUE, force = TRUE)
+    unlink(resultfile, recursive = TRUE, force = TRUE)
+    unlink(logfile, recursive = TRUE, force = TRUE)
+  }
+
   return(output)
 
 }

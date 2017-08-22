@@ -29,7 +29,7 @@ mbmdr(formula = NULL, data = NULL, file = NULL, trait, cpus.topfiles,
   progressbar = "NORMAL", erase = NULL, erase.file = NULL,
   filter = NULL, filter.file = NULL, keep = NULL, keep.file = NULL,
   replicate.file = NULL, input.format = "MBMDR", transform = "NONE",
-  result.only = FALSE, fs.latency = 65, ...)
+  result.only = FALSE, fs.latency = 65, clean = FALSE, ...)
 }
 \arguments{
 \item{formula}{[\code{formula}]\cr
@@ -162,6 +162,9 @@ for each combination with more detailed informations about HLO tables etc. (defa
 
 \item{fs.latency}{[\code{number}]\cr
 File system latency in seconds to use to wait for files. Default is \code{65} seconds.}
+
+\item{clean}{[\code{logical}]\cr
+Shall intermediate files be deleted? Default is \code{FALSE}.}
 
 \item{...}{[\code{any}]\cr
 Additional parameter passed to and from other methods.}

@@ -110,7 +110,7 @@ gammastep4 <- function(file, trait, c, q, p, t, o, options) {
                        ""),
                 "-if", options$input.format,
                 ifelse(trait == "continuous",
-                       paste0("-rt", options$rt),
+                       paste("-rt", options$rt),
                        ""),
                 "-pb", options$pb,
                 shQuote(file),

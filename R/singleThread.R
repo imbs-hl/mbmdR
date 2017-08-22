@@ -129,7 +129,7 @@ singleThread <- function(file, trait, o, log, mod, options) {
                        ""),
                 "-if", options$input.format,
                 ifelse(trait == "continuous",
-                       paste0("-rt", options$rt),
+                       paste("-rt", options$rt),
                        ""),
                 "-pb", options$pb,
                 file,

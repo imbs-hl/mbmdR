@@ -37,7 +37,7 @@
 #'   Sets the output file name. Defaults to <\code{work.dir}>/<\code{file}>.result.
 #'
 #' @param logfile [\code{string}]\cr
-#'   Sets the output file name. Defaults to <\code{work.dir}>/<\code{file}>.log.
+#'   Sets the log file name. Defaults to <\code{work.dir}>/<\code{file}>.log.
 #'
 #' @param modelsfile [\code{string}]\cr
 #'   Sets the models file name. Defaults to <\code{work.dir}>/<\code{file}>.models.
@@ -397,7 +397,8 @@ mbmdr <- function(formula = NULL,
                                        topfiles.prefix = prefix.topfiles,
                                        mod = modelsfile,
                                        out = topfile,
-                                       work.dir = work.dir, ...))
+                                       work.dir = work.dir,
+                                       logfile = logfile, ...))
       step2new <- TRUE
     }
 
@@ -429,7 +430,8 @@ mbmdr <- function(formula = NULL,
                              topfile = topfile,
                              out = resultfile,
                              perm.prefix = prefix.permutations,
-                             work.dir = work.dir, ...))
+                             work.dir = work.dir,
+                             logfile = logfile, ...))
       step4new <- TRUE
     }
 

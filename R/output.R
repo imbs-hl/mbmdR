@@ -15,6 +15,9 @@
 #' @param work.dir [\code{string}]\cr
 #'   Working directory for MB-MDR. Defaults to current working directory.
 #'
+#' @param logfile [\code{string}]\cr
+#'   Sets the log file name. Defaults to <\code{work.dir}>/<\code{file}>.log.
+#'
 #' @param topfile [\code{string}]\cr
 #'   Path of topfile. Defaults to <\code{work.dir}>/<\code{file}>.topfile.
 #'
@@ -31,6 +34,9 @@ createOutput <- function(file,
                          trait,
                          cpus,
                          work.dir = getwd(),
+                         logfile = file.path(work.dir,
+                                             paste(basename(tools::file_path_sans_ext(file)),
+                                                   "log", sep = ".")),
                          topfile = file.path(work.dir,
                                              paste(basename(file_path_sans_ext(file)),
                                                    "topfile", sep = ".")),
@@ -46,6 +52,7 @@ createOutput <- function(file,
   checkmate::assertChoice(trait, c("binary", "continuous", "survival"))
   checkmate::assertNumber(cpus)
   checkmate::assertDirectory(work.dir)
+  checkmate::assertDirectory(dirname(logfile))
   if(!checkmate::testDirectory(dirname(out))) {
     warning(paste(checkmate::checkDirectory(dirname(out)), "will be created!", sep = ", "))
     dir.create(dirname(out), recursive = TRUE)
@@ -63,6 +70,7 @@ createOutput <- function(file,
                                                       p = options$p,
                                                       o = out,
                                                       t = topfile,
+                                                      log = logfile,
                                                       options = options))
 
   waitForFiles(fns = out, timeout = options$fs.latency)
@@ -71,7 +79,7 @@ createOutput <- function(file,
 
 }
 
-gammastep4 <- function(file, trait, c, q, p, t, o, options) {
+gammastep4 <- function(file, trait, c, q, p, t, o, log, options) {
 
   check.options(options)
 
@@ -114,7 +122,7 @@ gammastep4 <- function(file, trait, c, q, p, t, o, options) {
                        ""),
                 "-pb", options$pb,
                 shQuote(file),
-                "&>", shQuote(paste0(o, '.log')))
+                ">>", shQuote(log), "2>&1")
 
   sysOut <- BBmisc::system3(command = options$exec,
                             args = args,
@@ -122,7 +130,7 @@ gammastep4 <- function(file, trait, c, q, p, t, o, options) {
                             stderr = TRUE,
                             stop.on.exit.code = TRUE)
 
-  waitForFiles(fns = c(o, sprintf("%s.log", o)), timeout = options$fs.latency)
+  waitForFiles(fns = c(o, log), timeout = options$fs.latency)
 
   return(sysOut)
 

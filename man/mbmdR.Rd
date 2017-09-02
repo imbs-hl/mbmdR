@@ -66,7 +66,7 @@ Path for saving the permutation files. Defaults to <\code{work.dir}>/permutation
 Sets the output file name. Defaults to <\code{work.dir}>/<\code{file}>.result.}
 
 \item{logfile}{[\code{string}]\cr
-Sets the output file name. Defaults to <\code{work.dir}>/<\code{file}>.log.}
+Sets the log file name. Defaults to <\code{work.dir}>/<\code{file}>.log.}
 
 \item{modelsfile}{[\code{string}]\cr
 Sets the models file name. Defaults to <\code{work.dir}>/<\code{file}>.models.}

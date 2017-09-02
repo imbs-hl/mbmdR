@@ -487,19 +487,37 @@ c.mdr_models <- function(..., recursive = FALSE) {
 #'                   A list of \code{mdr_model}s of class \code{mdr_models}.
 #'
 #' @param i [\code{integer}]\cr
-#'          A vector of integers indicating which MDR models to extract.
+#'          A vector of integers, indicating which MDR models to extract.
 #'
 #' @return A list of \code{mdr_model}s of class \code{mdr_models}.
 #'
 #' @export
 `[.mdr_models` <- function(mdr_models, i) {
-  checkmate::assertClass(mdr_model, c("mdr_models"))
+  checkmate::assertClass(mdr_models, c("mdr_models"))
   checkmate::assertInteger(i, lower = 1, any.missing = FALSE, min.len = 1)
 
   class(mdr_models) <- NULL
   res <- mdr_models[i]
   class(res) <- "mdr_models"
   return(res)
+}
+
+#' Extract a subset of MDR models from a MB-MDR result object
+#' @param mbmdr [\code{mbmdr}]\cr
+#'                   A \code{mbmdr} object.
+#'
+#' @param i [\code{integer}]\cr
+#'          A vector of integers, indicating which MDR models to extract.
+#'
+#' @return A list of \code{mdr_model}s of class \code{mdr_models}.
+#'
+#' @export
+`[.mbmdr` <- function(mbmdr, i) {
+  checkmate::assertClass(mbmdr, c("mbmdr"))
+  checkmate::assertInteger(i, lower = 1, any.missing = FALSE, min.len = 1)
+
+  mbmdr$mdr_models[i]
+
 }
 
 #' @export
@@ -522,5 +540,29 @@ print.mdr_model <- function(mdr_model) {
   }
   cat("\n")
   cat(sprintf("      Test statistic: %.4f\n", mdr_model$statistic))
-  cat(sprintf("      P value: %.4f", mdr_model$pvalue))
+  cat(sprintf("      P value: %.4f\n", mdr_model$pvalue))
+  cat("\n")
+}
+
+#' @export
+print.mdr_models <- function(mdr_models, n = 5) {
+
+  num_models <- length(mdr_models)
+
+  cat(sprintf("List of %d MDR models:\n\n", num_models))
+  for (i in seq_len(min(n, num_models))) {
+    cat("  ", rep("-", 30), "\n")
+    print(mdr_models[[i]])
+  }
+  if (n < num_models) {
+    cat("   ...\n")
+    cat(sprintf("Output truncated after %d MDR models!", n))
+  }
+}
+
+#' @export
+print.mbmdr <- function(mbmdr, n = 1) {
+  print(mbmdr$call)
+  cat("\n")
+  print(mbmdr$mdr_models, n = n)
 }

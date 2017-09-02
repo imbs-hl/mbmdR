@@ -464,20 +464,63 @@ mbmdr <- function(formula = NULL,
 
 #' Combine MB-MDR objects
 #'
-#' @param ...         [\code{mbmdr}]\cr
-#'                    \code{mbmdr} objects to be concatenated.
+#' @param ...         [\code{mdr_models}]\cr
+#'                    \code{mdr_models} objects to be concatenated.
 #' @param recursive   [\code{logical}]\cr
 #'                    Not used.
 #'
 #' @details The concatenated results are sorted according to the test statistics
 #' of the models.
 #'
-#' @return A \code{mbmdr} object of concatenated \code{mbmdr} objects.
+#' @return A \code{mdr_models} object of concatenated \code{mdr_models} objects.
 #' @export
-c.mbmdr <- function(..., recursive = FALSE) {
+c.mdr_models <- function(..., recursive = FALSE) {
   dots <- list(...)
   res <- unlist(dots, recursive = FALSE)
   res <- res[order(sapply(res, function(model) model$statistic), decreasing = TRUE)]
-  class(res) <- "mbmdr"
+  class(res) <- "mdr_models"
   return(res)
+}
+
+#' Extract a subset of MDR models
+#' @param mdr_models [\code{mdr_models}]\cr
+#'                   A list of \code{mdr_model}s of class \code{mdr_models}.
+#'
+#' @param i [\code{integer}]\cr
+#'          A vector of integers indicating which MDR models to extract.
+#'
+#' @return A list of \code{mdr_model}s of class \code{mdr_models}.
+#'
+#' @export
+`[.mdr_models` <- function(mdr_models, i) {
+  checkmate::assertClass(mdr_model, c("mdr_models"))
+  checkmate::assertInteger(i, lower = 1, any.missing = FALSE, min.len = 1)
+
+  class(mdr_models) <- NULL
+  res <- mdr_models[i]
+  class(res) <- "mdr_models"
+  return(res)
+}
+
+#' @export
+print.mdr_model <- function(mdr_model) {
+  num_rows <- attr(mdr_model$cell_labels, "num_rows")
+  predictions <- matrix(mdr_model$cell_predictions, nrow = num_rows)
+  hlo_table <- matrix(mdr_model$cell_labels, nrow = num_rows)
+  num_cols <- ncol(hlo_table)
+  cat(sprintf("    MDR model of features %s\n\n", paste(mdr_model$features, collapse = ", ")))
+  cat(sprintf(sprintf("      %% %ds\t\t%% %ds\n",
+                      num_cols*6 + (num_cols - 1),
+                      num_cols*4 + (num_cols - 1)),
+              "Average trait", "HLO matrix"))
+  for (r in seq_len(num_rows)) {
+    cat(sprintf("        "))
+    cat(sprintf("% 6.4f", predictions[r, ]))
+    cat(sprintf("\t\t"))
+    cat(sprintf("% 4s", hlo_table[r, ]))
+    cat("\n")
+  }
+  cat("\n")
+  cat(sprintf("      Test statistic: %.4f\n", mdr_model$statistic))
+  cat(sprintf("      P value: %.4f", mdr_model$pvalue))
 }

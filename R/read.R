@@ -57,6 +57,7 @@ read <- function(resultfile, logfile, modelsfile, trait, options, result.only) {
     model$pvalue <- out$result[i]$pValue
     model$cell_predictions <- out$models$cell_predictions[[i]]
     model$cell_labels <- out$models$cell_labels[[i]]
+    class(model) <- "mdr_model"
     models[[i]] <- model
   }
 

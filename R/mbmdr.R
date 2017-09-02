@@ -437,9 +437,15 @@ mbmdr <- function(formula = NULL,
 
   }
 
-  output <- read(resultfile, logfile, modelsfile, trait, options, result.only)
   if(!result.only) {
+    output <- list()
+    output$mdr_models <- read(resultfile, logfile, modelsfile, trait, options, result.only)
+    output$options <- options
+    output$call <- sys.call()
+    class(output$mdr_models) <- "mdr_models"
     class(output) <- "mbmdr"
+  } else {
+    output <- read(resultfile, logfile, modelsfile, trait, options, result.only)
   }
 
   # Clean up intermediate file

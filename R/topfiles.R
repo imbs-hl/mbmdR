@@ -73,6 +73,9 @@ createPartialTopFiles <- function(file,
 #' @param work.dir [\code{string}]\cr
 #'   Working directory for MB-MDR. Defaults to current working directory.
 #'
+#' @param logfile [\code{string}]\cr
+#'   Sets the log file name. Defaults to <\code{work.dir}>/<\code{file}>.log.
+#'
 #' @param topfiles.prefix [\code{string}]\cr
 #'   Path of partial topfiles. Defaults to <\code{work.dir}>/topfiles/<\code{file}>_top.
 #'
@@ -89,6 +92,9 @@ combinePartialTopFiles <- function(file,
                                    trait,
                                    cpus,
                                    work.dir = getwd(),
+                                   logfile = file.path(work.dir,
+                                                       paste(basename(tools::file_path_sans_ext(file)),
+                                                             "log", sep = ".")),
                                    topfiles.prefix = file.path(work.dir,
                                                                "topfiles",
                                                                paste(basename(tools::file_path_sans_ext(file)),
@@ -122,6 +128,7 @@ combinePartialTopFiles <- function(file,
                                                       ti = topfiles.prefix,
                                                       t = out,
                                                       o2 = mod,
+                                                      log = logfile,
                                                       options = options))
 
   waitForFiles(fns = c(out, mod), timeout = options$fs.latency)
@@ -185,7 +192,7 @@ gammastep1 <- function(file, trait, id, cpus, ti, options) {
 
 }
 
-gammastep2 <- function(file, trait, cpus, ti, t, o2, options) {
+gammastep2 <- function(file, trait, cpus, ti, t, o2, log, options) {
 
   check.options(options)
 
@@ -228,7 +235,7 @@ gammastep2 <- function(file, trait, cpus, ti, t, o2, options) {
                        ""),
                 "-pb", options$pb,
                 shQuote(file),
-                "&>", shQuote(sprintf("%s.log", t)))
+                "&>>", shQuote(log))
 
   sysOut <- BBmisc::system3(command = options$exec,
                             args = args,
@@ -236,7 +243,7 @@ gammastep2 <- function(file, trait, cpus, ti, t, o2, options) {
                             stderr = TRUE,
                             stop.on.exit.code = TRUE)
 
-  waitForFiles(fns = c(t, o2), timeout = options$fs.latency)
+  waitForFiles(fns = c(t, o2, log), timeout = options$fs.latency)
 
   return(sysOut)
 

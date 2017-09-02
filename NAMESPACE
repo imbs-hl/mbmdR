@@ -2,6 +2,9 @@
 
 S3method("[",mbmdr)
 S3method("[",mdr_models)
+S3method(as.data.frame,mbmdr)
+S3method(as.data.frame,mdr_model)
+S3method(as.data.frame,mdr_models)
 S3method(c,mdr_models)
 S3method(print,mbmdr)
 S3method(print,mdr_model)

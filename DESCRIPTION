@@ -14,7 +14,8 @@ Imports:
     backports (>= 1.0.2),
     parallelMap,
     utils,
-    stats
+    stats,
+    dplyr
 SoftwareRequirements: mbmdr (>= 4.4.1)
 License: GPL-3
 LazyData: true

@@ -566,3 +566,26 @@ print.mbmdr <- function(mbmdr, n = 1) {
   cat("\n")
   print(mbmdr$mdr_models, n = n)
 }
+
+#' @export
+as.data.frame.mdr_model <- function(mdr_model) {
+  num_features <- length(mdr_model$features)
+  df <- data.frame(as.list(mdr_model$features),
+                   STATISTIC = mdr_model$statistic,
+                   PVALUE = mdr_model$pvalue,
+                   stringsAsFactors = FALSE)
+  names(df) <- c(sprintf("FEATURE%d", 1:num_features), "STATISTIC", "PVALUE")
+  return(df)
+}
+
+#' @export
+as.data.frame.mdr_models <- function(mdr_models) {
+  df_list <- lapply(mdr_models, as.data.frame)
+  df <- do.call(dplyr::bind_rows, args = df_list)
+  return(df)
+}
+
+#' @export
+as.data.frame.mbmdr <- function(mbmdr) {
+  as.data.frame(mbmdr$mdr_models)
+}

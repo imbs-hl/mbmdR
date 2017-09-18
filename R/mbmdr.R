@@ -562,7 +562,7 @@ print.mdr_models <- function(mdr_models, n = 5) {
 
 #' @export
 print.mbmdr <- function(mbmdr, n = 1) {
-  print(mbmdr$call)
+  cat(deparse(mbmdr$call, width.cutoff = getOption("width")), sep = "\n")
   cat("\n")
   print(mbmdr$mdr_models, n = n)
 }

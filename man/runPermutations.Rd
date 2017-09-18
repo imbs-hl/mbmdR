@@ -29,7 +29,7 @@ Path of topfile. Defaults to <\code{work.dir}>/<\code{file}>.topfile.}
 Path for saving the permutation files. Defaults to <\code{work.dir}>/permutations/<\code{file}>_perm.}
 }
 \value{
-BatchJobs registry object.
+System output of MB-MDR executable.
 }
 \description{
 Third step of parallel workflow of MB-MDR. Run permutations on multiple CPUs.

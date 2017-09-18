@@ -21,13 +21,15 @@ mbmdr(formula = NULL, data = NULL, file = NULL, trait, cpus.topfiles,
   modelsfile = file.path(work.dir, paste(ifelse(is.null(file), "input",
   basename(tools::file_path_sans_ext(file))), "models", sep = ".")),
   exec = "mbmdr", n.pvalues = 1000, permutations = 999,
-  random.seed = as.integer(Sys.Date()), group.size = 10, num.traits = 1,
+  random.seed = as.integer(stats::runif(1, min = 1, max =
+  .Machine$integer.max)), group.size = 10, num.traits = 1,
   current.trait = 1, num.covariates = 0, alpha = 0.1,
   multi.test.corr = "gammaMAXT", adjustment = "CODOMINANT",
   cov.adjustment = "RESIDUALS", dim = "2D", verbose = "MEDIUM",
   progressbar = "NORMAL", erase = NULL, erase.file = NULL,
   filter = NULL, filter.file = NULL, keep = NULL, keep.file = NULL,
-  replicate.file = NULL, input.format = "MBMDR", transform = "NONE", ...)
+  replicate.file = NULL, input.format = "MBMDR", transform = "NONE",
+  result.only = FALSE, fs.latency = 65, clean = FALSE, ...)
 }
 \arguments{
 \item{formula}{[\code{formula}]\cr
@@ -64,7 +66,7 @@ Path for saving the permutation files. Defaults to <\code{work.dir}>/permutation
 Sets the output file name. Defaults to <\code{work.dir}>/<\code{file}>.result.}
 
 \item{logfile}{[\code{string}]\cr
-Sets the output file name. Defaults to <\code{work.dir}>/<\code{file}>.log.}
+Sets the log file name. Defaults to <\code{work.dir}>/<\code{file}>.log.}
 
 \item{modelsfile}{[\code{string}]\cr
 Sets the models file name. Defaults to <\code{work.dir}>/<\code{file}>.models.}
@@ -153,6 +155,16 @@ Input file format. "MDR" or "MBMDR" (default).}
 \item{transform}{[\code{string}]\cr
 Rank transformation (continuous trait only).
 "RANK_TRANSFORM" or "NONE" (default)}
+
+\item{result.only}{[\code{bool}]\cr
+Return only a data.table object with the results or a list with an element
+for each combination with more detailed informations about HLO tables etc. (default).}
+
+\item{fs.latency}{[\code{number}]\cr
+File system latency in seconds to use to wait for files. Default is \code{65} seconds.}
+
+\item{clean}{[\code{logical}]\cr
+Shall intermediate files be deleted? Default is \code{FALSE}.}
 
 \item{...}{[\code{any}]\cr
 Additional parameter passed to and from other methods.}

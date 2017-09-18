@@ -5,6 +5,8 @@
 \title{Combine partial top files}
 \usage{
 combinePartialTopFiles(file, trait, cpus, work.dir = getwd(),
+  logfile = file.path(work.dir,
+  paste(basename(tools::file_path_sans_ext(file)), "log", sep = ".")),
   topfiles.prefix = file.path(work.dir, "topfiles",
   paste(basename(tools::file_path_sans_ext(file)), "top", sep = "_")),
   out = file.path(work.dir, paste(basename(tools::file_path_sans_ext(file)),
@@ -24,6 +26,9 @@ Sets the total amount of CPUs used in \link{createPartialTopFiles}.}
 \item{work.dir}{[\code{string}]\cr
 Working directory for MB-MDR. Defaults to current working directory.}
 
+\item{logfile}{[\code{string}]\cr
+Sets the log file name. Defaults to <\code{work.dir}>/<\code{file}>.log.}
+
 \item{topfiles.prefix}{[\code{string}]\cr
 Path of partial topfiles. Defaults to <\code{work.dir}>/topfiles/<\code{file}>_top.}
 
@@ -34,7 +39,7 @@ Path for saving the final topfile. Defaults to <\code{work.dir}>/<\code{file}>.t
 Path for saving the models file. Defaults to <\code{work.dir}>/<\code{file}>.models.}
 }
 \value{
-BatchJobs registry object.
+System output of MB-MDR executable.
 }
 \description{
 Second step of parallel workflow of MB-MDR. Creates topfiles from multiple partial topfiles.

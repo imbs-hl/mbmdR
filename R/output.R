@@ -15,6 +15,9 @@
 #' @param work.dir [\code{string}]\cr
 #'   Working directory for MB-MDR. Defaults to current working directory.
 #'
+#' @param logfile [\code{string}]\cr
+#'   Sets the log file name. Defaults to <\code{work.dir}>/<\code{file}>.log.
+#'
 #' @param topfile [\code{string}]\cr
 #'   Path of topfile. Defaults to <\code{work.dir}>/<\code{file}>.topfile.
 #'
@@ -24,13 +27,16 @@
 #' @param out [\code{string}]\cr
 #'   Sets the output file name. Defaults to <\code{work.dir}>/<\code{file}>.result.
 #'
-#' @return BatchJobs registry object.
+#' @return System output of MB-MDR executable.
 #'
 #' @export
 createOutput <- function(file,
                          trait,
                          cpus,
                          work.dir = getwd(),
+                         logfile = file.path(work.dir,
+                                             paste(basename(tools::file_path_sans_ext(file)),
+                                                   "log", sep = ".")),
                          topfile = file.path(work.dir,
                                              paste(basename(file_path_sans_ext(file)),
                                                    "topfile", sep = ".")),
@@ -46,6 +52,7 @@ createOutput <- function(file,
   checkmate::assertChoice(trait, c("binary", "continuous", "survival"))
   checkmate::assertNumber(cpus)
   checkmate::assertDirectory(work.dir)
+  checkmate::assertDirectory(dirname(logfile))
   if(!checkmate::testDirectory(dirname(out))) {
     warning(paste(checkmate::checkDirectory(dirname(out)), "will be created!", sep = ", "))
     dir.create(dirname(out), recursive = TRUE)
@@ -63,61 +70,68 @@ createOutput <- function(file,
                                                       p = options$p,
                                                       o = out,
                                                       t = topfile,
+                                                      log = logfile,
                                                       options = options))
+
+  waitForFiles(fns = out, timeout = options$fs.latency)
 
   return(sysOut)
 
 }
 
-gammastep4 <- function(file, trait, c, q, p, t, o, options) {
+gammastep4 <- function(file, trait, c, q, p, t, o, log, options) {
 
   check.options(options)
 
   args <- paste(paste0("--", trait),
-               "--gammastep4",
-               "-c", shQuote(c),
-               "-q", sprintf("%d", q),
-               "-p", sprintf("%d", p),
-               "-m", sprintf("%d", options$m),
-               "-at", sprintf("%d", options$at),
-               "-ct", sprintf("%d", options$ct),
-               "-ac", sprintf("%d", options$ac),
-               "-x", sprintf("%f", options$x),
-               "-t", shQuote(t),
-               "-o", shQuote(o),
-               "-r", options$r,
-               "-a", options$a,
-               "-rc", options$rc,
-               ifelse(testCharacter(options$e),
-                      paste("-e", paste(options$e, collapse = ",")),
-                      ""),
-               ifelse(testString(options$E),
-                      paste("-E", shQuote(options$E)),
-                      ""),
-               ifelse(testCharacter(options$filter),
-                      paste("-f", paste(options$filter, collapse = ",")),
-                      ""),
-               ifelse(testString(options$filter.file),
-                      paste("-F", shQuote(options$filter.file)),
-                      ""),
-               ifelse(testCharacter(options$k),
-                      paste("-k", paste(options$k, collapse = ",")),
-                      ""),
-               ifelse(testString(options$K),
-                      paste("-K", shQuote(options$K)),
-                      ""),
-               "-if", options$input.format,
-               ifelse(trait == "continuous",
-                      paste0("-rt", options$rt),
-                      ""),
-               "-pb", options$pb,
-               shQuote(file),
-               "&>", shQuote(paste0(o, '.log')))
+                "--gammastep4",
+                "-c", shQuote(c),
+                "-q", sprintf("%d", q),
+                "-p", sprintf("%d", p),
+                "-m", sprintf("%d", options$m),
+                "-at", sprintf("%d", options$at),
+                "-ct", sprintf("%d", options$ct),
+                "-ac", sprintf("%d", options$ac),
+                "-x", sprintf("%f", options$x),
+                "-t", shQuote(t),
+                "-o", shQuote(o),
+                "-r", options$r,
+                "-a", options$a,
+                "-rc", options$rc,
+                ifelse(testCharacter(options$e),
+                       paste("-e", paste(options$e, collapse = ",")),
+                       ""),
+                ifelse(testString(options$E),
+                       paste("-E", shQuote(options$E)),
+                       ""),
+                ifelse(testCharacter(options$filter),
+                       paste("-f", paste(options$filter, collapse = ",")),
+                       ""),
+                ifelse(testString(options$filter.file),
+                       paste("-F", shQuote(options$filter.file)),
+                       ""),
+                ifelse(testCharacter(options$k),
+                       paste("-k", paste(options$k, collapse = ",")),
+                       ""),
+                ifelse(testString(options$K),
+                       paste("-K", shQuote(options$K)),
+                       ""),
+                "-if", options$input.format,
+                ifelse(trait == "continuous",
+                       paste("-rt", options$rt),
+                       ""),
+                "-pb", options$pb,
+                shQuote(file),
+                ">>", shQuote(log), "2>&1")
 
-  BBmisc::system3(command = options$exec,
-                  args = args,
-                  stdout = TRUE,
-                  stderr = TRUE,
-                  stop.on.exit.code = TRUE)
+  sysOut <- BBmisc::system3(command = options$exec,
+                            args = args,
+                            stdout = TRUE,
+                            stderr = TRUE,
+                            stop.on.exit.code = TRUE)
+
+  waitForFiles(fns = c(o, log), timeout = options$fs.latency)
+
+  return(sysOut)
 
 }

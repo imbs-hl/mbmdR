@@ -5,6 +5,8 @@
 \title{Create final output file}
 \usage{
 createOutput(file, trait, cpus, work.dir = getwd(),
+  logfile = file.path(work.dir,
+  paste(basename(tools::file_path_sans_ext(file)), "log", sep = ".")),
   topfile = file.path(work.dir, paste(basename(file_path_sans_ext(file)),
   "topfile", sep = ".")), perm.prefix = file.path(work.dir, "permutations",
   paste(basename(file_path_sans_ext(file)), "perm", sep = "_")),
@@ -24,6 +26,9 @@ Sets the total amount of CPUs used in \link{runPermutations}.}
 \item{work.dir}{[\code{string}]\cr
 Working directory for MB-MDR. Defaults to current working directory.}
 
+\item{logfile}{[\code{string}]\cr
+Sets the log file name. Defaults to <\code{work.dir}>/<\code{file}>.log.}
+
 \item{topfile}{[\code{string}]\cr
 Path of topfile. Defaults to <\code{work.dir}>/<\code{file}>.topfile.}
 
@@ -34,7 +39,7 @@ Path of the permutation files. Defaults to <\code{work.dir}>/permutations/<\code
 Sets the output file name. Defaults to <\code{work.dir}>/<\code{file}>.result.}
 }
 \value{
-BatchJobs registry object.
+System output of MB-MDR executable.
 }
 \description{
 Fourth step of parallel workflow of MB-MDR. Creates final output file on one CPU.

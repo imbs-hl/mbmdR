@@ -37,7 +37,7 @@
 #'   Sets the output file name. Defaults to <\code{work.dir}>/<\code{file}>.result.
 #'
 #' @param logfile [\code{string}]\cr
-#'   Sets the output file name. Defaults to <\code{work.dir}>/<\code{file}>.log.
+#'   Sets the log file name. Defaults to <\code{work.dir}>/<\code{file}>.log.
 #'
 #' @param modelsfile [\code{string}]\cr
 #'   Sets the models file name. Defaults to <\code{work.dir}>/<\code{file}>.models.
@@ -127,6 +127,16 @@
 #'   Rank transformation (continuous trait only).
 #'   "RANK_TRANSFORM" or "NONE" (default)
 #'
+#' @param result.only [\code{bool}]\cr
+#'   Return only a data.table object with the results or a list with an element
+#'   for each combination with more detailed informations about HLO tables etc. (default).
+#'
+#' @param fs.latency [\code{number}]\cr
+#'   File system latency in seconds to use to wait for files. Default is \code{65} seconds.
+#'
+#' @param clean [\code{logical}]\cr
+#'   Shall intermediate files be deleted? Default is \code{FALSE}.
+#'
 #' @param ... [\code{any}]\cr
 #'   Additional parameter passed to and from other methods.
 #'
@@ -183,7 +193,7 @@ mbmdr <- function(formula = NULL,
                   exec = "mbmdr",
                   n.pvalues = 1000,
                   permutations = 999,
-                  random.seed = as.integer(Sys.Date()),
+                  random.seed = as.integer(stats::runif(1, min = 1, max = .Machine$integer.max)),
                   group.size = 10,
                   num.traits = 1,
                   current.trait = 1,
@@ -203,9 +213,19 @@ mbmdr <- function(formula = NULL,
                   keep.file = NULL,
                   replicate.file = NULL,
                   input.format = "MBMDR",
-                  transform = "NONE", ...) {
+                  transform = "NONE",
+                  result.only = FALSE,
+                  fs.latency = 65,
+                  clean = FALSE, ...) {
 
-  tryCatch(BBmisc::suppressAll(system(exec, intern = TRUE)))
+  old_warn_level <- getOption("warn")
+  options("warn" = 1)
+  on.exit(options("warn" = old_warn_level))
+
+  tryCatch(BBmisc::suppressAll(system(exec, intern = TRUE)),
+           error = function(e) {
+             stop("MB-MDR executable not found!")
+           })
 
   if(!checkmate::testNull(file)) {
     checkmate::assertFile(file)
@@ -238,6 +258,8 @@ mbmdr <- function(formula = NULL,
     replicate <- FALSE
   }
   dir.create(work.dir, recursive = TRUE)
+  checkmate::assertFlag(result.only)
+  checkmate::assertFlag(clean)
 
   configure(exec,
             n.pvalues,
@@ -262,9 +284,10 @@ mbmdr <- function(formula = NULL,
             keep.file,
             replicate.file,
             input.format,
-            transform)
+            transform,
+            fs.latency)
 
-  #clean(work.dir = work.dir)
+  utils::flush.console()
 
   if(!checkmate::testNull(formula)) {
     file <- file.path(work.dir, "input.mbmdr")
@@ -302,9 +325,9 @@ mbmdr <- function(formula = NULL,
   # Check the number of columns
   ncols <- tryCatch({
     sysOut <- (system2(command = "awk",
-                      args = c("-F' '", "'{print NF; exit}'", shQuote(file)),
-                      stdout = TRUE,
-                      stderr = TRUE))
+                       args = c("-F' '", "'{print NF; exit}'", shQuote(file)),
+                       stdout = TRUE,
+                       stderr = TRUE))
 
     if(!is.null(attr(sysOut, "status"))) {
       stop(sysOut)
@@ -328,12 +351,19 @@ mbmdr <- function(formula = NULL,
     message("Running the analysis as a single thread...\n")
     utils::flush.console()
 
-    invisible(runSingleThread(file = file,
-                                          trait = trait,
-                                          out = resultfile,
-                                          log = logfile,
-                                          mod = modelsfile,
-                                          work.dir = work.dir, ...))
+
+    if(any(file.exists(c(resultfile, logfile, modelsfile)))) {
+      message("Found output files. Skipping new analysis...")
+      utils::flush.console()
+      single_new <- FALSE
+    } else {
+      invisible(runSingleThread(file = file,
+                                trait = trait,
+                                out = resultfile,
+                                log = logfile,
+                                mod = modelsfile,
+                                work.dir = work.dir, ...))
+    }
 
   } else {
     message("Starting parallel workflow..\n")
@@ -367,7 +397,8 @@ mbmdr <- function(formula = NULL,
                                        topfiles.prefix = prefix.topfiles,
                                        mod = modelsfile,
                                        out = topfile,
-                                       work.dir = work.dir, ...))
+                                       work.dir = work.dir,
+                                       logfile = logfile, ...))
       step2new <- TRUE
     }
 
@@ -399,34 +430,162 @@ mbmdr <- function(formula = NULL,
                              topfile = topfile,
                              out = resultfile,
                              perm.prefix = prefix.permutations,
-                             work.dir = work.dir, ...))
+                             work.dir = work.dir,
+                             logfile = logfile, ...))
       step4new <- TRUE
     }
 
   }
 
-  output <- read(resultfile, logfile, modelsfile, trait, options)
-  class(output) <- "mbmdr"
+  if(!result.only) {
+    output <- list()
+    output$mdr_models <- read(resultfile, logfile, modelsfile, trait, options, result.only)
+    output$options <- options
+    output$call <- sys.call()
+    class(output$mdr_models) <- "mdr_models"
+    class(output) <- "mbmdr"
+  } else {
+    output <- read(resultfile, logfile, modelsfile, trait, options, result.only)
+  }
+
+  # Clean up intermediate file
+  if(clean) {
+    unlink(topfile, recursive = TRUE, force = TRUE)
+    unlink(dirname(prefix.topfiles), recursive = TRUE, force = TRUE)
+    unlink(dirname(prefix.permutations), recursive = TRUE, force = TRUE)
+    unlink(modelsfile, recursive = TRUE, force = TRUE)
+    unlink(resultfile, recursive = TRUE, force = TRUE)
+    unlink(logfile, recursive = TRUE, force = TRUE)
+  }
+
   return(output)
 
 }
 
 #' Combine MB-MDR objects
 #'
-#' @param ...         [\code{mbmdr}]\cr
-#'                    \code{mbmdr} objects to be concatenated.
+#' @param ...         [\code{mdr_models}]\cr
+#'                    \code{mdr_models} objects to be concatenated.
 #' @param recursive   [\code{logical}]\cr
 #'                    Not used.
 #'
 #' @details The concatenated results are sorted according to the test statistics
 #' of the models.
 #'
-#' @return A \code{mbmdr} object of concatenated \code{mbmdr} objects.
+#' @return A \code{mdr_models} object of concatenated \code{mdr_models} objects.
 #' @export
-c.mbmdr <- function(..., recursive = FALSE) {
+c.mdr_models <- function(..., recursive = FALSE) {
   dots <- list(...)
   res <- unlist(dots, recursive = FALSE)
   res <- res[order(sapply(res, function(model) model$statistic), decreasing = TRUE)]
-  class(res) <- "mbmdr"
+  class(res) <- "mdr_models"
   return(res)
+}
+
+#' Extract a subset of MDR models
+#' @param mdr_models [\code{mdr_models}]\cr
+#'                   A list of \code{mdr_model}s of class \code{mdr_models}.
+#'
+#' @param i [\code{integer}]\cr
+#'          A vector of integers, indicating which MDR models to extract.
+#'
+#' @return A list of \code{mdr_model}s of class \code{mdr_models}.
+#'
+#' @export
+`[.mdr_models` <- function(mdr_models, i) {
+  checkmate::assertClass(mdr_models, c("mdr_models"))
+  checkmate::assertInteger(i, lower = 1, any.missing = FALSE, min.len = 1)
+
+  class(mdr_models) <- NULL
+  res <- mdr_models[i]
+  class(res) <- "mdr_models"
+  return(res)
+}
+
+#' Extract a subset of MDR models from a MB-MDR result object
+#' @param mbmdr [\code{mbmdr}]\cr
+#'                   A \code{mbmdr} object.
+#'
+#' @param i [\code{integer}]\cr
+#'          A vector of integers, indicating which MDR models to extract.
+#'
+#' @return A list of \code{mdr_model}s of class \code{mdr_models}.
+#'
+#' @export
+`[.mbmdr` <- function(mbmdr, i) {
+  checkmate::assertClass(mbmdr, c("mbmdr"))
+  checkmate::assertInteger(i, lower = 1, any.missing = FALSE, min.len = 1)
+
+  mbmdr$mdr_models[i]
+
+}
+
+#' @export
+print.mdr_model <- function(mdr_model) {
+  num_rows <- attr(mdr_model$cell_labels, "num_rows")
+  predictions <- matrix(mdr_model$cell_predictions, nrow = num_rows)
+  hlo_table <- matrix(mdr_model$cell_labels, nrow = num_rows)
+  num_cols <- ncol(hlo_table)
+  cat(sprintf("    MDR model of features %s\n\n", paste(mdr_model$features, collapse = ", ")))
+  cat(sprintf(sprintf("      %% %ds\t\t%% %ds\n",
+                      num_cols*6 + (num_cols - 1),
+                      num_cols*4 + (num_cols - 1)),
+              "Average trait", "HLO matrix"))
+  for (r in seq_len(num_rows)) {
+    cat(sprintf("        "))
+    cat(sprintf("% 6.4f", predictions[r, ]))
+    cat(sprintf("\t\t"))
+    cat(sprintf("% 4s", hlo_table[r, ]))
+    cat("\n")
+  }
+  cat("\n")
+  cat(sprintf("      Test statistic: %.4f\n", mdr_model$statistic))
+  cat(sprintf("      P value: %.4f\n", mdr_model$pvalue))
+  cat("\n")
+}
+
+#' @export
+print.mdr_models <- function(mdr_models, n = 5) {
+
+  num_models <- length(mdr_models)
+
+  cat(sprintf("List of %d MDR models:\n\n", num_models))
+  for (i in seq_len(min(n, num_models))) {
+    cat("  ", rep("-", 30), "\n")
+    print(mdr_models[[i]])
+  }
+  if (n < num_models) {
+    cat("   ...\n")
+    cat(sprintf("Output truncated after %d MDR models!", n))
+  }
+}
+
+#' @export
+print.mbmdr <- function(mbmdr, n = 1) {
+  cat(deparse(mbmdr$call, width.cutoff = getOption("width")), sep = "\n")
+  cat("\n")
+  print(mbmdr$mdr_models, n = n)
+}
+
+#' @export
+as.data.frame.mdr_model <- function(mdr_model) {
+  num_features <- length(mdr_model$features)
+  df <- data.frame(as.list(mdr_model$features),
+                   STATISTIC = mdr_model$statistic,
+                   PVALUE = mdr_model$pvalue,
+                   stringsAsFactors = FALSE)
+  names(df) <- c(sprintf("FEATURE%d", 1:num_features), "STATISTIC", "PVALUE")
+  return(df)
+}
+
+#' @export
+as.data.frame.mdr_models <- function(mdr_models) {
+  df_list <- lapply(mdr_models, as.data.frame)
+  df <- do.call(dplyr::bind_rows, args = df_list)
+  return(df)
+}
+
+#' @export
+as.data.frame.mbmdr <- function(mbmdr) {
+  as.data.frame(mbmdr$mdr_models)
 }

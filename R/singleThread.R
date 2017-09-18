@@ -21,7 +21,7 @@
 #' @param work.dir [\code{string}]\cr
 #'   Working directory for MB-MDR. Defaults to current working directory.
 #'
-#' @return \link{BatchJobs} \link{Registry} object.
+#' @return System output of MB-MDR executable.
 #'
 #' @export
 runSingleThread <- function(file,
@@ -129,7 +129,7 @@ singleThread <- function(file, trait, o, log, mod, options) {
                        ""),
                 "-if", options$input.format,
                 ifelse(trait == "continuous",
-                       paste0("-rt", options$rt),
+                       paste("-rt", options$rt),
                        ""),
                 "-pb", options$pb,
                 file,

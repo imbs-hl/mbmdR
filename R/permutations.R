@@ -21,7 +21,7 @@
 #' @param out.prefix [\code{string}]\cr
 #'   Path for saving the permutation files. Defaults to <\code{work.dir}>/permutations/<\code{file}>_perm.
 #'
-#' @return BatchJobs registry object.
+#' @return System output of MB-MDR executable.
 #'
 #' @export
 runPermutations <- function(file,
@@ -60,6 +60,8 @@ runPermutations <- function(file,
                                                       out.prefix = out.prefix,
                                                       options = options))
 
+  waitForFiles(fns = sprintf("%s%d.txt", out.prefix, 1:cpus), timeout = options$fs.latency)
+
   return(sysOut)
 
 }
@@ -69,50 +71,54 @@ gammastep3 <- function(file, trait, p, i, t, out.prefix, options) {
   check.options(options)
 
   args <- paste(paste0("--", trait),
-               "--gammastep3",
-               "-p", sprintf("%d", p),
-               "-t", shQuote(t),
-               "-o", shQuote(paste0(out.prefix, sprintf("%d", i), '.txt')),
-               ifelse(is.null(options$r),
-                      "",
-                      paste("-r", sprintf("%d", options$r+i))),
-               "-m", sprintf("%d", options$m),
-               "-at", sprintf("%d", options$at),
-               "-ct", sprintf("%d", options$ct),
-               "-ac", sprintf("%d", options$ac),
-               "-x", sprintf("%f", options$x),
-               "-a", options$a,
-               "-rc", options$rc,
-               ifelse(testCharacter(options$e),
-                      paste("-e", paste(options$e, collapse = ",")),
-                      ""),
-               ifelse(testString(options$E),
-                      paste("-E", shQuote(options$E)),
-                      ""),
-               ifelse(testCharacter(options$filter),
-                      paste("-f", paste(options$filter, collapse = ",")),
-                      ""),
-               ifelse(testString(options$filter.file),
-                      paste("-F", shQuote(options$filter.file)),
-                      ""),
-               ifelse(testCharacter(options$k),
-                      paste("-k", paste(options$k, collapse = ",")),
-                      ""),
-               ifelse(testString(options$K),
-                      paste("-K", shQuote(options$K)),
-                      ""),
-               "-if", options$input.format,
-               ifelse(trait == "continuous",
-                      paste0("-rt", options$rt),
-                      ""),
-               "-pb", options$pb,
-               shQuote(file),
-               "&>", shQuote(paste0(out.prefix, sprintf("%d", i), '.log')))
+                "--gammastep3",
+                "-p", sprintf("%d", p),
+                "-t", shQuote(t),
+                "-o", shQuote(paste0(out.prefix, sprintf("%d", i), '.txt')),
+                ifelse(is.null(options$r),
+                       "",
+                       paste("-r", sprintf("%d", options$r+i))),
+                "-m", sprintf("%d", options$m),
+                "-at", sprintf("%d", options$at),
+                "-ct", sprintf("%d", options$ct),
+                "-ac", sprintf("%d", options$ac),
+                "-x", sprintf("%f", options$x),
+                "-a", options$a,
+                "-rc", options$rc,
+                ifelse(testCharacter(options$e),
+                       paste("-e", paste(options$e, collapse = ",")),
+                       ""),
+                ifelse(testString(options$E),
+                       paste("-E", shQuote(options$E)),
+                       ""),
+                ifelse(testCharacter(options$filter),
+                       paste("-f", paste(options$filter, collapse = ",")),
+                       ""),
+                ifelse(testString(options$filter.file),
+                       paste("-F", shQuote(options$filter.file)),
+                       ""),
+                ifelse(testCharacter(options$k),
+                       paste("-k", paste(options$k, collapse = ",")),
+                       ""),
+                ifelse(testString(options$K),
+                       paste("-K", shQuote(options$K)),
+                       ""),
+                "-if", options$input.format,
+                ifelse(trait == "continuous",
+                       paste("-rt", options$rt),
+                       ""),
+                "-pb", options$pb,
+                shQuote(file),
+                "&>", shQuote(paste0(out.prefix, sprintf("%d", i), '.log')))
 
-  BBmisc::system3(command = options$exec,
-                  args = args,
-                  stdout = TRUE,
-                  stderr = TRUE,
-                  stop.on.exit.code = TRUE)
+  sysOut <- BBmisc::system3(command = options$exec,
+                            args = args,
+                            stdout = TRUE,
+                            stderr = TRUE,
+                            stop.on.exit.code = TRUE)
+
+  waitForFiles(fns = sprintf("%s%d.txt", out.prefix, i), timeout = options$fs.latency)
+
+  return(sysOut)
 
 }

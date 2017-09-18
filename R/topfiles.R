@@ -18,7 +18,7 @@
 #' @param out.prefix [\code{string}]\cr
 #'   Path for saving the partial topfiles. Defaults to <\code{work.dir}>/topfiles/<\code{file}>_top.
 #'
-#' @return BatchJobs registry object.
+#' @return System output of MB-MDR executable.
 #'
 #' @export
 createPartialTopFiles <- function(file,
@@ -40,13 +40,17 @@ createPartialTopFiles <- function(file,
   }
   checkmate::assertDirectory(dirname(out.prefix))
 
+  options <- getOption("mbmdr")
+
   sysOut <- parallelMap::parallelMap(gammastep1,
                                      id = 1:cpus, level = "mbmdR.parallelSteps",
                                      more.args = list(file = file,
-                                                                    trait = trait,
-                                                                    cpus = cpus,
-                                                                    ti = out.prefix,
-                                                                    options = getOption("mbmdr")))
+                                                      trait = trait,
+                                                      cpus = cpus,
+                                                      ti = out.prefix,
+                                                      options = options))
+
+  waitForFiles(fns = sprintf("%s%d.txt", out.prefix, 1:cpus), timeout = options$fs.latency)
 
   return(sysOut)
 
@@ -69,6 +73,9 @@ createPartialTopFiles <- function(file,
 #' @param work.dir [\code{string}]\cr
 #'   Working directory for MB-MDR. Defaults to current working directory.
 #'
+#' @param logfile [\code{string}]\cr
+#'   Sets the log file name. Defaults to <\code{work.dir}>/<\code{file}>.log.
+#'
 #' @param topfiles.prefix [\code{string}]\cr
 #'   Path of partial topfiles. Defaults to <\code{work.dir}>/topfiles/<\code{file}>_top.
 #'
@@ -78,13 +85,16 @@ createPartialTopFiles <- function(file,
 #' @param mod [\code{string}]\cr
 #'   Path for saving the models file. Defaults to <\code{work.dir}>/<\code{file}>.models.
 #'
-#' @return BatchJobs registry object.
+#' @return System output of MB-MDR executable.
 #'
 #' @export
 combinePartialTopFiles <- function(file,
                                    trait,
                                    cpus,
                                    work.dir = getwd(),
+                                   logfile = file.path(work.dir,
+                                                       paste(basename(tools::file_path_sans_ext(file)),
+                                                             "log", sep = ".")),
                                    topfiles.prefix = file.path(work.dir,
                                                                "topfiles",
                                                                paste(basename(tools::file_path_sans_ext(file)),
@@ -109,6 +119,8 @@ combinePartialTopFiles <- function(file,
   checkmate::assertDirectory(dirname(out))
   checkmate::assertDirectory(dirname(mod))
 
+  options <- getOption("mbmdr")
+
   sysOut <- parallelMap::parallelMap(gammastep2,
                                      file,
                                      more.args = list(trait = trait,
@@ -116,7 +128,10 @@ combinePartialTopFiles <- function(file,
                                                       ti = topfiles.prefix,
                                                       t = out,
                                                       o2 = mod,
-                                                      options = getOption("mbmdr")))
+                                                      log = logfile,
+                                                      options = options))
+
+  waitForFiles(fns = c(out, mod), timeout = options$fs.latency)
 
   return(sysOut)
 
@@ -159,69 +174,77 @@ gammastep1 <- function(file, trait, id, cpus, ti, options) {
                    ""),
             "-if", options$input.format,
             ifelse(trait == "continuous",
-                   paste0("-rt", options$rt),
+                   paste("-rt", options$rt),
                    ""),
             "-pb", options$pb,
-           shQuote(file),
-           "&>", shQuote(sprintf("%s%d.log", ti, id)))
+            shQuote(file),
+            "&>", shQuote(sprintf("%s%d.log", ti, id)))
 
-  BBmisc::system3(command = options$exec,
-                  args = args,
-                  stdout = TRUE,
-                  stderr = TRUE,
-                  stop.on.exit.code = TRUE)
+  sysOut <- BBmisc::system3(command = options$exec,
+                            args = args,
+                            stdout = TRUE,
+                            stderr = TRUE,
+                            stop.on.exit.code = TRUE)
+
+  waitForFiles(fns = sprintf("%s%d.txt", ti, 1:cpus), timeout = options$fs.latency)
+
+  return(sysOut)
 
 }
 
-gammastep2 <- function(file, trait, cpus, ti, t, o2, options) {
+gammastep2 <- function(file, trait, cpus, ti, t, o2, log, options) {
 
   check.options(options)
 
   args <- paste(paste0("--", trait),
-               "--gammastep2",
-               "-N", sprintf("%d", cpus),
-               "-ti", shQuote(ti),
-               "-t", shQuote(t),
-               "-o2", shQuote(o2),
-               "-n", sprintf("%d", options$n),
-               "-m", sprintf("%d", options$m),
-               "-at", sprintf("%d", options$at),
-               "-ct", sprintf("%d", options$ct),
-               "-ac", sprintf("%d", options$ac),
-               "-a", options$a,
-               "-rc", options$rc,
-               "-x", sprintf("%f", options$x),
-               ifelse(testCharacter(options$e),
-                      paste("-e", paste(options$e, collapse = ",")),
-                      ""),
-               ifelse(testString(options$E),
-                      paste("-E", shQuote(options$E)),
-                      ""),
-               ifelse(testCharacter(options$filter),
-                      paste("-f", paste(options$filter, collapse = ",")),
-                      ""),
-               ifelse(testString(options$filter.file),
-                      paste("-F", shQuote(options$filter.file)),
-                      ""),
-               ifelse(testCharacter(options$k),
-                      paste("-k", paste(options$k, collapse = ",")),
-                      ""),
-               ifelse(testString(options$K),
-                      paste("-K", shQuote(options$K)),
-                      ""),
-               "-v", options$v,
-               "-if", options$input.format,
-               ifelse(trait == "continuous",
-                      paste0("-rt", options$rt),
-                      ""),
-               "-pb", options$pb,
-               shQuote(file),
-               "&>", shQuote(sprintf("%s.log", t)))
+                "--gammastep2",
+                "-N", sprintf("%d", cpus),
+                "-ti", shQuote(ti),
+                "-t", shQuote(t),
+                "-o2", shQuote(o2),
+                "-n", sprintf("%d", options$n),
+                "-m", sprintf("%d", options$m),
+                "-at", sprintf("%d", options$at),
+                "-ct", sprintf("%d", options$ct),
+                "-ac", sprintf("%d", options$ac),
+                "-a", options$a,
+                "-rc", options$rc,
+                "-x", sprintf("%f", options$x),
+                ifelse(testCharacter(options$e),
+                       paste("-e", paste(options$e, collapse = ",")),
+                       ""),
+                ifelse(testString(options$E),
+                       paste("-E", shQuote(options$E)),
+                       ""),
+                ifelse(testCharacter(options$filter),
+                       paste("-f", paste(options$filter, collapse = ",")),
+                       ""),
+                ifelse(testString(options$filter.file),
+                       paste("-F", shQuote(options$filter.file)),
+                       ""),
+                ifelse(testCharacter(options$k),
+                       paste("-k", paste(options$k, collapse = ",")),
+                       ""),
+                ifelse(testString(options$K),
+                       paste("-K", shQuote(options$K)),
+                       ""),
+                "-v", options$v,
+                "-if", options$input.format,
+                ifelse(trait == "continuous",
+                       paste("-rt", options$rt),
+                       ""),
+                "-pb", options$pb,
+                shQuote(file),
+                ">>", shQuote(log), "2>&1")
 
-  BBmisc::system3(command = options$exec,
-                  args = args,
-                  stdout = TRUE,
-                  stderr = TRUE,
-                  stop.on.exit.code = TRUE)
+  sysOut <- BBmisc::system3(command = options$exec,
+                            args = args,
+                            stdout = TRUE,
+                            stderr = TRUE,
+                            stop.on.exit.code = TRUE)
+
+  waitForFiles(fns = c(t, o2, log), timeout = options$fs.latency)
+
+  return(sysOut)
 
 }

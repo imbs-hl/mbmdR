@@ -31,7 +31,7 @@ Sets the models file name. Defaults to <\code{work.dir}>/<\code{file}>.models.}
 Working directory for MB-MDR. Defaults to current working directory.}
 }
 \value{
-\link{BatchJobs} \link{Registry} object.
+System output of MB-MDR executable.
 }
 \description{
 Non parallel MB-MDR analysis.

@@ -527,13 +527,16 @@ print.mdr_model <- function(mdr_model) {
   hlo_table <- matrix(mdr_model$cell_labels, nrow = num_rows)
   num_cols <- ncol(hlo_table)
   cat(sprintf("    MDR model of features %s\n\n", paste(mdr_model$features, collapse = ", ")))
-  cat(sprintf(sprintf("      %% %ds\t\t%% %ds\n",
-                      num_cols*6 + (num_cols - 1),
-                      num_cols*4 + (num_cols - 1)),
-              "Average trait", "HLO matrix"))
+  # cat(sprintf(sprintf("        %% %ds\t\t%% %ds\n",
+  #                     num_cols*7 + (num_cols - 1),
+  #                     num_cols*4 + (num_cols - 1)),
+  #             "Average trait", "HLO matrix"))
+  cat(sprintf("        %s\t\t%s\n",
+          sprintf(paste0("% ", (num_cols*7 + (num_cols - 1) - 13) + 13+1,"s"), sprintf(paste0("%-", 0.5*(num_cols*7 + (num_cols - 1) - 13) + 13,"s"), "Average trait")),
+          sprintf(paste0("% ", (num_cols*4 + (num_cols - 1) - 10) + 10+1,"s"), sprintf(paste0("%-", 0.5*(num_cols*4 + (num_cols - 1) - 10) + 10,"s"), "HLO matrix"))))
   for (r in seq_len(num_rows)) {
     cat(sprintf("        "))
-    cat(sprintf("%-8s", sprintf("% 6.4f", predictions[r, ])))
+    cat(sprintf("% 7.4f", predictions[r, ]))
     cat(sprintf("\t\t"))
     cat(sprintf("% 4s", hlo_table[r, ]))
     cat("\n")

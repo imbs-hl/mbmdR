@@ -533,7 +533,7 @@ print.mdr_model <- function(mdr_model) {
               "Average trait", "HLO matrix"))
   for (r in seq_len(num_rows)) {
     cat(sprintf("        "))
-    cat(sprintf("% 6.4f", predictions[r, ]))
+    cat(sprintf("%-8s", sprintf("% 6.4f", predictions[r, ])))
     cat(sprintf("\t\t"))
     cat(sprintf("% 4s", hlo_table[r, ]))
     cat("\n")
